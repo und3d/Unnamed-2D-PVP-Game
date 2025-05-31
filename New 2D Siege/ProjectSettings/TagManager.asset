@@ -11,10 +11,10 @@ TagManager:
   - 
   - Water
   - UI
-  - Players
+  - PlayerSelf
+  - PlayerOther
   - Background
   - Map Objects
-  - 
   - 
   - 
   - 
@@ -49,6 +49,9 @@ TagManager:
     locked: 0
   - name: Players
     uniqueID: 2206241935
+    locked: 0
+  - name: UI
+    uniqueID: 4014301863
     locked: 0
   m_RenderingLayers:
   - Default

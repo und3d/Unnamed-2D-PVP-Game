@@ -13,7 +13,6 @@ public class playerController : NetworkIdentity
     [SerializeField] private float sprintSpeed = 8f;
 
     [Header("References")]
-    [SerializeField] private CinemachineCamera playerCamera;
     [SerializeField] private StateMachine stateMachine;
     [SerializeField] private List<StateNode> weaponStates = new();
 
@@ -28,21 +27,11 @@ public class playerController : NetworkIdentity
         TryGetComponent(out _rigidbody);
     }
 
-    private void Start()
-    {
-        if (playerCamera == null)
-        {
-            enabled = false;
-            return;
-        }
-    }
-
     protected override void OnSpawned()
     {
         base.OnSpawned();
 
         enabled = isOwner;
-        playerCamera.gameObject.SetActive(isOwner);
     }
 
     private void FixedUpdate()

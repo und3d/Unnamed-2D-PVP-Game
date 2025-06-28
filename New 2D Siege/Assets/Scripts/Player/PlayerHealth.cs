@@ -47,16 +47,19 @@ public class PlayerHealth : NetworkIdentity
         }
     }
 
-    [ServerRpc(requireOwnership:false)]
-    public void ChangeHealth(int amount, RPCInfo info = default)
+  
+    public void ChangeHealth(int amount, PlayerID shooter)
     {
+        if (!isServer)
+            return;
+        
         health.value += amount;
 
         if (health <= 0)
         {
             if (InstanceHandler.TryGetInstance(out GameController gameController))
             {
-                gameController.AddKill(info.sender);
+                gameController.AddKill(shooter);
                 if (owner.HasValue)
                     gameController.AddDeath(owner.Value);
                 else

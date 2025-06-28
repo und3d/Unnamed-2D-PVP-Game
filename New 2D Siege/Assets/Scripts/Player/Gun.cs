@@ -20,6 +20,7 @@ public class Gun : StateNode
     
     [Header("References")]
     [SerializeField] private Transform playerTransform;
+    [SerializeField] private Transform shootOrigin;
     [SerializeField] private LayerMask hitLayer;
     [SerializeField] private ParticleSystem muzzleFlash;
     [SerializeField] private GameController gameController;
@@ -84,28 +85,47 @@ public class Gun : StateNode
 
         Vector2 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mouseWorldPosition - (Vector2)playerTransform.position).normalized;
-        
-        RaycastHit2D hit = Physics2D.Raycast((Vector2)playerTransform.position, direction, range, hitLayer);
-        
-        if (!hit)
-            return;
 
-        if (!hit.transform.TryGetComponent(out PlayerHealth playerHealth))
+        //Ray2D ray = new(shootOrigin.position, direction);
+        RaycastHit2D hit = Physics2D.Raycast(shootOrigin.position, direction, range, hitLayer);
+        
+        if (hit)
         {
-            if (enviroHitEffect)
+            if (!hit.transform.TryGetComponent(out PlayerHealth playerHealth))
             {
-                EnvironmentHit(hit.point, hit.normal);
-                return;
+                if (enviroHitEffect)
+                {
+                    EnvironmentHit(hit.point, hit.normal);
+                    return;
+                }
             }
+            PlayerHit(playerHealth, playerHealth.transform.InverseTransformPoint(hit.point), hit.normal);
+            
         }
+        HandleHit(shootOrigin.position, direction, networkManager.tickModule.rollbackTick);
+    }
+    [ServerRpc]
+    private void HandleHit(Vector2 origin, Vector2 dir, Double preciseTick, RPCInfo info = default)
+    {
+        Ray2D ray = new(origin, dir);
         
-        PlayerHit(playerHealth, playerHealth.transform.InverseTransformPoint(hit.point), hit.normal);
-        
-        
-        playerHealth.ChangeHealth(-damage);
+        if (rollbackModule.Raycast(preciseTick, ray, out var hit, range))
+        {
+            if (!hit.transform.TryGetComponent(out PlayerHealth playerHealth))
+                return;
+
+            //Debug.Log($"Player should be losing health.");
+            playerHealth.ChangeHealth(-damage, info.sender);
+            PlayerHitConfirmation(playerHealth, playerHealth.transform.InverseTransformPoint(hit.point), hit.normal);
+        }
     }
 
-    [ObserversRpc(runLocally: true)]
+    [ObserversRpc(excludeOwner: true)]
+    private void PlayerHitConfirmation(PlayerHealth player, Vector3 localPosition, Vector3 normal)
+    {
+        PlayerHit(player, localPosition, normal);
+    }
+    
     private void PlayerHit(PlayerHealth player, Vector3 localPosition, Vector3 normal)
     {
         if (playerHitEffect && player)

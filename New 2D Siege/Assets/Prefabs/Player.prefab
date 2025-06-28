@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3401231433800048838}
   - component: {fileID: 2468881062887719266}
   - component: {fileID: 4980798662954896818}
+  - component: {fileID: 3228059592462097586}
   - component: {fileID: 3385270567159970399}
   - component: {fileID: 5780825994155303848}
   - component: {fileID: 8926897897760493110}
@@ -39,6 +40,7 @@ Transform:
   - {fileID: 4602719137933676255}
   - {fileID: 4419182818503309906}
   - {fileID: 8251610409718722025}
+  - {fileID: 6838778048533206435}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3401231433800048838
@@ -64,7 +66,6 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   moveSpeed: 5
   sprintSpeed: 8
-  playerCamera: {fileID: 8490605048016817685}
   stateMachine: {fileID: 2468881062887719266}
   weaponStates:
   - {fileID: 4139357833510178640}
@@ -90,7 +91,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  ownerAuth: 1
+  _ownerAuth: 1
   _states:
   - {fileID: 4139357833510178640}
   - {fileID: 2326740372766534828}
@@ -121,6 +122,23 @@ MonoBehaviour:
     _sendIntervalInSeconds: 0
   selfLayer: 6
   otherLayer: 7
+--- !u!114 &3228059592462097586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437286425798109518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15780e97d72f9104db84d77a763c6fe6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _storeHistoryInSeconds: 2
+  _autoAddAllChildren: 0
+  _colliders3D: []
+  _colliders2D:
+  - {fileID: 5780825994155303848}
 --- !u!212 &3385270567159970399
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -392,9 +410,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   playerTransform: {fileID: 1196152672649150724}
+  shootOrigin: {fileID: 6838778048533206435}
   hitLayer:
     serializedVersion: 2
-    m_Bits: 951
+    m_Bits: 4294967295
   muzzleFlash: {fileID: 4731351591826490611}
   gameController: {fileID: 3806975639612252344, guid: 0fedf1bb60ce11b40835c7e34f3c38c2, type: 3}
   renderers:
@@ -456,6 +475,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &3166724633728627696
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6838778048533206435}
+  m_Layer: 6
+  m_Name: ShootOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6838778048533206435
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3166724633728627696}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.614, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1196152672649150724}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3933407679709339849
 GameObject:
   m_ObjectHideFlags: 0
@@ -468,14 +518,14 @@ GameObject:
   - component: {fileID: 8490605048016817685}
   - component: {fileID: 7590251095080947172}
   - component: {fileID: 4584622195247966111}
-  - component: {fileID: 1804989287541713213}
+  - component: {fileID: 711885471427292266}
   m_Layer: 6
   m_Name: PlayerCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4602719137933676255
 Transform:
   m_ObjectHideFlags: 0
@@ -504,7 +554,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Priority:
-    Enabled: 0
+    Enabled: 1
     m_Value: 0
   OutputChannel: 1
   StandbyUpdate: 2
@@ -566,18 +616,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LookAtOffset: {x: 0, y: 0, z: 0}
---- !u!114 &1804989287541713213
+--- !u!114 &711885471427292266
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3933407679709339849}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 565eb65e279d126488322baf9b4a68c0, type: 3}
+  m_Script: {fileID: 11500000, guid: f734ab91444d2604a9b167d453f45553, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  playerCamera: {fileID: 8490605048016817685}
 --- !u!1 &6984946323666268576
 GameObject:
   m_ObjectHideFlags: 0
@@ -700,9 +760,10 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   playerTransform: {fileID: 1196152672649150724}
+  shootOrigin: {fileID: 6838778048533206435}
   hitLayer:
     serializedVersion: 2
-    m_Bits: 951
+    m_Bits: 4294967295
   muzzleFlash: {fileID: 1471267271617475086}
   gameController: {fileID: 3806975639612252344, guid: 0fedf1bb60ce11b40835c7e34f3c38c2, type: 3}
   renderers:

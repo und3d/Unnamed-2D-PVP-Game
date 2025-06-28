@@ -86,8 +86,8 @@ public class Gun : StateNode
         Vector2 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = (mouseWorldPosition - (Vector2)playerTransform.position).normalized;
 
-        //Ray2D ray = new(shootOrigin.position, direction);
-        RaycastHit2D hit = Physics2D.Raycast(shootOrigin.position, direction, range, hitLayer);
+        Ray2D ray = new(shootOrigin.position, direction);
+        RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, range, hitLayer);
         
         if (hit)
         {
@@ -102,14 +102,16 @@ public class Gun : StateNode
             PlayerHit(playerHealth, playerHealth.transform.InverseTransformPoint(hit.point), hit.normal);
             
         }
-        HandleHit(shootOrigin.position, direction, networkManager.tickModule.rollbackTick);
+        HandleHit(ray, networkManager.tickModule.rollbackTick);
     }
     [ServerRpc]
-    private void HandleHit(Vector2 origin, Vector2 dir, Double preciseTick, RPCInfo info = default)
+    private void HandleHit(Ray2D ray, Double preciseTick, RPCInfo info = default)
     {
-        Ray2D ray = new(origin, dir);
+        var hitLayers = new ContactFilter2D();
+        hitLayers.SetLayerMask(hitLayer);
+        hitLayers.useLayerMask = true;
         
-        if (rollbackModule.Raycast(preciseTick, ray, out var hit, range))
+        if (rollbackModule.Raycast(preciseTick, ray, out var hit, range, hitLayers))
         {
             if (!hit.transform.TryGetComponent(out PlayerHealth playerHealth))
                 return;

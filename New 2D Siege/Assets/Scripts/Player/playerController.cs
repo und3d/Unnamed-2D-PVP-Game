@@ -1,6 +1,7 @@
 using PurrNet;
 using PurrNet.StateMachine;
 using System;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -13,7 +14,8 @@ public class playerController : NetworkIdentity
 
     [Header("References")]
     [SerializeField] private CinemachineCamera playerCamera;
-    //[SerializeField] private StateMachine stateMachine;
+    [SerializeField] private StateMachine stateMachine;
+    [SerializeField] private List<StateNode> weaponStates = new();
 
 
     private Rigidbody2D _rigidbody;
@@ -26,15 +28,21 @@ public class playerController : NetworkIdentity
         TryGetComponent(out _rigidbody);
     }
 
+    private void Start()
+    {
+        if (playerCamera == null)
+        {
+            enabled = false;
+            return;
+        }
+    }
+
     protected override void OnSpawned()
     {
         base.OnSpawned();
 
         enabled = isOwner;
-        
-        playerCamera.Priority.Value = isOwner ? 10 : 0;
-        if(isOwner)
-            playerCamera.transform.SetParent(null);
+        playerCamera.gameObject.SetActive(isOwner);
     }
 
     private void FixedUpdate()
@@ -49,6 +57,19 @@ public class playerController : NetworkIdentity
         
         if (Application.isFocused)
             RotateTowardsMouse();
+    }
+
+    private void Update()
+    {
+        HandleWeaponSwitching();
+    }
+
+    private void HandleWeaponSwitching()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            stateMachine.SetState(weaponStates[0]);
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            stateMachine.SetState(weaponStates[1]);
     }
 
     private void RotateTowardsMouse()

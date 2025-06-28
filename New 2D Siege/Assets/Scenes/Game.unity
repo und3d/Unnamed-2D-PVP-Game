@@ -703,6 +703,7 @@ MonoBehaviour:
   _dontDestroyOnLoad: 0
   _transport: {fileID: 324796147}
   _networkPrefabs: {fileID: 11400000, guid: 9b53830e8731a4d4596d04be58edf828, type: 2}
+  _networkAssets: {fileID: 0}
   _networkRules: {fileID: 11400000, guid: d8799083b96579a42b8b2d03e4ceae98, type: 2}
   _visibilityRules: {fileID: 11400000, guid: 8f014a5bd8dc68646a2a3c0b18c5bbd8, type: 2}
   _authenticator: {fileID: 0}
@@ -737,7 +738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   checkInterval: 0.33
   placement: 1
-  displayType: 2
+  _displayType: 3
   fontSize: 24
   textColor: {r: 0, g: 0.41989112, b: 1, a: 1}
 --- !u!114 &324796146
@@ -3105,7 +3106,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  ownerAuth: 0
+  _ownerAuth: 0
   _states:
   - {fileID: 2136721848}
   - {fileID: 1566363576}
@@ -3413,7 +3414,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  minPlayers: 1
+  minPlayers: 3
 --- !u!4 &2136721849
 Transform:
   m_ObjectHideFlags: 0

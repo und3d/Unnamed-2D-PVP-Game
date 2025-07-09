@@ -3,11 +3,12 @@ using PurrNet;
 using PurrNet.StateMachine;
 using UnityEngine;
 
-public class RoundState : StateNode<List<PlayerHealth>>
+public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerHealth>>>
 {
-    private List<PlayerID> _players = new();
+    private List<PlayerID> _playersRed = new();
+    private List<PlayerID> _playersBlue = new();
     
-    public override void Enter(List<PlayerHealth> data, bool asServer)
+    /*public override void Enter(List<PlayerHealth> data, bool asServer)
     {
         base.Enter(data, asServer);
 
@@ -22,15 +23,60 @@ public class RoundState : StateNode<List<PlayerHealth>>
             player.OnDeath_Server += OnPlayerDeath;
         }
     }
-
-    private void OnPlayerDeath(PlayerID deadPlayer)
+    */
+    
+    public override void Enter(Dictionary<GameController.Team, List<PlayerHealth>> data, bool asServer)
     {
-        _players.Remove(deadPlayer);
+        Debug.Log($"Entering RoundState. Is this server? {asServer}");
+        base.Enter(data, asServer);
 
-        if (_players.Count <= 1)
+        if (!asServer)
+        {
+            Debug.Log("Exiting RoundState as a client.");
+            return;
+        }
+        
+        _playersRed.Clear();
+        _playersBlue.Clear();
+        
+        // Red Team
+        foreach (var player in data[GameController.Team.Red])
+        {
+            if (player.owner.HasValue)
+                _playersRed.Add(player.owner.Value);
+            player.OnDeath_Server += OnPlayerDeathRed;
+        }
+        
+        Debug.Log($"Red team players: {_playersRed.Count}");
+        
+        //Blue Team
+        foreach (var player in data[GameController.Team.Blue])
+        {
+            if (player.owner.HasValue)
+                _playersBlue.Add(player.owner.Value);
+            player.OnDeath_Server += OnPlayerDeathBlue;
+        }
+        
+        Debug.Log($"Blue team players: {_playersBlue.Count}");
+    }
+
+    private void OnPlayerDeathRed(PlayerID deadPlayer)
+    {
+        _playersRed.Remove(deadPlayer);
+
+        if (_playersRed.Count <= 0)
         {
             machine.Next();
         }
+    }
+    
+    private void OnPlayerDeathBlue(PlayerID deadPlayer)
+    {
+        _playersBlue.Remove(deadPlayer);
 
+        if (_playersBlue.Count <= 0)
+        {
+            machine.Next();
+        }
     }
 }

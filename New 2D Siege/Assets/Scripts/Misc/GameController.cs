@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using PurrNet;
 using UnityEngine;
 
@@ -7,6 +8,16 @@ public class GameController : NetworkBehaviour
     public bool debugMode = false;
     
     [SerializeField] private SyncDictionary<PlayerID, ScoreData> scores = new();
+    
+    public enum Team {
+        Red, Blue
+    }
+
+    public Dictionary<Team, List<PlayerID>> GlobalTeams = new Dictionary<Team, List<PlayerID>>()
+    {
+        { Team.Red, new List<PlayerID>() },
+        { Team.Blue, new List<PlayerID>() }
+    };
 
     private void Awake()
     {

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using PurrNet;
 using PurrNet.StateMachine;
 using UnityEngine;
 
@@ -6,6 +7,9 @@ public class PlayerSpawningState : StateNode
 {
     [SerializeField] private PlayerHealth playerPrefab;
     [SerializeField] private List<Transform> spawnPoints = new();
+
+    [SerializeField] private List<Transform> spawnPointsRed = new();
+    [SerializeField] private List<Transform> spawnPointsBlue = new();
     
 
     public override void Enter(bool asServer)
@@ -17,7 +21,9 @@ public class PlayerSpawningState : StateNode
 
         DespawnPlayers();
         
-        var spawnedPlayers = SpawnPlayers();
+        var spawnedPlayers = SpawnPlayersWithTeam();
+        
+        Debug.Log($"Sending {spawnedPlayers}");
         machine.Next(spawnedPlayers);
     }
 
@@ -46,6 +52,50 @@ public class PlayerSpawningState : StateNode
             if (currentSpawnIndex >= spawnPoints.Count)
                 currentSpawnIndex = 0;
         }
+        
+        return spawnedPlayers;
+    }
+
+    private Dictionary<GameController.Team, List<PlayerHealth>> SpawnPlayersWithTeam()
+    {
+        var spawnedPlayers = new Dictionary<GameController.Team, List<PlayerHealth>>()
+        {
+            { GameController.Team.Red, new List<PlayerHealth>() },
+            { GameController.Team.Blue, new List<PlayerHealth>() }
+        };
+        
+        if (!InstanceHandler.TryGetInstance(out GameController gameController))
+        {
+            Debug.LogError($"GameStartState failed to get gameController!", this);
+        }
+        
+        // Spawn Red Team
+        int currentSpawnIndex = 0;
+        foreach (var player in gameController.GlobalTeams[GameController.Team.Red])
+        {
+            var spawnPoint = spawnPointsRed[currentSpawnIndex];
+            var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+            newPlayer.GetComponent<SpriteRenderer>().color = Color.red;
+            newPlayer.GiveOwnership(player);
+            spawnedPlayers[GameController.Team.Red].Add(newPlayer);
+            currentSpawnIndex++;
+        }
+        
+        Debug.Log($"Spawned {currentSpawnIndex} Red team players");
+        
+        // Spawn Blue Team
+        currentSpawnIndex = 0;
+        foreach (var player in gameController.GlobalTeams[GameController.Team.Blue])
+        {
+            var spawnPoint = spawnPointsBlue[currentSpawnIndex];
+            var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+            newPlayer.GetComponent<SpriteRenderer>().color = Color.blue;
+            newPlayer.GiveOwnership(player);
+            spawnedPlayers[GameController.Team.Blue].Add(newPlayer);
+            currentSpawnIndex++;
+        }
+        
+        Debug.Log($"Spawned {currentSpawnIndex} Blue team players");
         
         return spawnedPlayers;
     }

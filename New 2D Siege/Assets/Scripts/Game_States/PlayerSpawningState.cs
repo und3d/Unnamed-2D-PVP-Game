@@ -1,7 +1,17 @@
 using System.Collections.Generic;
 using PurrNet;
+using PurrNet.Packing;
 using PurrNet.StateMachine;
 using UnityEngine;
+
+public static class GameExtensions
+{
+    [RegisterPackers]
+    static void RegisterPackers()
+    {
+        PackCollections.RegisterList<PlayerHealth>();
+    }
+}
 
 public class PlayerSpawningState : StateNode
 {
@@ -75,7 +85,7 @@ public class PlayerSpawningState : StateNode
         {
             var spawnPoint = spawnPointsRed[currentSpawnIndex];
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            newPlayer.GetComponent<SpriteRenderer>().color = Color.red;
+            //newPlayer.GetComponent<SpriteRenderer>().color = Color.red;
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Red].Add(newPlayer);
             currentSpawnIndex++;
@@ -89,7 +99,7 @@ public class PlayerSpawningState : StateNode
         {
             var spawnPoint = spawnPointsBlue[currentSpawnIndex];
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            newPlayer.GetComponent<SpriteRenderer>().color = Color.blue;
+            //newPlayer.GetComponent<SpriteRenderer>().color = Color.blue;
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Blue].Add(newPlayer);
             currentSpawnIndex++;

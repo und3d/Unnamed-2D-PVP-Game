@@ -25,10 +25,10 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
     }
     */
     
-    public override void Enter(Dictionary<GameController.Team, List<PlayerHealth>> data, bool asServer)
+    public override void Enter(Dictionary<GameController.Team, List<PlayerHealth>> spawnedPlayers, bool asServer)
     {
         Debug.Log($"Entering RoundState. Is this server? {asServer}");
-        base.Enter(data, asServer);
+        base.Enter(spawnedPlayers, asServer);
 
         if (!asServer)
         {
@@ -40,7 +40,7 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
         _playersBlue.Clear();
         
         // Red Team
-        foreach (var player in data[GameController.Team.Red])
+        foreach (var player in spawnedPlayers[GameController.Team.Red])
         {
             if (player.owner.HasValue)
                 _playersRed.Add(player.owner.Value);
@@ -50,7 +50,7 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
         Debug.Log($"Red team players: {_playersRed.Count}");
         
         //Blue Team
-        foreach (var player in data[GameController.Team.Blue])
+        foreach (var player in spawnedPlayers[GameController.Team.Blue])
         {
             if (player.owner.HasValue)
                 _playersBlue.Add(player.owner.Value);

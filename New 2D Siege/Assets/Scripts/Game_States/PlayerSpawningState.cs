@@ -16,7 +16,7 @@ public static class GameExtensions
 public class PlayerSpawningState : StateNode
 {
     [SerializeField] private PlayerHealth playerPrefab;
-    [SerializeField] private List<Transform> spawnPoints = new();
+    //[SerializeField] private List<Transform> spawnPoints = new();
 
     [SerializeField] private List<Transform> spawnPointsRed = new();
     [SerializeField] private List<Transform> spawnPointsBlue = new();
@@ -46,7 +46,7 @@ public class PlayerSpawningState : StateNode
         }
     }
 
-    private List<PlayerHealth> SpawnPlayers()
+    /*private List<PlayerHealth> SpawnPlayers()
     {
         var spawnedPlayers = new List<PlayerHealth>();
 
@@ -64,7 +64,7 @@ public class PlayerSpawningState : StateNode
         }
         
         return spawnedPlayers;
-    }
+    }*/
 
     private Dictionary<GameController.Team, List<PlayerHealth>> SpawnPlayersWithTeam()
     {
@@ -85,7 +85,7 @@ public class PlayerSpawningState : StateNode
         {
             var spawnPoint = spawnPointsRed[currentSpawnIndex];
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            //newPlayer.GetComponent<SpriteRenderer>().color = Color.red;
+            SetColor(true, newPlayer);
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Red].Add(newPlayer);
             currentSpawnIndex++;
@@ -99,7 +99,7 @@ public class PlayerSpawningState : StateNode
         {
             var spawnPoint = spawnPointsBlue[currentSpawnIndex];
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            //newPlayer.GetComponent<SpriteRenderer>().color = Color.blue;
+            SetColor(false, newPlayer);
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Blue].Add(newPlayer);
             currentSpawnIndex++;
@@ -110,6 +110,22 @@ public class PlayerSpawningState : StateNode
         return spawnedPlayers;
     }
 
+    [ObserversRpc]
+    private void SetColor(bool redTeam, PlayerHealth player)
+    {
+        Debug.Log($"Player team color is set");
+        if (redTeam)
+        {
+            player.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+        else
+        {
+            player.GetComponent<SpriteRenderer>().color = Color.blue;
+        }
+    }
+    
+    
+    
     public override void Exit(bool asServer)
     {
         base.Exit(asServer);

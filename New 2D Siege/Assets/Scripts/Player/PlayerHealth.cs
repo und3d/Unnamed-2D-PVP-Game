@@ -17,6 +17,23 @@ public class PlayerHealth : NetworkIdentity
         
         var actualLayer = isOwner ? selfLayer : otherLayer;
         SetLayerRecursive(gameObject, actualLayer);
+        
+        if (!InstanceHandler.TryGetInstance(out GameController gameController))
+        {
+            Debug.LogError($"GameStartState failed to get gameController!", this);
+        }
+        // Is the owner of this player object on Red team?
+        if (gameController.GlobalTeams[GameController.Team.Red].Contains(owner.Value))
+        {
+            SetColor(true);
+        }
+        // Is the owner of this player object on Blue team?
+        else
+        {
+            SetColor(false);
+        }
+        
+        
 
         if (isOwner)
         {
@@ -67,6 +84,20 @@ public class PlayerHealth : NetworkIdentity
             }
             OnDeath_Server?.Invoke(owner.Value);
             Destroy(gameObject);
+        }
+    }
+    
+    [ObserversRpc]
+    public void SetColor(bool redTeam)
+    {
+        Debug.Log($"Player team color is set");
+        if (redTeam)
+        {
+            GetComponent<SpriteRenderer>().color = Color.red;
+        }
+        else
+        {
+            GetComponent<SpriteRenderer>().color = Color.blue;
         }
     }
 }

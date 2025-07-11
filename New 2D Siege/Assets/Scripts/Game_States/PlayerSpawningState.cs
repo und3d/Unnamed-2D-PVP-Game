@@ -85,7 +85,7 @@ public class PlayerSpawningState : StateNode
         {
             var spawnPoint = spawnPointsRed[currentSpawnIndex];
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            SetColor(true, newPlayer);
+            newPlayer.GetComponent<PlayerHealth>().SetColor(true);
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Red].Add(newPlayer);
             currentSpawnIndex++;
@@ -99,7 +99,7 @@ public class PlayerSpawningState : StateNode
         {
             var spawnPoint = spawnPointsBlue[currentSpawnIndex];
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            SetColor(false, newPlayer);
+            newPlayer.GetComponent<PlayerHealth>().SetColor(false);
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Blue].Add(newPlayer);
             currentSpawnIndex++;
@@ -110,19 +110,7 @@ public class PlayerSpawningState : StateNode
         return spawnedPlayers;
     }
 
-    [ObserversRpc]
-    private void SetColor(bool redTeam, PlayerHealth player)
-    {
-        Debug.Log($"Player team color is set");
-        if (redTeam)
-        {
-            player.GetComponent<SpriteRenderer>().color = Color.red;
-        }
-        else
-        {
-            player.GetComponent<SpriteRenderer>().color = Color.blue;
-        }
-    }
+
     
     
     

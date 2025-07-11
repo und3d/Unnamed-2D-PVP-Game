@@ -13,16 +13,24 @@ public class GameController : NetworkBehaviour
         Red, Blue
     }
 
-    public Dictionary<Team, List<PlayerID>> GlobalTeams = new Dictionary<Team, List<PlayerID>>()
+    public SyncDictionary<Team, List<PlayerID>> GlobalTeams = new();
+    
+    /*public SyncDictionary<Team, List<PlayerID>> GlobalTeams = new SyncDictionary<Team, List<PlayerID>>()
     {
         { Team.Red, new List<PlayerID>() },
         { Team.Blue, new List<PlayerID>() }
-    };
+    };*/
 
     private void Awake()
     {
         InstanceHandler.RegisterInstance(this); //A safer singleton; needs a OnDestroy
         scores.onChanged += OnScoresChanged;
+        
+        GlobalTeams = new SyncDictionary<Team, List<PlayerID>>()
+        {
+            { Team.Red, new List<PlayerID>() },
+            { Team.Blue, new List<PlayerID>() }
+        };
     }
 
     private void OnScoresChanged(SyncDictionaryChange<PlayerID, ScoreData> change)

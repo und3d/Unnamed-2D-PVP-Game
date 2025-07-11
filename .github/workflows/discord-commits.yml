@@ -13,14 +13,12 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          COMMIT_MESSAGE=$(jq -r '.commits[0].message' "$GITHUB_EVENT_PATH")
+          COMMIT_MESSAGE=$(jq -r '.commits[0].message' "$GITHUB_EVENT_PATH" | sed ':a;N;$!ba;s/\n/\\n/g')
           COMMIT_AUTHOR=$(jq -r '.commits[0].author.name' "$GITHUB_EVENT_PATH")
           COMMIT_URL=$(jq -r '.commits[0].url' "$GITHUB_EVENT_PATH")
           BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
 
-          curl -H "Content-Type: application/json" \
-          -X POST \
-          -d "$(jq -n \
+          PAYLOAD=$(jq -n \
             --arg username "GitHub Bot" \
             --arg title "New Commit to '$BRANCH_NAME'" \
             --arg description "$COMMIT_MESSAGE" \
@@ -39,5 +37,9 @@ jobs:
                 ],
                 url: $url
               }]
-            }')" \
-          "$DISCORD_WEBHOOK"
+            }')
+
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "$PAYLOAD" \
+            "$DISCORD_WEBHOOK"

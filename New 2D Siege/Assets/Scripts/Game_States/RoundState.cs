@@ -11,6 +11,7 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
 {
     private List<PlayerID> _playersRed = new();
     private List<PlayerID> _playersBlue = new();
+    private Coroutine roundTimer;
     [SerializeField] private float roundTime = 180f;
     [SerializeField] private float objectiveTime = 45f;
     
@@ -70,7 +71,7 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
         
         Debug.Log($"Blue team players: {_playersBlue.Count}");
         
-        StartCoroutine(RoundTimer(roundTime));
+        roundTimer = StartCoroutine(RoundTimer(roundTime));
     }
 
     private void Update()
@@ -79,10 +80,14 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
         {
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
-
+        
+        // Stops Update loop if Objective has not been planted yet
         if (!gameController.isPlanted.value)
             return;
         
+        // Stops round timer and starts Objective Timer if Obj has been planted
+        StopCoroutine(roundTimer);
+        StartCoroutine(ObjectiveTimer(objectiveTime));
     }
 
     private void OnPlayerDeathRed(PlayerID deadPlayer)

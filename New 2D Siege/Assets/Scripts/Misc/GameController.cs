@@ -13,7 +13,16 @@ public class GameController : NetworkBehaviour
         Red, Blue
     }
 
+    public enum Side
+    {
+        Attack, Defense
+    }
+    
+    public SyncDictionary<Team, int> roundScores = new();
+    public SyncDictionary<Side, Team> teamSides = new();
     public SyncDictionary<Team, List<PlayerID>> GlobalTeams = new();
+    public SyncVar<bool> isPlanting = new(false);
+    public SyncVar<bool> isPlanted = new(false);
     
     /*public SyncDictionary<Team, List<PlayerID>> GlobalTeams = new SyncDictionary<Team, List<PlayerID>>()
     {
@@ -30,6 +39,18 @@ public class GameController : NetworkBehaviour
         {
             { Team.Red, new List<PlayerID>() },
             { Team.Blue, new List<PlayerID>() }
+        };
+
+        roundScores = new SyncDictionary<Team, int>()
+        {
+            { Team.Red, 0 },
+            { Team.Blue, 0 }
+        };
+
+        teamSides = new SyncDictionary<Side, Team>()
+        {
+            { Side.Attack, Team.Red },
+            { Side.Defense, Team.Blue }
         };
     }
 
@@ -48,6 +69,13 @@ public class GameController : NetworkBehaviour
         InstanceHandler.UnregisterInstance<GameController>();
     }
 
+    public void AddRoundWin(Team team)
+    {
+        var roundScoreData = roundScores[team];
+        roundScoreData++;
+        roundScores[team] = roundScoreData;
+    }
+    
     public void AddKill(PlayerID playerID)
     {
         CheckForDictionaryEntry(playerID);

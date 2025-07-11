@@ -12,32 +12,32 @@ jobs:
       - name: Send Discord Notification
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          COMMIT_MESSAGE: ${{ github.event.commits[0].message }}
-          COMMIT_AUTHOR: ${{ github.event.commits[0].author.name }}
-          COMMIT_URL: ${{ github.event.commits[0].url }}
-          BRANCH_NAME: ${{ github.ref_name }}
         run: |
+          COMMIT_MESSAGE=$(jq -r '.commits[0].message' "$GITHUB_EVENT_PATH")
+          COMMIT_AUTHOR=$(jq -r '.commits[0].author.name' "$GITHUB_EVENT_PATH")
+          COMMIT_URL=$(jq -r '.commits[0].url' "$GITHUB_EVENT_PATH")
+          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}")
+
           curl -H "Content-Type: application/json" \
           -X POST \
-          -d '{
-            "username": "GitHub Bot",
-            "embeds": [{
-              "title": "New Commit to '${{ env.BRANCH_NAME }}'",
-              "description": "**${{ env.COMMIT_MESSAGE }}**",
-              "color": 5814783,
-              "fields": [
-                {
-                  "name": "Author",
-                  "value": "${{ env.COMMIT_AUTHOR }}",
-                  "inline": true
-                },
-                {
-                  "name": "Branch",
-                  "value": "${{ env.BRANCH_NAME }}",
-                  "inline": true
-                }
-              ],
-              "url": "${{ env.COMMIT_URL }}"
-            }]
-          }' \
-          $DISCORD_WEBHOOK
+          -d "$(jq -n \
+            --arg username "GitHub Bot" \
+            --arg title "New Commit to '$BRANCH_NAME'" \
+            --arg description "$COMMIT_MESSAGE" \
+            --arg author "$COMMIT_AUTHOR" \
+            --arg branch "$BRANCH_NAME" \
+            --arg url "$COMMIT_URL" \
+            '{
+              username: $username,
+              embeds: [{
+                title: $title,
+                description: $description,
+                color: 5814783,
+                fields: [
+                  { name: "Author", value: $author, inline: true },
+                  { name: "Branch", value: $branch, inline: true }
+                ],
+                url: $url
+              }]
+            }')" \
+          "$DISCORD_WEBHOOK"

@@ -54,6 +54,8 @@ public class ProgressBarController : MonoBehaviour
     public void Cancel(GameController gameController)
     {
         gameController.canMove = true;
+        if (currentCoroutine == null)
+            return;
         StopCoroutine(currentCoroutine);
         currentCoroutine = null;
         gameObject.SetActive(false);

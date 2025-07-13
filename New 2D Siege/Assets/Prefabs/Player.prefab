@@ -70,6 +70,8 @@ MonoBehaviour:
   weaponStates:
   - {fileID: 4139357833510178640}
   - {fileID: 2326740372766534828}
+  gadgetPreviewPrefab: {fileID: 3565984352568502889, guid: 6535a52fece06b2448673a7b9e7032fc, type: 3}
+  gadgetKey: 103
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +212,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 32
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2

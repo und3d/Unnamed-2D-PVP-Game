@@ -6,6 +6,9 @@ using UnityEngine;
 public class GameController : NetworkBehaviour
 {
     public bool debugMode = false;
+    public bool canMove = true;
+    
+    public ProgressBarController progressBar;
     
     [SerializeField] private SyncDictionary<PlayerID, ScoreData> scores = new();
     

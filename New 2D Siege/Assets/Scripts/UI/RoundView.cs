@@ -2,6 +2,7 @@ using System;
 using PurrNet;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RoundView : View
 {

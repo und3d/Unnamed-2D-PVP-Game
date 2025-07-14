@@ -93,17 +93,28 @@ public class Gun : StateNode
         {
             if (!hit.transform.TryGetComponent(out PlayerHealth playerHealth))
             {
-                if (enviroHitEffect)
+                if (!hit.transform.TryGetComponent(out PlaceableGadget gadget))
                 {
-                    EnvironmentHit(hit.point, hit.normal);
-                    return;
+                    if (enviroHitEffect)
+                    {
+                        EnvironmentHit(hit.point, hit.normal);
+                        return;
+                    }
                 }
+                GadgetHit(gadget);
+                return;
             }
             PlayerHit(playerHealth, playerHealth.transform.InverseTransformPoint(hit.point), hit.normal);
             
         }
         HandleHit(ray, networkManager.tickModule.rollbackTick);
     }
+
+    private void GadgetHit(PlaceableGadget gadget)
+    {
+        gadget.GadgetShot();
+    }
+
     [ServerRpc]
     private void HandleHit(Ray2D ray, Double preciseTick, RPCInfo info = default)
     {

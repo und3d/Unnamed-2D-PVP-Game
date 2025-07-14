@@ -80,6 +80,11 @@ public abstract class PlaceableGadget : NetworkIdentity
         Destroy(gameObject);
     }
 
+    public virtual void GadgetShot()
+    {
+        Destroy(gameObject);
+    }
+
     protected override void OnDestroy()
     {
         base.OnDestroy();

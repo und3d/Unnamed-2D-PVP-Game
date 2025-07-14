@@ -83,7 +83,7 @@ public class PlaceGadgetPreview : MonoBehaviour
         Vector2 center = pos + col.offset;
         float radius = col.radius * transform.lossyScale.x;
         
-        Collider2D hit = Physics2D.OverlapCircle(center, radius, LayerMask.GetMask("Map Objects", "PlayerSelf", "PlayerOther"));
+        Collider2D hit = Physics2D.OverlapCircle(center, radius, LayerMask.GetMask("Map Objects", "PlayerSelf", "PlayerOther", "Gadgets"));
 
         return !hit;
     }

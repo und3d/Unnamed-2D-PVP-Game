@@ -4,14 +4,22 @@ using UnityEngine;
 
 public class PlaceGadgetPreview : MonoBehaviour
 {
-    [SerializeField] private GameObject finalGadgetPrefab;
-    [SerializeField] private ProgressBarController progressBar;
-    [SerializeField] private KeyCode placeKey = KeyCode.G;
-    [SerializeField] private float placementDuration = 1.5f;
+    [Header("Placeable Settings")]
+    [SerializeField] private KeyCode placeKey = KeyCode.F;
+    [SerializeField] private float placementTime = 2f;
     [SerializeField] private float maxPlacementDistance = 3f;
     [SerializeField] private Color validColor = Color.green;
     [SerializeField] private Color invalidColor = Color.red;
-
+    
+    [Header("References")]
+    [SerializeField] private GameObject gadgetPrefab;
+    [SerializeField] private ProgressBarController progressBar;
+    [SerializeField] private Transform spawnOffset;
+    
+    [Header("Optional")]
+    [SerializeField] private AudioClip placeSound;
+    [SerializeField] private GameController.Team ownerTeam;
+    
     private playerController owner;
     private Transform playerTransform;
     private PlayerID ownerID;
@@ -36,7 +44,7 @@ public class PlaceGadgetPreview : MonoBehaviour
         progressBar = gameController.progressBar;
     }
 
-    void Update()
+    private void Update()
     {
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 playerToMouse = mouseWorld - playerTransform.position;
@@ -58,7 +66,7 @@ public class PlaceGadgetPreview : MonoBehaviour
             isPlacing = true;
             progressBar.BeginInteraction(new InteractionRequest
             {
-                duration = placementDuration,
+                duration = placementTime,
                 key = placeKey,
                 canStart = () => IsValidPlacement(transform.position),
                 onComplete = PlaceGadget
@@ -68,7 +76,7 @@ public class PlaceGadgetPreview : MonoBehaviour
             isPlacing = false;
     }
 
-    bool IsValidPlacement(Vector2 pos)
+    private bool IsValidPlacement(Vector2 pos)
     {
         CircleCollider2D col = GetComponent<CircleCollider2D>();
         
@@ -80,10 +88,22 @@ public class PlaceGadgetPreview : MonoBehaviour
         return !hit;
     }
 
-    void PlaceGadget()
+    private void PlaceGadget()
     {
-        var gadget = Instantiate(finalGadgetPrefab, transform.position, Quaternion.identity);
+        var gadget = Instantiate(gadgetPrefab, transform.position, Quaternion.identity);
+        
+        if (gadget.TryGetComponent<PlaceableGadget>(out var gadgetScript))
+            gadgetScript.Initialize(owner.gameObject, ownerID);
+        
         owner.OnGadgetPlaced();
         Destroy(gameObject);
+    }
+
+    private void PlayPlacementFeedback()
+    {
+        if (placeSound)
+        {
+            AudioSource.PlayClipAtPoint(placeSound, transform.position);
+        }
     }
 }

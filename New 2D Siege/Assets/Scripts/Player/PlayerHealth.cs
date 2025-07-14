@@ -32,8 +32,6 @@ public class PlayerHealth : NetworkIdentity
         {
             SetColor(false);
         }
-        
-        
 
         if (isOwner)
         {

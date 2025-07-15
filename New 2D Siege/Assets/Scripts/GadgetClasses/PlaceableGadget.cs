@@ -42,6 +42,8 @@ public abstract class PlaceableGadget : NetworkIdentity
 
     protected virtual void HandlePickup()
     {
+        if (!playerObject)
+            return;
         if (!PlayerIsInRange())
             return;
         if (!IsCursorNearGadget())

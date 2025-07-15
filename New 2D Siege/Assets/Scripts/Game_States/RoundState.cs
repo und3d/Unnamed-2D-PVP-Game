@@ -87,7 +87,7 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
         
         // Stops round timer and starts Objective Timer if Obj has been planted
         StopCoroutine(roundTimer);
-        StartCoroutine(ObjectiveTimer(objectiveTime));
+        roundTimer = StartCoroutine(ObjectiveTimer(objectiveTime));
     }
 
     private void OnPlayerDeathRed(PlayerID deadPlayer)
@@ -105,6 +105,7 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
             // Red is the losing team here, meaning Blue has won the round. machine.Next() takes in a bool for if the WINNING team is on ATK or not.
             bool blueIsAttacking = gameController.teamSides[GameController.Side.Attack] == GameController.Team.Blue;
             
+            StopCoroutine(roundTimer);
             machine.Next(data:blueIsAttacking);
         }
     }
@@ -123,6 +124,8 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
             // Boolean expression (Sets redIsAttacking to true or false depending on if red team is on Attack)
             // Blue is the losing team here, meaning Red has won the round. machine.Next() takes in a bool for if the WINNING team is on ATK or not.
             bool redIsAttacking = gameController.teamSides[GameController.Side.Attack] == GameController.Team.Red;
+            
+            StopCoroutine(roundTimer);
             
             machine.Next(data:redIsAttacking);
         }

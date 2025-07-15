@@ -8978,6 +8978,10 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   playerPrefab: {fileID: 4980798662954896818, guid: 01271e17281d1ad40a430ad604266e3c, type: 3}
+  attackerPrefabs:
+  - {fileID: 4980798662954896818, guid: eeafdda690d9cf846bf4685e918b0caf, type: 3}
+  defenderPrefabs:
+  - {fileID: 4980798662954896818, guid: dcfb37c78f95a0e4cae71b4a15cbc6ee, type: 3}
   spawnPointsRed:
   - {fileID: 201089171}
   - {fileID: 658308924}

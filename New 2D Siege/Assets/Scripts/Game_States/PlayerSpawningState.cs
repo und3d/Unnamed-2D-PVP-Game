@@ -16,6 +16,8 @@ public static class GameExtensions
 public class PlayerSpawningState : StateNode
 {
     [SerializeField] private PlayerHealth playerPrefab;
+    [SerializeField] private List<PlayerHealth> attackerPrefabs;
+    [SerializeField] private List<PlayerHealth> defenderPrefabs;
     //[SerializeField] private List<Transform> spawnPoints = new();
 
     [SerializeField] private List<Transform> spawnPointsRed = new();
@@ -30,6 +32,7 @@ public class PlayerSpawningState : StateNode
             return;
 
         DespawnPlayers();
+        DespawnGadgets();
         
         var spawnedPlayers = SpawnPlayersWithTeam();
         
@@ -43,6 +46,15 @@ public class PlayerSpawningState : StateNode
         foreach (var player in allPlayers)
         {
             Destroy(player.gameObject);
+        }
+    }
+
+    private void DespawnGadgets()
+    {
+        var allGadgets = FindObjectsByType<PlaceableGadget>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (var gadget in allGadgets)
+        {
+            Destroy(gadget.gameObject);
         }
     }
 
@@ -79,6 +91,8 @@ public class PlayerSpawningState : StateNode
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
         
+        playerPrefab = attackerPrefabs[0];
+        
         // Spawn Red Team
         int currentSpawnIndex = 0;
         foreach (var player in gameController.GlobalTeams[GameController.Team.Red])
@@ -92,6 +106,8 @@ public class PlayerSpawningState : StateNode
         }
         
         Debug.Log($"Spawned {currentSpawnIndex} Red team players");
+        
+        playerPrefab = defenderPrefabs[0];
         
         // Spawn Blue Team
         currentSpawnIndex = 0;

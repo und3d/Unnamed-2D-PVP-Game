@@ -7,7 +7,7 @@ using UnityEngine;
 public class RoundEndState : StateNode<bool>
 {
     [SerializeField] private int amountOfRounds = 3;
-    [SerializeField] private StateNode spawningState;
+    [SerializeField] private StateNode characterSelectionState;
 
     private int _roundCount = 0;
     private WaitForSeconds _delay = new(3f);
@@ -78,6 +78,6 @@ public class RoundEndState : StateNode<bool>
     private IEnumerator DelayNextState()
     {
         yield return _delay;
-        machine.SetState(spawningState);
+        machine.SetState(characterSelectionState);
     }
 }

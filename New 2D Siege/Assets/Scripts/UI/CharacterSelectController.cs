@@ -1,0 +1,111 @@
+using System.Collections.Generic;
+using NUnit.Framework;
+using PurrNet;
+using UnityEngine;
+
+public class CharacterSelectController : NetworkBehaviour
+{
+    private static CanvasGroup attackerViewStatic;
+    private static CanvasGroup defenderViewStatic;
+    private static GameObject attackerViewObjectStatic;
+    private static GameObject defenderViewObjectStatic;
+    private PlayerID selectingPlayer;
+    private List<PlayerID> redTeam = new List<PlayerID>();
+    private List<PlayerID> blueTeam = new List<PlayerID>();
+    private GameController gameController;
+    
+    [SerializeField] private CanvasGroup attackerView;
+    [SerializeField] private CanvasGroup defenderView;
+    [SerializeField] private GameObject attackerViewObject;
+    [SerializeField] private GameObject defenderViewObject;
+    
+    private void Start()
+    {
+        if (!InstanceHandler.TryGetInstance(out GameController _gameController))
+        {
+            Debug.LogError("CharacterSelectController: GameController not found!");
+            return;
+        }
+        gameController = _gameController;
+        
+        attackerViewStatic = attackerView;
+        defenderViewStatic = defenderView;
+        attackerViewObjectStatic = attackerViewObject;
+        defenderViewObjectStatic = defenderViewObject;
+    }
+
+    public void SelectedAttacker(int characterID)
+    {
+        Debug.Log("Volt Selected");
+        SelectedAttackCharacterRPC(characterID);
+    }
+
+    public void SelectedDefender(int characterID)
+    {
+        Debug.Log("Scramble Selected");
+        SelectedDefenderCharacterRPC(characterID);
+    }
+
+    public void ClearTeams()
+    {
+        redTeam.Clear();
+        blueTeam.Clear();
+    }
+    
+    [ServerRpc(requireOwnership:false)]
+    private void SelectedAttackCharacterRPC(int characterID, RPCInfo info = default)
+    {
+        //Debug.Log($"Character selected: {characterID}");
+        gameController.redTeamSelections[info.sender] = characterID;
+        
+        Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
+    }
+    
+    [ServerRpc(requireOwnership:false)]
+    private void SelectedDefenderCharacterRPC(int characterID, RPCInfo info = default)
+    {
+        //Debug.Log($"Character selected: {characterID}");
+        gameController.blueTeamSelections[info.sender] = characterID;
+        
+        Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
+    }
+    
+    public void ShowCharacterSelect(PlayerID player, GameController.Team team)
+    {
+        //Debug.Log("Trying to show character select");
+        switch (team)
+        {
+            case GameController.Team.Red:
+                redTeam.Add(player);
+                break;
+            case GameController.Team.Blue:
+                blueTeam.Add(player);
+                break;
+        }
+        ShowCharacters(player, team);
+    }
+    
+    [TargetRpc]
+    public static void ShowCharacters(PlayerID target, GameController.Team team)
+    {
+        switch (team)
+        {
+            case GameController.Team.Red:
+                attackerViewObjectStatic.SetActive(true);
+                attackerViewStatic.alpha = 1;
+                attackerViewStatic.interactable = true;
+                defenderViewStatic.alpha = 0;
+                defenderViewStatic.interactable = false;
+                defenderViewObjectStatic.SetActive(false);
+                break;
+            case GameController.Team.Blue:
+                defenderViewObjectStatic.SetActive(true);
+                attackerViewStatic.alpha = 0;
+                attackerViewStatic.interactable = false;
+                defenderViewStatic.alpha = 1;
+                defenderViewStatic.interactable = true;
+                attackerViewObjectStatic.SetActive(false);
+                break;
+        }
+    }
+}

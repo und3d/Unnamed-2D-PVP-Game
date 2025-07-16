@@ -91,12 +91,17 @@ public class PlayerSpawningState : StateNode
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
         
-        playerPrefab = attackerPrefabs[0];
+        foreach (var player in gameController.redTeamSelections)
+            Debug.Log($"Red Player: {player.Key}");
+        
+        foreach (var player in gameController.blueTeamSelections)
+            Debug.Log($"Blue Player: {player.Key}");
         
         // Spawn Red Team
         int currentSpawnIndex = 0;
         foreach (var player in gameController.GlobalTeams[GameController.Team.Red])
         {
+            playerPrefab = attackerPrefabs[gameController.redTeamSelections[player]];
             var spawnPoint = spawnPointsRed[currentSpawnIndex];
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             newPlayer.GetComponent<PlayerHealth>().SetColor(true);
@@ -107,12 +112,11 @@ public class PlayerSpawningState : StateNode
         
         Debug.Log($"Spawned {currentSpawnIndex} Red team players");
         
-        playerPrefab = defenderPrefabs[0];
-        
         // Spawn Blue Team
         currentSpawnIndex = 0;
         foreach (var player in gameController.GlobalTeams[GameController.Team.Blue])
         {
+            playerPrefab = defenderPrefabs[gameController.blueTeamSelections[player]];
             var spawnPoint = spawnPointsBlue[currentSpawnIndex];
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             newPlayer.GetComponent<PlayerHealth>().SetColor(false);

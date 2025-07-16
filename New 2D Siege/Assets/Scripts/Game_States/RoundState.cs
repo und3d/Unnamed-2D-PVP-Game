@@ -34,12 +34,21 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
     
     public override void Enter(Dictionary<GameController.Team, List<PlayerHealth>> spawnedPlayers, bool asServer)
     {
-        Debug.Log($"Entering RoundState. Is this server? {asServer}");
+        //Debug.Log($"Entering RoundState. Is this server? {asServer}");
+        
         base.Enter(spawnedPlayers, asServer);
-
+        
+        if (!InstanceHandler.TryGetInstance(out GameViewManager gameViewManager))
+        {
+            Debug.LogError($"CharacterSelectState: Failed to find GameViewManager", this);
+            return;
+        }
+        
+        gameViewManager.ShowView<RoundView>();
+        
         if (!asServer)
         {
-            Debug.Log("Exiting RoundState as a client.");
+            //Debug.Log("Exiting RoundState as a client.");
             return;
         }
         
@@ -59,7 +68,7 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
             player.OnDeath_Server += OnPlayerDeathRed;
         }
         
-        Debug.Log($"Red team players: {_playersRed.Count}");
+        //Debug.Log($"Red team players: {_playersRed.Count}");
         
         //Blue Team
         foreach (var player in spawnedPlayers[GameController.Team.Blue])
@@ -69,7 +78,7 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
             player.OnDeath_Server += OnPlayerDeathBlue;
         }
         
-        Debug.Log($"Blue team players: {_playersBlue.Count}");
+        //Debug.Log($"Blue team players: {_playersBlue.Count}");
         
         roundTimer = StartCoroutine(RoundTimer(roundTime));
     }

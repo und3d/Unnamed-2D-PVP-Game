@@ -32,7 +32,14 @@ public class GadgetController : NetworkBehaviour
             Debug.LogError($"GadgetController failed to get gameController!", this);
         }
     }
-    
+
+    protected override void OnSpawned()
+    {
+        base.OnSpawned();
+
+        enabled = isOwner;
+    }
+
     private void Update()
     {
         switch (primaryGadget)

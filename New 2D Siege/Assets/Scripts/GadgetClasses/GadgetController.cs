@@ -14,8 +14,8 @@ public class GadgetController : NetworkBehaviour
     
     [Header("Gadget Settings")]
     [SerializeField] private KeyCode gadgetKey = KeyCode.G;
-    public int primaryGadgetCount = 3;
-    public int secondaryGadgetCount = 2;
+    [SerializeField] private int primaryGadgetCount = 3;
+    [SerializeField] private int secondaryGadgetCount = 2;
     
     [Header("Gadget Type")]
     [SerializeField] private GadgetType primaryGadget;
@@ -24,6 +24,9 @@ public class GadgetController : NetworkBehaviour
     
     [Header("Placeable")]
     [SerializeField] private GameObject gadgetPlaceablePreview;
+    
+    [Header("Throwable")]
+    [SerializeField] private GameObject gadgetThrowablePreview;
     
     private void Awake()
     {
@@ -45,7 +48,7 @@ public class GadgetController : NetworkBehaviour
         switch (primaryGadget)
         {
             case GadgetType.Placeable:
-                if (Input.GetKeyDown(gadgetKey))
+                if (Input.GetKeyDown(gadgetKey) && primaryGadgetCount > 0)
                 {
                     if (!currentPlacementPreview)
                     {
@@ -61,7 +64,19 @@ public class GadgetController : NetworkBehaviour
                 }
                 break;
             case GadgetType.Throwable:
-                Debug.Log("Throwable method not implemented");
+                if (Input.GetKeyDown(gadgetKey) && primaryGadgetCount > 0)
+                {
+                    if (!currentPlacementPreview)
+                    {
+                        currentPlacementPreview = Instantiate(gadgetThrowablePreview);
+                        var thrower = currentPlacementPreview.GetComponent<ThrowGadgetPreview>();
+                        thrower.Initialize(this, transform, owner.Value);
+                    }
+                    else
+                    {
+                        CancelPlacement();
+                    }
+                }
                 break;
             case GadgetType.Drone:
                 Debug.Log("Drone method not implemented");
@@ -87,5 +102,12 @@ public class GadgetController : NetworkBehaviour
     public void OnGadgetPlaced()
     {
         currentPlacementPreview = null; // allow future placements
+        primaryGadgetCount--;
+    }
+
+    public void OnGadgetPickup()
+    {
+        Debug.Log("Pickup Gadget");
+        primaryGadgetCount++;
     }
 }

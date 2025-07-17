@@ -43,6 +43,7 @@ Transform:
   - {fileID: 4419182818503309906}
   - {fileID: 8251610409718722025}
   - {fileID: 6838778048533206435}
+  - {fileID: 4627275655915200179}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2351446990782016337
@@ -72,6 +73,7 @@ MonoBehaviour:
   primaryGadget: 1
   secondaryGadget: 0
   gadgetPlaceablePreview: {fileID: 0}
+  gadgetThrowablePreview: {fileID: 8545139829908164114, guid: 20fd83ee6919daf40a89a0de3c43e9ef, type: 3}
 --- !u!114 &3401231433800048838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -843,6 +845,51 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1055305388288583509}
   m_maskType: 0
+--- !u!1 &6454474615894941250
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4627275655915200179}
+  - component: {fileID: 5363947605407750504}
+  m_Layer: 0
+  m_Name: ThrowOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4627275655915200179
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6454474615894941250}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalScale: {x: 0.1463, y: 0.1463, z: 0.1463}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1196152672649150724}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5363947605407750504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6454474615894941250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 861253df98c87ae4b99919c38bb47241, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  throwOrigin: {fileID: 4627275655915200179}
 --- !u!1 &6984946323666268576
 GameObject:
   m_ObjectHideFlags: 0

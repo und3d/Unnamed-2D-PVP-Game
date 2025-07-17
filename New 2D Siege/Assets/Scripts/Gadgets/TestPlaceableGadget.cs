@@ -1,6 +1,7 @@
+using PurrNet;
 using UnityEngine;
 
-public class TestPlaceableGadget : PlaceableGadget
+public class TestPlaceableGadget : MonoBehaviour
 {
     
 }

@@ -13,7 +13,7 @@ public class PlaceGadgetPreview : MonoBehaviour
     
     [Header("References")]
     [SerializeField] private GameObject gadgetPrefab;
-    [SerializeField] private ProgressBarController progressBar;
+    private ProgressBarController progressBar;
     [SerializeField] private Transform spawnOffset;
     
     [Header("Optional")]

@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6970516520527883739}
+  - component: {fileID: -2871534746112929358}
   - component: {fileID: 5042808587619449925}
   - component: {fileID: 5051641891680670756}
-  - component: {fileID: -2871534746112929358}
   m_Layer: 10
   m_Name: Scramble_Gadget_Preview
   m_TagString: Untagged
@@ -34,6 +34,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-2871534746112929358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3565984352568502889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61c5a8f2480bf0240a32bc3b8c5a857e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  placeKey: 102
+  placementTime: 2
+  maxPlacementDistance: 2
+  validColor: {r: 0, g: 1, b: 0, a: 1}
+  invalidColor: {r: 1, g: 0, b: 0, a: 1}
+  gadgetPrefab: {fileID: 3565984352568502889, guid: d693b20a543cc6249a711226b79987d5, type: 3}
+  spawnOffset: {fileID: 0}
+  placeSound: {fileID: 0}
+  ownerTeam: 0
 --- !u!212 &5042808587619449925
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -125,25 +146,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &-2871534746112929358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3565984352568502889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61c5a8f2480bf0240a32bc3b8c5a857e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  placeKey: 102
-  placementTime: 2
-  maxPlacementDistance: 2
-  validColor: {r: 0, g: 1, b: 0, a: 1}
-  invalidColor: {r: 1, g: 0, b: 0, a: 1}
-  gadgetPrefab: {fileID: 3565984352568502889, guid: d693b20a543cc6249a711226b79987d5, type: 3}
-  progressBar: {fileID: 0}
-  spawnOffset: {fileID: 0}
-  placeSound: {fileID: 0}
-  ownerTeam: 0

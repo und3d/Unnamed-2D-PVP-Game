@@ -93,7 +93,7 @@ public class Gun : StateNode
         {
             if (!hit.transform.TryGetComponent(out PlayerHealth playerHealth))
             {
-                if (!hit.transform.TryGetComponent(out PlaceableGadget gadget))
+                if (!hit.transform.TryGetComponent(out GadgetBase gadget))
                 {
                     if (enviroHitEffect)
                     {
@@ -110,7 +110,7 @@ public class Gun : StateNode
         HandleHit(ray, networkManager.tickModule.rollbackTick);
     }
 
-    private void GadgetHit(PlaceableGadget gadget)
+    private void GadgetHit(GadgetBase gadget)
     {
         gadget.GadgetShot();
     }

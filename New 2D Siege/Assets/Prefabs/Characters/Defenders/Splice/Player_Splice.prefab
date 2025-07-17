@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1196152672649150724}
+  - component: {fileID: 501596069157153375}
   - component: {fileID: 3401231433800048838}
   - component: {fileID: 2468881062887719266}
   - component: {fileID: 4980798662954896818}
@@ -44,6 +45,33 @@ Transform:
   - {fileID: 6838778048533206435}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &501596069157153375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437286425798109518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9b6f0f6b14bc714cad32fe87e802db5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  gadgetKey: 103
+  primaryGadgetCount: 3
+  secondaryGadgetCount: 2
+  primaryGadget: 0
+  secondaryGadget: 0
+  gadgetPlaceablePreview: {fileID: 3565984352568502889, guid: 3708821889b2c6e45bf3724ac242614c, type: 3}
 --- !u!114 &3401231433800048838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -71,8 +99,6 @@ MonoBehaviour:
   weaponStates:
   - {fileID: 4139357833510178640}
   - {fileID: 2326740372766534828}
-  gadgetPreviewPrefab: {fileID: 3565984352568502889, guid: 3708821889b2c6e45bf3724ac242614c, type: 3}
-  gadgetKey: 103
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0

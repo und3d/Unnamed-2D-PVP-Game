@@ -20,14 +20,14 @@ public class PlaceGadgetPreview : MonoBehaviour
     [SerializeField] private AudioClip placeSound;
     [SerializeField] private GameController.Team ownerTeam;
     
-    private playerController owner;
+    private GadgetController owner;
     private Transform playerTransform;
     private PlayerID ownerID;
     private SpriteRenderer sr;
     private bool isPlacing = false;
     private bool canPlace = false;
     
-    public void Initialize(playerController manager, Transform player, PlayerID id)
+    public void Initialize(GadgetController manager, Transform player, PlayerID id)
     {
         owner = manager;
         playerTransform = player;

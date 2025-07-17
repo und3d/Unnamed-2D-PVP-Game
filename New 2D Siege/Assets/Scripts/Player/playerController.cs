@@ -15,10 +15,10 @@ public class playerController : NetworkIdentity
     [Header("References")]
     [SerializeField] private StateMachine stateMachine;
     [SerializeField] private List<StateNode> weaponStates = new();
-    [SerializeField] private GameObject gadgetPreviewPrefab;
+    //[SerializeField] private GameObject gadgetPreviewPrefab;
     
     [Header("Keybinds")]
-    [SerializeField] private KeyCode gadgetKey = KeyCode.G;
+    //[SerializeField] private KeyCode gadgetKey = KeyCode.G;
 
     private GameObject currentPreview;
     private Rigidbody2D _rigidbody;
@@ -69,7 +69,7 @@ public class playerController : NetworkIdentity
         {
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
-        
+        /*
         if (Input.GetKeyDown(gadgetKey))
         {
             if (!currentPreview)
@@ -84,7 +84,7 @@ public class playerController : NetworkIdentity
                 CancelPlacement();
             }
         }
-
+        */
         if (!gameController.canMove)
             return;
         
@@ -106,7 +106,7 @@ public class playerController : NetworkIdentity
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         _rigidbody.rotation = angle - 90f;
     }
-    
+    /*
     public void CancelPlacement()
     {
         if (currentPreview)
@@ -120,4 +120,5 @@ public class playerController : NetworkIdentity
     {
         currentPreview = null; // allow future placements
     }
+    */
 }

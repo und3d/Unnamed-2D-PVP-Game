@@ -4,7 +4,7 @@ using UnityEngine;
 public abstract class ThrowableGadget : GadgetBase
 {
     [SerializeField] protected Rigidbody2D rb;
-    [SerializeField] protected bool canBePickedUp = false;
+    public bool canBePickedUp = false;
 
     protected override void Update()
     {

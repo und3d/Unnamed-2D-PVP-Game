@@ -1,32 +1,53 @@
 using System;
-using NaughtyAttributes;
 using PurrNet;
 using UnityEngine;
 
 public class GadgetController : NetworkBehaviour
 {
-    private enum GadgetType
+    public enum GadgetType
     {
         Placeable, Throwable, Drone, Tool, Toggle
     }
-    private GameObject currentPlacementPreview;
+    
+    private GameObject equippedGadget;
     private GameController gameController;
     
     [Header("Gadget Settings")]
     [SerializeField] private KeyCode gadgetKey = KeyCode.G;
+    [SerializeField] private KeyCode useGadgetKey = KeyCode.F;
     [SerializeField] private int primaryGadgetCount = 3;
+    [SerializeField] private bool hasDurability = false;
+    [SerializeField] private bool hasDuration = false;
+    [SerializeField] private bool canRecharge = true;
+    [SerializeField] private int toolDurability = 15;
+    [SerializeField] private float primaryGadgetDuration = 30f;     // How long can a tool or toggle be used (If timer needed)
+    [SerializeField] private float primaryGadgetDelay = 2f;         // How long until tool or toggle can be enabled/pulled-out after being disabled/put-away
     [SerializeField] private int secondaryGadgetCount = 2;
     
     [Header("Gadget Type")]
     [SerializeField] private GadgetType primaryGadget;
     [SerializeField] private GadgetType secondaryGadget;
     
-    
     [Header("Placeable")]
     [SerializeField] private GameObject gadgetPlaceablePreview;
-    
+
     [Header("Throwable")]
-    [SerializeField] private GameObject gadgetThrowablePreview;
+    [SerializeField] private Transform throwOrigin;
+    [SerializeField] private float throwForce = 10f;
+    
+    [Header("Drone")]
+    [SerializeField] private GameObject gadgetDronePreview;
+    
+    [Header("Tool")]
+    [SerializeField] private GameObject gadgetTool;
+    
+    [Header("Toggle")]
+    [SerializeField] private GameObject gadgetToggle;
+
+    [SerializeField] private GameObject gadgetVisual;
+    [SerializeField] private GameObject gadgetPrefab;
+
+    private bool isGadgetPulledOut = false;
     
     private void Awake()
     {
@@ -50,58 +71,73 @@ public class GadgetController : NetworkBehaviour
             case GadgetType.Placeable:
                 if (Input.GetKeyDown(gadgetKey) && primaryGadgetCount > 0)
                 {
-                    if (!currentPlacementPreview)
+                    if (!isGadgetPulledOut)
                     {
-                        currentPlacementPreview = Instantiate(gadgetPlaceablePreview);
-                        var placer = currentPlacementPreview.GetComponent<PlaceGadgetPreview>();
+                        equippedGadget = Instantiate(gadgetPlaceablePreview);
+                        var placer = equippedGadget.GetComponent<PlaceGadgetPreview>();
                         placer.Initialize(this, transform, owner.Value);
+                        ToggleGadgetVisual();
                     }
                     else
                     {
                         gameController.progressBar.GetComponent<ProgressBarController>().Cancel(gameController);
-                        CancelPlacement();
+                        PutAwayGadget();
                     }
                 }
                 break;
             case GadgetType.Throwable:
                 if (Input.GetKeyDown(gadgetKey) && primaryGadgetCount > 0)
                 {
-                    if (!currentPlacementPreview)
+                    if (!isGadgetPulledOut)
                     {
-                        currentPlacementPreview = Instantiate(gadgetThrowablePreview);
-                        var thrower = currentPlacementPreview.GetComponent<ThrowGadgetPreview>();
-                        thrower.Initialize(this, transform, owner.Value);
+                        gadgetPrefab.GetComponent<ThrowableGadget>().canBePickedUp = false;
+                        ToggleGadgetVisual();
                     }
                     else
                     {
-                        CancelPlacement();
+                        gadgetPrefab.GetComponent<ThrowableGadget>().canBePickedUp = false;
+                        PutAwayGadget();
                     }
+                }
+
+                if (Input.GetKeyDown(useGadgetKey) && isGadgetPulledOut)
+                {
+                    Throw();
                 }
                 break;
             case GadgetType.Drone:
                 Debug.Log("Drone method not implemented");
                 break;
             case GadgetType.Tool:
-                Debug.Log("Tool method not implemented");
+                if (Input.GetKeyDown(gadgetKey))
+                {
+                    if (!isGadgetPulledOut)
+                    {
+                        ToggleGadgetVisual();
+                        
+                    }
+                    else
+                    {
+                        PutAwayGadget();
+                    }
+                }
                 break;
             case GadgetType.Toggle:
                 Debug.Log("Toggle method not implemented");
                 break;
         }
     }
-    
-    public void CancelPlacement()
+
+    private void PutAwayGadget()
     {
-        if (currentPlacementPreview)
-        {
-            Destroy(currentPlacementPreview);
-            currentPlacementPreview = null;
-        }
+        if (gadgetVisual) ToggleGadgetVisual();
+        if (equippedGadget) Destroy(equippedGadget);
+        equippedGadget = null;
     }
 
     public void OnGadgetPlaced()
     {
-        currentPlacementPreview = null; // allow future placements
+        equippedGadget = null; // allow future placements
         primaryGadgetCount--;
     }
 
@@ -109,5 +145,37 @@ public class GadgetController : NetworkBehaviour
     {
         Debug.Log("Pickup Gadget");
         primaryGadgetCount++;
+    }
+
+    private void Throw()
+    {
+        Vector2 throwDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - throwOrigin.position).normalized;
+        GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, Quaternion.identity);
+        
+        if (gadget.TryGetComponent<ThrowableGadget>(out var script))
+        {
+            script.Initialize(gameObject, owner.Value);
+            script.Throw(throwDir, throwForce);
+        }
+        
+        OnGadgetPlaced();
+        ToggleGadgetVisual();
+    }
+
+    private void ToggleGadgetVisual()
+    {
+        isGadgetPulledOut = !isGadgetPulledOut;
+        ToggleGadgetVisualRPC();
+    }
+
+    public bool isGadgetEquipped()
+    {
+        return isGadgetPulledOut;
+    }
+    
+    [ObserversRpc(runLocally:false)]
+    private void ToggleGadgetVisualRPC()
+    {
+        gadgetVisual.SetActive(!gadgetVisual.activeSelf);
     }
 }

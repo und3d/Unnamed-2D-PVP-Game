@@ -64,14 +64,14 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  moveSpeed: 5
-  sprintSpeed: 8
+  toggleSprint: 0
+  walkSpeed: 8
+  sprintSpeed: 12
+  moveSpeed: 8
   stateMachine: {fileID: 2468881062887719266}
   weaponStates:
   - {fileID: 4139357833510178640}
   - {fileID: 2326740372766534828}
-  gadgetPreviewPrefab: {fileID: 3565984352568502889, guid: 6535a52fece06b2448673a7b9e7032fc, type: 3}
-  gadgetKey: 103
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0

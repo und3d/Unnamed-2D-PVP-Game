@@ -8,23 +8,18 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class playerController : NetworkIdentity
 {
-    [Header("Movement Settings")]
-    [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private float sprintSpeed = 8f;
-
-    [Header("References")]
-    [SerializeField] private StateMachine stateMachine;
-    [SerializeField] private List<StateNode> weaponStates = new();
-    //[SerializeField] private GameObject gadgetPreviewPrefab;
+    [SerializeField] private PlayerSettings playerSettings;
     
-    [Header("Keybinds")]
-    //[SerializeField] private KeyCode gadgetKey = KeyCode.G;
-
+    [Header("References")]
+    public StateMachine stateMachine;
+    public List<StateNode> weaponStates = new();
+    
     private GameObject currentPreview;
     private Rigidbody2D _rigidbody;
     Vector2 moveDirection;
     Vector2 mousePosition;
     bool canMove = true;
+    private bool isSprinting = false;
 
     private void Awake()
     {
@@ -50,13 +45,43 @@ public class playerController : NetworkIdentity
             _rigidbody.linearVelocity = new Vector2(0, 0);
             return;
         }
+
+        if (!playerSettings.toggleSprint)
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                playerSettings.moveSpeed = playerSettings.sprintSpeed;
+                isSprinting = true;
+            }
+            else
+            {
+                playerSettings.moveSpeed = playerSettings.walkSpeed;
+                isSprinting = false;
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                if ((int)playerSettings.moveSpeed == (int)playerSettings.walkSpeed)
+                {
+                    playerSettings.moveSpeed = playerSettings.sprintSpeed;
+                    isSprinting = true;
+                }
+                else
+                {
+                    playerSettings.moveSpeed = playerSettings.walkSpeed;
+                    isSprinting = false;
+                }
+            }
+        }
         
         var input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         
         if (input.magnitude > 1)
             input.Normalize();
         
-        var movement = input * moveSpeed;
+        var movement = input * playerSettings.moveSpeed;
         _rigidbody.linearVelocity = movement;
         
         if (Application.isFocused)

@@ -68,6 +68,7 @@ MonoBehaviour:
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
   gadgetKey: 103
+  useGadgetKey: 102
   primaryGadgetCount: 3
   hasDurability: 0
   hasDuration: 0
@@ -79,11 +80,13 @@ MonoBehaviour:
   primaryGadget: 3
   secondaryGadget: 0
   gadgetPlaceablePreview: {fileID: 0}
-  gadgetThrowablePreview: {fileID: 0}
+  throwOrigin: {fileID: 0}
+  throwForce: 10
   gadgetDronePreview: {fileID: 0}
   gadgetTool: {fileID: 3565984352568502889, guid: 5e05c177589e05043959389fe4d91c32, type: 3}
   gadgetToggle: {fileID: 0}
   gadgetVisual: {fileID: 2595348711344048262}
+  gadgetPrefab: {fileID: 3565984352568502889, guid: 5e05c177589e05043959389fe4d91c32, type: 3}
 --- !u!114 &3401231433800048838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,8 +108,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  moveSpeed: 5
-  sprintSpeed: 8
+  playerSettings: {fileID: 11400000, guid: 5b1202b28a886f1468978e5275e5560d, type: 2}
   stateMachine: {fileID: 2468881062887719266}
   weaponStates:
   - {fileID: 4139357833510178640}
@@ -283,7 +285,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.0001
+  m_Mass: 10000
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0

@@ -106,7 +106,18 @@ public class GadgetController : NetworkBehaviour
                 }
                 break;
             case GadgetType.Drone:
-                Debug.Log("Drone method not implemented");
+                if (Input.GetKeyDown(gadgetKey) && primaryGadgetCount > 0)
+                {
+                    if (!isGadgetPulledOut)
+                    {
+                        ToggleGadgetVisual();
+                        
+                    }
+                    else
+                    {
+                        PutAwayGadget();
+                    }
+                }
                 break;
             case GadgetType.Tool:
                 if (Input.GetKeyDown(gadgetKey))
@@ -148,6 +159,21 @@ public class GadgetController : NetworkBehaviour
     }
 
     private void Throw()
+    {
+        Vector2 throwDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - throwOrigin.position).normalized;
+        GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, Quaternion.identity);
+        
+        if (gadget.TryGetComponent<ThrowableGadget>(out var script))
+        {
+            script.Initialize(gameObject, owner.Value);
+            script.Throw(throwDir, throwForce);
+        }
+        
+        OnGadgetPlaced();
+        ToggleGadgetVisual();
+    }
+
+    private void ThrowDrone()
     {
         Vector2 throwDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - throwOrigin.position).normalized;
         GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, Quaternion.identity);

@@ -116,12 +116,15 @@ public class GadgetControllerEditor : Editor
                 }
             }
         }
-
+        
         EditorGUILayout.PropertyField(primaryGadget);
         EditorGUILayout.PropertyField(secondaryGadget);
-        EditorGUILayout.PropertyField(gadgetVisual);
-        if (gadgetType != GadgetController.GadgetType.Placeable) 
-            EditorGUILayout.PropertyField(gadgetPrefab);
+        if (gadgetType != GadgetController.GadgetType.Toggle)
+        {
+            EditorGUILayout.PropertyField(gadgetVisual);
+            if (gadgetType != GadgetController.GadgetType.Placeable)
+                EditorGUILayout.PropertyField(gadgetPrefab);
+        }
 
         DrawGadgetPreviewFor(primaryGadget, "Primary Gadget References");
 

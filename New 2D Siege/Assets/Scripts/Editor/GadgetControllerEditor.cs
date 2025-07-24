@@ -4,6 +4,8 @@ using UnityEngine;
 [CustomEditor(typeof(GadgetController))]
 public class GadgetControllerEditor : Editor
 {
+    private SerializedProperty playerController;
+    
     private SerializedProperty primaryGadget;
     private SerializedProperty secondaryGadget;
 
@@ -31,6 +33,8 @@ public class GadgetControllerEditor : Editor
     
     private void OnEnable()
     {
+        playerController = serializedObject.FindProperty("playerController");
+        
         primaryGadget = serializedObject.FindProperty("primaryGadget");
         secondaryGadget = serializedObject.FindProperty("secondaryGadget");
 
@@ -62,7 +66,9 @@ public class GadgetControllerEditor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-
+        
+        EditorGUILayout.PropertyField(playerController);
+        
         EditorGUILayout.PropertyField(gadgetKey);
 
         // Only show gadget counts for non-Tool/Toggle types

@@ -9,10 +9,4 @@ public class PlayerSettings : ScriptableObject
     public bool toggleSprint = false;
     public float walkSpeed = 4f;
     public float sprintSpeed = 6f;
-    public float moveSpeed = 4f;
-    
-    //public GameObject gadgetPreviewPrefab;
-    
-    //[Header("Keybinds")]
-    //public KeyCode gadgetKey = KeyCode.G;
 }

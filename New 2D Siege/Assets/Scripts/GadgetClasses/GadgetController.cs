@@ -11,6 +11,7 @@ public class GadgetController : NetworkBehaviour
     
     private GameObject equippedGadget;
     private GameController gameController;
+    [SerializeField] private playerController playerController;
     
     [Header("Gadget Settings")]
     [SerializeField] private KeyCode gadgetKey = KeyCode.G;
@@ -191,6 +192,7 @@ public class GadgetController : NetworkBehaviour
     private void ToggleGadgetVisual()
     {
         isGadgetPulledOut = !isGadgetPulledOut;
+        playerController.isGadgetEquipped = isGadgetPulledOut;
         ToggleGadgetVisualRPC();
     }
 

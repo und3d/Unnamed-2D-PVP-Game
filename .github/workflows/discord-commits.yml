@@ -18,27 +18,32 @@ jobs:
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
           SANITIZED_COMMIT_MESSAGE=$(echo "$COMMIT_MESSAGE" | sed ':a;N;$!ba;s/\n/\\n/g')
-          curl -H "Content-Type: application/json" \
-          -X POST \
-          -d '{
-            "username": "GitHub Bot",
-            "embeds": [{
-              "title": "New Commit to '"$BRANCH_NAME"'",
-              "description": "'"$SANITIZED_COMMIT_MESSAGE"'",
-              "color": 5814783,
-              "fields": [
+
+          PAYLOAD=$(jq -n \
+            --arg username "GitHub Bot" \
+            --arg title "New Commit to $BRANCH_NAME" \
+            --arg description "$SANITIZED_COMMIT_MESSAGE" \
+            --arg author "$COMMIT_AUTHOR" \
+            --arg branch "$BRANCH_NAME" \
+            --arg url "$COMMIT_URL" \
+            '{
+              username: $username,
+              embeds: [
                 {
-                  "name": "Author",
-                  "value": "'"$COMMIT_AUTHOR"'",
-                  "inline": true
-                },
-                {
-                  "name": "Branch",
-                  "value": "'"$BRANCH_NAME"'",
-                  "inline": true
+                  title: $title,
+                  description: $description,
+                  color: 5814783,
+                  fields: [
+                    { name: "Author", value: $author, inline: true },
+                    { name: "Branch", value: $branch, inline: true }
+                  ],
+                  url: $url
                 }
-              ],
-              "url": "'"$COMMIT_URL"'"
-            }]
-          }' \
-          "$DISCORD_WEBHOOK"
+              ]
+            }'
+          )
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK"

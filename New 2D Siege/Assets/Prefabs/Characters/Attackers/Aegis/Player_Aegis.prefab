@@ -83,9 +83,8 @@ MonoBehaviour:
   gadgetPlaceablePreview: {fileID: 0}
   throwOrigin: {fileID: 0}
   throwForce: 10
-  gadgetDronePreview: {fileID: 0}
   gadgetTool: {fileID: 0}
-  gadgetToggle: {fileID: 0}
+  gadgetToggle: {fileID: 3565984352568502889, guid: 77b1539f7db6a70428454c4f252d97f1, type: 3}
   gadgetVisual: {fileID: 0}
   gadgetPrefab: {fileID: 0}
 --- !u!114 &3401231433800048838

@@ -7,6 +7,9 @@ public class GameController : NetworkBehaviour
 {
     public bool debugMode = false;
     public bool canMove = true;
+    public bool isGadgetEquipped;
+    public bool justThrewGadget;
+    public bool canActivateThrownGadget;
     
     public ProgressBarController progressBar;
     

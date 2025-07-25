@@ -39,32 +39,13 @@ public class PlayerSpawningState : StateNode
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
         
-        DespawnPlayers();
-        DespawnGadgets();
-        
         var spawnedPlayers = SpawnPlayersWithTeam();
         
         //Debug.Log($"Sending {spawnedPlayers}");
         machine.Next(spawnedPlayers);
     }
 
-    private void DespawnPlayers()
-    {
-        var allPlayers = FindObjectsByType<PlayerHealth>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        foreach (var player in allPlayers)
-        {
-            Destroy(player.gameObject);
-        }
-    }
-
-    private void DespawnGadgets()
-    {
-        var allGadgets = FindObjectsByType<PlaceableGadget>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        foreach (var gadget in allGadgets)
-        {
-            Destroy(gadget.gameObject);
-        }
-    }
+    
 
     private Dictionary<GameController.Team, List<PlayerHealth>> SpawnPlayersWithTeam()
     {
@@ -76,11 +57,10 @@ public class PlayerSpawningState : StateNode
         
         
         
-        foreach (var player in gameController.redTeamSelections)
-            Debug.Log($"Red Player: {player.Key}");
+        Debug.Log("Red Players: " + string.Join(", ", gameController.redTeamSelections.Keys));
+
         
-        foreach (var player in gameController.blueTeamSelections)
-            Debug.Log($"Blue Player: {player.Key}");
+        Debug.Log("Blue Players: " + string.Join(", ", gameController.blueTeamSelections.Keys));
         
         var redSide = GetSideForTeam(GameController.Team.Red);
         
@@ -109,7 +89,7 @@ public class PlayerSpawningState : StateNode
             currentSpawnIndex++;
         }
         
-        //Debug.Log($"Spawned {currentSpawnIndex} Red team players");
+        Debug.Log($"Spawned {currentSpawnIndex} Red team players");
         
         var blueSide = GetSideForTeam(GameController.Team.Blue);
         
@@ -138,7 +118,7 @@ public class PlayerSpawningState : StateNode
             currentSpawnIndex++;
         }
         
-        //Debug.Log($"Spawned {currentSpawnIndex} Blue team players");
+        Debug.Log($"Spawned {currentSpawnIndex} Blue team players");
         
         return spawnedPlayers;
     }

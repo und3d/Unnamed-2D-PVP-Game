@@ -37,7 +37,6 @@ public class GadgetController : NetworkBehaviour
     [SerializeField] private float throwForce = 10f;
     
     [Header("Drone")]
-    [SerializeField] private GameObject gadgetDronePreview;
     
     [Header("Tool")]
     [SerializeField] private GameObject gadgetTool;
@@ -67,6 +66,12 @@ public class GadgetController : NetworkBehaviour
 
     private void Update()
     {
+        if (gameController.justThrewGadget)
+        {
+            gameController.justThrewGadget = false;
+            gameController.canActivateThrownGadget = true;
+        }
+        
         switch (primaryGadget)
         {
             case GadgetType.Placeable:
@@ -91,12 +96,12 @@ public class GadgetController : NetworkBehaviour
                 {
                     if (!isGadgetPulledOut)
                     {
-                        gadgetPrefab.GetComponent<ThrowableGadget>().canBePickedUp = false;
+                        gameController.isGadgetEquipped = true;
                         ToggleGadgetVisual();
                     }
                     else
                     {
-                        gadgetPrefab.GetComponent<ThrowableGadget>().canBePickedUp = false;
+                        gameController.isGadgetEquipped = false;
                         PutAwayGadget();
                     }
                 }
@@ -118,6 +123,11 @@ public class GadgetController : NetworkBehaviour
                     {
                         PutAwayGadget();
                     }
+                }
+                
+                if (Input.GetKeyDown(useGadgetKey) && isGadgetPulledOut)
+                {
+                    ThrowDrone();
                 }
                 break;
             case GadgetType.Tool:
@@ -162,7 +172,7 @@ public class GadgetController : NetworkBehaviour
     private void Throw()
     {
         Vector2 throwDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - throwOrigin.position).normalized;
-        GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, Quaternion.identity);
+        GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, transform.rotation);
         
         if (gadget.TryGetComponent<ThrowableGadget>(out var script))
         {
@@ -170,6 +180,9 @@ public class GadgetController : NetworkBehaviour
             script.Throw(throwDir, throwForce);
         }
         
+        gameController.canActivateThrownGadget = false;
+        gameController.justThrewGadget = true;
+        gameController.isGadgetEquipped = false;
         OnGadgetPlaced();
         ToggleGadgetVisual();
     }
@@ -177,9 +190,9 @@ public class GadgetController : NetworkBehaviour
     private void ThrowDrone()
     {
         Vector2 throwDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - throwOrigin.position).normalized;
-        GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, Quaternion.identity);
+        GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, transform.rotation * Quaternion.Euler(0f, 0f, 90f));
         
-        if (gadget.TryGetComponent<ThrowableGadget>(out var script))
+        if (gadget.TryGetComponent<DroneGadget>(out var script))
         {
             script.Initialize(gameObject, owner.Value);
             script.Throw(throwDir, throwForce);

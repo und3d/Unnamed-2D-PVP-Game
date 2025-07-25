@@ -1,3 +1,4 @@
+using System;
 using PurrNet;
 using UnityEngine;
 
@@ -14,17 +15,42 @@ public class GadgetBase : NetworkIdentity
     protected PlayerID ownerID;
     protected GameObject playerObject;
     protected GadgetController gadgetController;
+    protected GameController gameController;
+    protected Rigidbody2D gadgetRigidbody;
+    protected Collider2D gadgetCollider;
+    protected float stopThreshold = 0.1f;
+    protected float checkDelay = 0.2f;
+    protected bool hasStopped;
+    protected bool isFrozen;
+
+    public static bool gadgetBeingPickedUp = false;
+    public bool canBePickedUp;
 
     protected override void OnSpawned()
     {
         base.OnSpawned();
         
-        if (!InstanceHandler.TryGetInstance(out GameController gameController))
+        
+        
+        progressBar = gameController.progressBar;
+    }
+
+    protected virtual void Awake()
+    {
+        if (!InstanceHandler.TryGetInstance(out gameController))
         {
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
         
-        progressBar = gameController.progressBar;
+        if (!TryGetComponent(out gadgetRigidbody))
+        {
+            Debug.Log("GadgetBase: gadgetRigidbody is null");
+        }
+
+        if (!TryGetComponent(out gadgetCollider))
+        {
+            Debug.Log("GadgetBase: gadgetCollider is null");
+        }
     }
 
     public virtual void Initialize(GameObject player, PlayerID playerID)
@@ -42,12 +68,14 @@ public class GadgetBase : NetworkIdentity
 
     protected virtual void HandlePickup()
     {
-        if (!playerObject)
+        if (!CanStartPickup())
+        {
+            gadgetBeingPickedUp = false;
             return;
-        if (!PlayerIsInRange())
-            return;
-        if (!IsCursorNearGadget())
-            return;
+        }
+        
+        gadgetBeingPickedUp = true;
+        
         if (Input.GetKey(pickUpKey))
         {
             if (!progressBar)
@@ -86,6 +114,33 @@ public class GadgetBase : NetworkIdentity
     public virtual void GadgetShot()
     {
         Destroy(gameObject);
+    }
+
+    protected void CheckIfStopped()
+    {
+        if (hasStopped || !isOwner) return;
+
+        if (gadgetRigidbody.linearVelocity.magnitude < stopThreshold)
+        {
+            FreezeGadget(true);
+        }
+    }
+
+    protected void FreezeGadget(bool setTrigger)
+    {
+        gadgetRigidbody.linearVelocity = Vector2.zero;
+        gadgetRigidbody.angularVelocity = 0f;
+        
+        if (setTrigger)
+            gadgetCollider.isTrigger = true;
+        
+        isFrozen = true;
+        canBePickedUp = true;
+    }
+
+    protected bool CanStartPickup()
+    {
+        return PlayerIsInRange() && IsCursorNearGadget() && playerObject;
     }
 
     protected override void OnDestroy()

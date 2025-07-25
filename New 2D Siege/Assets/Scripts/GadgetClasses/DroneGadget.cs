@@ -2,10 +2,12 @@ using UnityEngine;
 
 public abstract class DroneGadget : GadgetBase
 {
-    [SerializeField] protected Rigidbody2D rb;
-    public bool canBePickedUp = false;
-    
-    protected bool isFrozen = false;
+    protected override void Awake()
+    {
+        base.Awake();
+        
+        InvokeRepeating(nameof(CheckIfStopped), checkDelay, checkDelay);
+    }
 
     protected override void Update()
     {
@@ -16,8 +18,8 @@ public abstract class DroneGadget : GadgetBase
 
     public virtual void Throw(Vector2 direction, float force)
     {
-        rb.simulated = true;
-        rb.linearVelocity = direction * force;
+        gadgetRigidbody.simulated = true;
+        gadgetRigidbody.linearVelocity = direction * force;
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
@@ -25,13 +27,6 @@ public abstract class DroneGadget : GadgetBase
         if (isFrozen)
             return;
 
-        rb.linearVelocity = Vector3.zero;
-        rb.angularVelocity = 0f;
-        rb.bodyType = RigidbodyType2D.Static;
-        
-        GetComponent<Collider2D>().isTrigger = true;
-        
-        isFrozen = true;
-        canBePickedUp = true;
+        FreezeGadget(false);
     }
 }

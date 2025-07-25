@@ -21,7 +21,6 @@ public class GadgetControllerEditor : Editor
     private SerializedProperty primaryGadgetDelay;
 
     private SerializedProperty gadgetPlaceablePreview;
-    private SerializedProperty gadgetDronePreview;
     private SerializedProperty gadgetTool;
     private SerializedProperty gadgetToggle;
     private SerializedProperty gadgetVisual;
@@ -50,7 +49,6 @@ public class GadgetControllerEditor : Editor
         primaryGadgetDelay = serializedObject.FindProperty("primaryGadgetDelay");
         
         gadgetPlaceablePreview = serializedObject.FindProperty("gadgetPlaceablePreview");
-        gadgetDronePreview = serializedObject.FindProperty("gadgetDronePreview");
         gadgetTool = serializedObject.FindProperty("gadgetTool");
         gadgetToggle = serializedObject.FindProperty("gadgetToggle");
         
@@ -154,7 +152,8 @@ public class GadgetControllerEditor : Editor
                 EditorGUILayout.PropertyField(throwForce);
                 break;
             case GadgetController.GadgetType.Drone:
-                EditorGUILayout.PropertyField(gadgetDronePreview);
+                EditorGUILayout.PropertyField(throwOrigin);
+                EditorGUILayout.PropertyField(throwForce);
                 break;
             case GadgetController.GadgetType.Tool:
                 EditorGUILayout.PropertyField(gadgetTool);

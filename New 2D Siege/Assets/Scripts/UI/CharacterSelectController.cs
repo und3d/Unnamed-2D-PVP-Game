@@ -36,13 +36,11 @@ public class CharacterSelectController : NetworkBehaviour
 
     public void SelectedAttacker(int characterID)
     {
-        Debug.Log("Volt Selected");
         SelectedAttackCharacterRPC(characterID);
     }
 
     public void SelectedDefender(int characterID)
     {
-        Debug.Log("Scramble Selected");
         SelectedDefenderCharacterRPC(characterID);
     }
 
@@ -59,11 +57,11 @@ public class CharacterSelectController : NetworkBehaviour
         {
             case GameController.Team.Red:
                 gameController.redTeamSelections[info.sender] = characterID;
-                Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
+                //Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
                 break;
             case GameController.Team.Blue:
                 gameController.blueTeamSelections[info.sender] = characterID;
-                Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
+                //Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
                 break;
         }
         
@@ -76,11 +74,11 @@ public class CharacterSelectController : NetworkBehaviour
         {
             case GameController.Team.Red:
                 gameController.redTeamSelections[info.sender] = characterID;
-                Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
+                //Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
                 break;
             case GameController.Team.Blue:
                 gameController.blueTeamSelections[info.sender] = characterID;
-                Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
+                //Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
                 break;
         }
     }

@@ -22,7 +22,10 @@ public class CharacterSelectionState : StateNode
         
         if (!asServer)
             return;
-
+        
+        DespawnPlayers();
+        DespawnGadgets();
+        
         ClearValues();
         selectionTimer = StartCoroutine(SelectionTimer(_selectionDuration));
         CheckTeam();
@@ -83,6 +86,24 @@ public class CharacterSelectionState : StateNode
         {
             Debug.LogError("CharacterSelectionState : No GameController found");
             return;
+        }
+    }
+    
+    private void DespawnPlayers()
+    {
+        var allPlayers = FindObjectsByType<PlayerHealth>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (var player in allPlayers)
+        {
+            Destroy(player.gameObject);
+        }
+    }
+
+    private void DespawnGadgets()
+    {
+        var allGadgets = FindObjectsByType<GadgetBase>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        foreach (var gadget in allGadgets)
+        {
+            Destroy(gadget.gameObject);
         }
     }
     

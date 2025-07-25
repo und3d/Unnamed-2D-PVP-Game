@@ -17,12 +17,10 @@ jobs:
           COMMIT_URL: ${{ github.event.head_commit.url }}
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          SANITIZED_COMMIT_MESSAGE=$(echo "$COMMIT_MESSAGE" | sed ':a;N;$!ba;s/\n/\\n/g')
-
           PAYLOAD=$(jq -n \
             --arg username "GitHub Bot" \
             --arg title "New Commit to $BRANCH_NAME" \
-            --arg description "$SANITIZED_COMMIT_MESSAGE" \
+            --arg description "$COMMIT_MESSAGE" \
             --arg author "$COMMIT_AUTHOR" \
             --arg branch "$BRANCH_NAME" \
             --arg url "$COMMIT_URL" \
@@ -42,7 +40,7 @@ jobs:
               ]
             }'
           )
-
+        
           curl -H "Content-Type: application/json" \
                -X POST \
                -d "$PAYLOAD" \

@@ -610,7 +610,7 @@ GameObject:
   m_Component:
   - component: {fileID: 46285409}
   m_Layer: 9
-  m_Name: BlueSpawnpoint (4)
+  m_Name: DefenseSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -965,7 +965,7 @@ GameObject:
   m_Component:
   - component: {fileID: 74461156}
   m_Layer: 9
-  m_Name: BlueSpawnpoint (2)
+  m_Name: DefenseSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1130,7 +1130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 109352176}
   m_Layer: 8
-  m_Name: BlueSpawnpoints
+  m_Name: DefenseSpawnpoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2059,7 +2059,7 @@ GameObject:
   m_Component:
   - component: {fileID: 201089171}
   m_Layer: 9
-  m_Name: RedSpawnpoint
+  m_Name: AttackSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -2358,7 +2358,7 @@ GameObject:
   m_Component:
   - component: {fileID: 258893273}
   m_Layer: 9
-  m_Name: BlueSpawnpoint
+  m_Name: DefenseSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -4096,7 +4096,7 @@ GameObject:
   m_Component:
   - component: {fileID: 531625232}
   m_Layer: 9
-  m_Name: BlueSpawnpoint (1)
+  m_Name: DefenseSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -5425,7 +5425,7 @@ GameObject:
   m_Component:
   - component: {fileID: 658308924}
   m_Layer: 9
-  m_Name: RedSpawnpoint (1)
+  m_Name: AttackSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -5925,7 +5925,7 @@ GameObject:
   m_Component:
   - component: {fileID: 734675489}
   m_Layer: 9
-  m_Name: RedSpawnpoint (4)
+  m_Name: AttackSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -10542,7 +10542,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1271677917}
   m_Layer: 8
-  m_Name: RedSpawnpoints
+  m_Name: AttackSpawnpoints
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11603,7 +11603,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1374474427}
   m_Layer: 9
-  m_Name: RedSpawnpoint (3)
+  m_Name: AttackSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -13227,13 +13227,13 @@ MonoBehaviour:
   - {fileID: 4980798662954896818, guid: 4900e59161747fa48bca43e577a4e8dc, type: 3}
   - {fileID: 4980798662954896818, guid: c23be9e57f441574e987c3410e9d6870, type: 3}
   - {fileID: 4980798662954896818, guid: 86a1d0bcfc30e7741b534879cb162a2a, type: 3}
-  spawnPointsRed:
+  spawnPointsAttack:
   - {fileID: 201089171}
   - {fileID: 658308924}
   - {fileID: 2083455315}
   - {fileID: 1374474427}
   - {fileID: 734675489}
-  spawnPointsBlue:
+  spawnPointsDefense:
   - {fileID: 258893273}
   - {fileID: 531625232}
   - {fileID: 74461156}
@@ -14376,7 +14376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1664965578}
   m_Layer: 9
-  m_Name: BlueSpawnpoint (3)
+  m_Name: DefenseSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -17554,7 +17554,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2083455315}
   m_Layer: 9
-  m_Name: RedSpawnpoint (2)
+  m_Name: AttackSpawnpoint
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0

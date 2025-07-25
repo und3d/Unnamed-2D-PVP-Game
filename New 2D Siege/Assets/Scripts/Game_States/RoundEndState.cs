@@ -6,11 +6,13 @@ using UnityEngine;
 
 public class RoundEndState : StateNode<bool>
 {
-    [SerializeField] private int amountOfRounds = 3;
+    [SerializeField] private int amountOfRounds = 5;
     [SerializeField] private StateNode characterSelectionState;
 
     private int _roundCount = 0;
+    private int roundCountToSwap;
     private WaitForSeconds _delay = new(3f);
+    private GameController gameController;
 
     
     //basic round end enter
@@ -21,16 +23,17 @@ public class RoundEndState : StateNode<bool>
         if (!asServer)
             return;
         
+        if (!InstanceHandler.TryGetInstance(out gameController))
+        {
+            Debug.LogError($"GameStartState failed to get gameController!", this);
+            return;
+        }
+        
         CheckForGameEnd(attackWon);
     }
 
     private void CheckForGameEnd(bool attackWon)
     {
-        if (!InstanceHandler.TryGetInstance(out GameController gameController))
-        {
-            Debug.LogError($"GameStartState failed to get gameController!", this);
-        }
-        
         if (attackWon)
         {
             var attackTeam = gameController.teamSides[GameController.Side.Attack];
@@ -41,10 +44,14 @@ public class RoundEndState : StateNode<bool>
             var defenseTeam = gameController.teamSides[GameController.Side.Defense];
             gameController.AddRoundWin(defenseTeam);
         }
-
-        int roundsToWin = (amountOfRounds / 2) + 1;
+        
+        var roundsToWin = (amountOfRounds / 2) + 1;
         _roundCount++;
-
+        roundCountToSwap++;
+        
+        if (roundCountToSwap == amountOfRounds / 2)
+            swapSides();
+        
         foreach (var team in gameController.roundScores)
         {
             if (team.Value >= roundsToWin)
@@ -62,17 +69,15 @@ public class RoundEndState : StateNode<bool>
         }
         
         StartCoroutine(DelayNextState());
+    }
+
+    private void swapSides()
+    {
+        roundCountToSwap = 0;
         
-        /* Non-Team System
-        
-        if (_roundCount >= amountOfRounds)
-        {
-            machine.Next();
-            return;        
-        }
-        StartCoroutine(DelayNextState());
-        */
-        
+        // Swapped via deconstruction
+        (gameController.teamSides[GameController.Side.Attack], gameController.teamSides[GameController.Side.Defense]) 
+            = (gameController.teamSides[GameController.Side.Defense], gameController.teamSides[GameController.Side.Attack]);
     }
 
     private IEnumerator DelayNextState()

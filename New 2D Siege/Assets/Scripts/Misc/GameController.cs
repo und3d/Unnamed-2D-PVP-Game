@@ -28,12 +28,6 @@ public class GameController : NetworkBehaviour
     public SyncDictionary<Team, List<PlayerID>> GlobalTeams = new();
     public SyncVar<bool> isPlanting = new(false);
     public SyncVar<bool> isPlanted = new(false);
-    
-    /*public SyncDictionary<Team, List<PlayerID>> GlobalTeams = new SyncDictionary<Team, List<PlayerID>>()
-    {
-        { Team.Red, new List<PlayerID>() },
-        { Team.Blue, new List<PlayerID>() }
-    };*/
 
     private void Awake()
     {

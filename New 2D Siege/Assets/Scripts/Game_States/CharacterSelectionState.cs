@@ -9,16 +9,14 @@ public class CharacterSelectionState : StateNode
     [SerializeField] private float _selectionDuration = 30f;
     
     private Coroutine selectionTimer;
+    private GameController gameController;
+    private GameViewManager gameViewManager;
     
     public override void Enter(bool asServer)
     {
         base.Enter(asServer);
         
-        if (!InstanceHandler.TryGetInstance(out GameViewManager gameViewManager))
-        {
-            Debug.LogError($"CharacterSelectState: Failed to find GameViewManager", this);
-            return;
-        }
+        GetReferences();
         
         gameViewManager.ShowView<CharacterSelectView>();
         
@@ -32,12 +30,6 @@ public class CharacterSelectionState : StateNode
 
     private void ClearValues()
     {
-        if (!InstanceHandler.TryGetInstance(out GameController gameController))
-        {
-            Debug.LogError("CharacterSelectionState : No GameController found");
-            return;
-        }
-        
         gameController.redTeamSelections.Clear();
         gameController.blueTeamSelections.Clear();
         characterSelectController.ClearTeams();
@@ -45,30 +37,19 @@ public class CharacterSelectionState : StateNode
 
     private void CheckTeam()
     {
-        if (!InstanceHandler.TryGetInstance(out GameController gameController))
+        foreach (var player in gameController.GlobalTeams[gameController.teamSides[GameController.Side.Attack]])
         {
-            Debug.LogError("CharacterSelectionState : No GameController found");
-            return;
+            characterSelectController.ShowCharacterSelect(player, GameController.Side.Attack);
         }
 
-        foreach (var player in gameController.GlobalTeams[GameController.Team.Red])
+        foreach (var player in gameController.GlobalTeams[gameController.teamSides[GameController.Side.Defense]])
         {
-            characterSelectController.ShowCharacterSelect(player, GameController.Team.Red);
-        }
-
-        foreach (var player in gameController.GlobalTeams[GameController.Team.Blue])
-        {
-            characterSelectController.ShowCharacterSelect(player, GameController.Team.Blue);
+            characterSelectController.ShowCharacterSelect(player, GameController.Side.Defense);
         }
     }
 
     private IEnumerator SelectionTimer(float selectionDuration)
     {
-        if (!InstanceHandler.TryGetInstance(out GameController gameController))
-        {
-            Debug.LogError("CharacterSelectionState : No GameController found");
-        }
-        
         float timeLeft = selectionDuration;
         
         // Timer
@@ -88,6 +69,21 @@ public class CharacterSelectionState : StateNode
         
         
         machine.Next();
+    }
+
+    private void GetReferences()
+    {
+        if (!InstanceHandler.TryGetInstance(out gameViewManager))
+        {
+            Debug.LogError($"CharacterSelectState: Failed to find GameViewManager", this);
+            return;
+        }
+        
+        if (!InstanceHandler.TryGetInstance(out gameController))
+        {
+            Debug.LogError("CharacterSelectionState : No GameController found");
+            return;
+        }
     }
     
     public override void Exit(bool asServer)

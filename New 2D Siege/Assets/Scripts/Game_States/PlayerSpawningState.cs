@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using PurrNet;
 using PurrNet.Packing;
@@ -20,9 +21,11 @@ public class PlayerSpawningState : StateNode
     [SerializeField] private List<PlayerHealth> defenderPrefabs;
     //[SerializeField] private List<Transform> spawnPoints = new();
 
-    [SerializeField] private List<Transform> spawnPointsRed = new();
-    [SerializeField] private List<Transform> spawnPointsBlue = new();
-    
+    [SerializeField] private List<Transform> spawnPointsAttack = new();
+    [SerializeField] private List<Transform> spawnPointsDefense = new();
+
+    private GameController gameController;
+    private Transform spawnPoint;
 
     public override void Enter(bool asServer)
     {
@@ -30,13 +33,18 @@ public class PlayerSpawningState : StateNode
         
         if (!asServer)
             return;
-
+        
+        if (!InstanceHandler.TryGetInstance(out gameController))
+        {
+            Debug.LogError($"GameStartState failed to get gameController!", this);
+        }
+        
         DespawnPlayers();
         DespawnGadgets();
         
         var spawnedPlayers = SpawnPlayersWithTeam();
         
-        Debug.Log($"Sending {spawnedPlayers}");
+        //Debug.Log($"Sending {spawnedPlayers}");
         machine.Next(spawnedPlayers);
     }
 
@@ -58,26 +66,6 @@ public class PlayerSpawningState : StateNode
         }
     }
 
-    /*private List<PlayerHealth> SpawnPlayers()
-    {
-        var spawnedPlayers = new List<PlayerHealth>();
-
-        int currentSpawnIndex = 0;
-        foreach (var player in networkManager.players)
-        {
-            var spawnPoint = spawnPoints[currentSpawnIndex];
-            var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            newPlayer.GiveOwnership(player);
-            spawnedPlayers.Add(newPlayer);
-            currentSpawnIndex++;
-            
-            if (currentSpawnIndex >= spawnPoints.Count)
-                currentSpawnIndex = 0;
-        }
-        
-        return spawnedPlayers;
-    }*/
-
     private Dictionary<GameController.Team, List<PlayerHealth>> SpawnPlayersWithTeam()
     {
         var spawnedPlayers = new Dictionary<GameController.Team, List<PlayerHealth>>()
@@ -86,10 +74,7 @@ public class PlayerSpawningState : StateNode
             { GameController.Team.Blue, new List<PlayerHealth>() }
         };
         
-        if (!InstanceHandler.TryGetInstance(out GameController gameController))
-        {
-            Debug.LogError($"GameStartState failed to get gameController!", this);
-        }
+        
         
         foreach (var player in gameController.redTeamSelections)
             Debug.Log($"Red Player: {player.Key}");
@@ -97,42 +82,79 @@ public class PlayerSpawningState : StateNode
         foreach (var player in gameController.blueTeamSelections)
             Debug.Log($"Blue Player: {player.Key}");
         
+        var redSide = GetSideForTeam(GameController.Team.Red);
+        
         // Spawn Red Team
-        int currentSpawnIndex = 0;
+        var currentSpawnIndex = 0;
         foreach (var player in gameController.GlobalTeams[GameController.Team.Red])
         {
-            playerPrefab = attackerPrefabs[gameController.redTeamSelections[player]];
-            var spawnPoint = spawnPointsRed[currentSpawnIndex];
+            switch (redSide)
+            {
+                case GameController.Side.Attack:
+                    playerPrefab = attackerPrefabs[gameController.redTeamSelections[player]];
+                    spawnPoint = spawnPointsAttack[currentSpawnIndex];
+                    break;
+                case GameController.Side.Defense:
+                    playerPrefab = defenderPrefabs[gameController.redTeamSelections[player]];
+                    spawnPoint = spawnPointsDefense[currentSpawnIndex];
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            newPlayer.GetComponent<PlayerHealth>().SetColor(true);
+            newPlayer.GetComponent<PlayerHealth>().SetColor(Color.red);
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Red].Add(newPlayer);
             currentSpawnIndex++;
         }
         
-        Debug.Log($"Spawned {currentSpawnIndex} Red team players");
+        //Debug.Log($"Spawned {currentSpawnIndex} Red team players");
         
-        // Spawn Blue Team
+        var blueSide = GetSideForTeam(GameController.Team.Blue);
+        
+        // Spawn Defenders
         currentSpawnIndex = 0;
         foreach (var player in gameController.GlobalTeams[GameController.Team.Blue])
         {
-            playerPrefab = defenderPrefabs[gameController.blueTeamSelections[player]];
-            var spawnPoint = spawnPointsBlue[currentSpawnIndex];
+            switch (blueSide)
+            {
+                case GameController.Side.Attack:
+                    playerPrefab = attackerPrefabs[gameController.blueTeamSelections[player]];
+                    spawnPoint = spawnPointsAttack[currentSpawnIndex];
+                    break;
+                case GameController.Side.Defense:
+                    playerPrefab = defenderPrefabs[gameController.blueTeamSelections[player]];
+                    spawnPoint = spawnPointsDefense[currentSpawnIndex];
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-            newPlayer.GetComponent<PlayerHealth>().SetColor(false);
+            newPlayer.GetComponent<PlayerHealth>().SetColor(Color.blue);
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Blue].Add(newPlayer);
             currentSpawnIndex++;
         }
         
-        Debug.Log($"Spawned {currentSpawnIndex} Blue team players");
+        //Debug.Log($"Spawned {currentSpawnIndex} Blue team players");
         
         return spawnedPlayers;
     }
 
+    private GameController.Side GetSideForTeam(GameController.Team team)
+    {
+        foreach (var kvp in gameController.teamSides)
+        {
+            if (kvp.Value == team)
+            {
+                return kvp.Key;
+            }
+        }
 
-    
-    
+        throw new System.Exception($"Team {team} not found in teamSides!");
+    }
     
     public override void Exit(bool asServer)
     {

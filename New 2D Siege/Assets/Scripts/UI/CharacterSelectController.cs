@@ -10,8 +10,8 @@ public class CharacterSelectController : NetworkBehaviour
     private static GameObject attackerViewObjectStatic;
     private static GameObject defenderViewObjectStatic;
     private PlayerID selectingPlayer;
-    private List<PlayerID> redTeam = new List<PlayerID>();
-    private List<PlayerID> blueTeam = new List<PlayerID>();
+    private List<PlayerID> attackersList = new List<PlayerID>();
+    private List<PlayerID> defendersList = new List<PlayerID>();
     private GameController gameController;
     
     [SerializeField] private CanvasGroup attackerView;
@@ -48,49 +48,63 @@ public class CharacterSelectController : NetworkBehaviour
 
     public void ClearTeams()
     {
-        redTeam.Clear();
-        blueTeam.Clear();
+        attackersList.Clear();
+        defendersList.Clear();
     }
     
     [ServerRpc(requireOwnership:false)]
     private void SelectedAttackCharacterRPC(int characterID, RPCInfo info = default)
     {
-        //Debug.Log($"Character selected: {characterID}");
-        gameController.redTeamSelections[info.sender] = characterID;
+        switch (gameController.teamSides[GameController.Side.Attack])
+        {
+            case GameController.Team.Red:
+                gameController.redTeamSelections[info.sender] = characterID;
+                Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
+                break;
+            case GameController.Team.Blue:
+                gameController.blueTeamSelections[info.sender] = characterID;
+                Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
+                break;
+        }
         
-        Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
     }
     
     [ServerRpc(requireOwnership:false)]
     private void SelectedDefenderCharacterRPC(int characterID, RPCInfo info = default)
     {
-        //Debug.Log($"Character selected: {characterID}");
-        gameController.blueTeamSelections[info.sender] = characterID;
-        
-        Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
-    }
-    
-    public void ShowCharacterSelect(PlayerID player, GameController.Team team)
-    {
-        //Debug.Log("Trying to show character select");
-        switch (team)
+        switch (gameController.teamSides[GameController.Side.Defense])
         {
             case GameController.Team.Red:
-                redTeam.Add(player);
+                gameController.redTeamSelections[info.sender] = characterID;
+                Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
                 break;
             case GameController.Team.Blue:
-                blueTeam.Add(player);
+                gameController.blueTeamSelections[info.sender] = characterID;
+                Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
                 break;
         }
-        ShowCharacters(player, team);
+    }
+    
+    public void ShowCharacterSelect(PlayerID player, GameController.Side side)
+    {
+        switch (side)
+        {
+            case GameController.Side.Attack:
+                attackersList.Add(player);
+                break;
+            case GameController.Side.Defense:
+                defendersList.Add(player);
+                break;
+        }
+        ShowCharacters(player, side);
     }
     
     [TargetRpc]
-    public static void ShowCharacters(PlayerID target, GameController.Team team)
+    public static void ShowCharacters(PlayerID target, GameController.Side side)
     {
-        switch (team)
+        switch (side)
         {
-            case GameController.Team.Red:
+            case GameController.Side.Attack:
                 attackerViewObjectStatic.SetActive(true);
                 attackerViewStatic.alpha = 1;
                 attackerViewStatic.interactable = true;
@@ -98,7 +112,7 @@ public class CharacterSelectController : NetworkBehaviour
                 defenderViewStatic.interactable = false;
                 defenderViewObjectStatic.SetActive(false);
                 break;
-            case GameController.Team.Blue:
+            case GameController.Side.Defense:
                 defenderViewObjectStatic.SetActive(true);
                 attackerViewStatic.alpha = 0;
                 attackerViewStatic.interactable = false;

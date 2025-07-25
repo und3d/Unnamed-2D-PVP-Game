@@ -25,12 +25,12 @@ public class PlayerHealth : NetworkIdentity
         // Is the owner of this player object on Red team?
         if (gameController.GlobalTeams[GameController.Team.Red].Contains(owner.Value))
         {
-            SetColor(true);
+            SetColor(Color.red);
         }
         // Is the owner of this player object on Blue team?
         else
         {
-            SetColor(false);
+            SetColor(Color.blue);
         }
 
         if (isOwner)
@@ -86,16 +86,8 @@ public class PlayerHealth : NetworkIdentity
     }
     
     [ObserversRpc]
-    public void SetColor(bool redTeam)
+    public void SetColor(Color teamColor)
     {
-        Debug.Log($"Player team color is set");
-        if (redTeam)
-        {
-            GetComponent<SpriteRenderer>().color = Color.red;
-        }
-        else
-        {
-            GetComponent<SpriteRenderer>().color = Color.blue;
-        }
+        GetComponent<SpriteRenderer>().color = teamColor;
     }
 }

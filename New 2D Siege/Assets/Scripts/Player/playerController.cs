@@ -15,6 +15,7 @@ public class playerController : NetworkIdentity
     [Header("References")]
     public StateMachine stateMachine;
     public List<StateNode> weaponStates = new();
+    [SerializeField] private GameObject playerVision;
 
     private float moveSpeed;
     private GameController gameController;
@@ -46,6 +47,11 @@ public class playerController : NetworkIdentity
         base.OnSpawned();
 
         enabled = isOwner;
+
+        if (isOwner)
+        {
+            var visionObj = Instantiate(playerVision, transform, false);
+        }
     }
 
     private void FixedUpdate()

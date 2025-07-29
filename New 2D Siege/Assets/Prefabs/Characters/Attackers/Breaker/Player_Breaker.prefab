@@ -84,7 +84,6 @@ MonoBehaviour:
   gadgetPlaceablePreview: {fileID: 0}
   throwOrigin: {fileID: 0}
   throwForce: 10
-  gadgetDronePreview: {fileID: 0}
   gadgetTool: {fileID: 0}
   gadgetToggle: {fileID: 0}
   gadgetVisual: {fileID: 3699038774483557529}
@@ -117,6 +116,7 @@ MonoBehaviour:
   - {fileID: 4139357833510178640}
   - {fileID: 2326740372766534828}
   - {fileID: 1261755061168148956}
+  playerVision: {fileID: 822313523801803427, guid: 0bd52025989aa3049b2fc00467898724, type: 3}
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -210,7 +210,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 998445421b9c2bb4f9aa65597dca02bc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -491,7 +491,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 998445421b9c2bb4f9aa65597dca02bc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -701,7 +701,7 @@ MonoBehaviour:
     CustomLookAtTarget: 0
   Lens:
     FieldOfView: 40
-    OrthographicSize: 4.8
+    OrthographicSize: 6
     NearClipPlane: 0.1
     FarClipPlane: 5000
     Dutch: 0
@@ -790,7 +790,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &514349198410903886
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1104,7 +1104,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 998445421b9c2bb4f9aa65597dca02bc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

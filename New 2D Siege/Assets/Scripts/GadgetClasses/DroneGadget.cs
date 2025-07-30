@@ -11,6 +11,8 @@ public abstract class DroneGadget : GadgetBase
 
     protected override void Update()
     {
+        if (!playerObject)
+            return;
         if (!canBePickedUp)
             return;
         base.Update();

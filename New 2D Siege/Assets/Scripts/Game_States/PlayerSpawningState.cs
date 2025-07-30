@@ -8,7 +8,7 @@ using UnityEngine;
 public static class GameExtensions
 {
     [RegisterPackers]
-    static void RegisterPackers()
+    private static void RegisterPackers()
     {
         PackCollections.RegisterList<PlayerHealth>();
     }
@@ -73,10 +73,12 @@ public class PlayerSpawningState : StateNode
                 case GameController.Side.Attack:
                     playerPrefab = attackerPrefabs[gameController.redTeamSelections[player]];
                     spawnPoint = spawnPointsAttack[currentSpawnIndex];
+                    gameController.ToggleGlobalLight(player, GameController.Side.Attack);
                     break;
                 case GameController.Side.Defense:
                     playerPrefab = defenderPrefabs[gameController.redTeamSelections[player]];
                     spawnPoint = spawnPointsDefense[currentSpawnIndex];
+                    gameController.ToggleGlobalLight(player, GameController.Side.Defense);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -102,10 +104,12 @@ public class PlayerSpawningState : StateNode
                 case GameController.Side.Attack:
                     playerPrefab = attackerPrefabs[gameController.blueTeamSelections[player]];
                     spawnPoint = spawnPointsAttack[currentSpawnIndex];
+                    gameController.ToggleGlobalLight(player, GameController.Side.Attack);
                     break;
                 case GameController.Side.Defense:
                     playerPrefab = defenderPrefabs[gameController.blueTeamSelections[player]];
                     spawnPoint = spawnPointsDefense[currentSpawnIndex];
+                    gameController.ToggleGlobalLight(player, GameController.Side.Defense);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -135,7 +139,6 @@ public class PlayerSpawningState : StateNode
 
         throw new System.Exception($"Team {team} not found in teamSides!");
     }
-    
     public override void Exit(bool asServer)
     {
         base.Exit(asServer);

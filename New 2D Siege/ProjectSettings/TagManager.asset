@@ -47,7 +47,10 @@ TagManager:
   - name: Map Objects
     uniqueID: 411185361
     locked: 0
-  - name: Players
+  - name: Attackers
+    uniqueID: 2868286749
+    locked: 0
+  - name: Defenders
     uniqueID: 2206241935
     locked: 0
   - name: UI

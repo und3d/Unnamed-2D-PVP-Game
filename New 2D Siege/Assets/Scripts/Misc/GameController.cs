@@ -12,6 +12,8 @@ public class GameController : NetworkBehaviour
     public bool canActivateThrownGadget;
     
     public ProgressBarController progressBar;
+    [SerializeField] private GameObject playerGlobalLightAttack;
+    [SerializeField] private GameObject playerGlobalLightDefense;
     
     [SerializeField] private SyncDictionary<PlayerID, ScoreData> scores = new();
     
@@ -139,6 +141,45 @@ public class GameController : NetworkBehaviour
         public override string ToString()
         {
             return $"K: {kills} D: {deaths} A: {assists}";
+        }
+    }
+    
+    public Side GetPlayerSide(PlayerID playerId)
+    {
+        // First, find the player's team
+        foreach (var (team, players) in GlobalTeams)
+        {
+            if (players.Contains(playerId))
+            {
+                // Now find the side that matches this team
+                foreach (var sidePair in teamSides)
+                {
+                    if (sidePair.Value.Equals(team))
+                    {
+                        return sidePair.Key;
+                    }
+                }
+            }
+        }
+
+        throw new Exception($"PlayerID {playerId} not found in any team.");
+    }
+
+    [TargetRpc]
+    public void ToggleGlobalLight(PlayerID playerId, Side side)
+    {
+        switch (side)
+        {
+            case Side.Attack:
+                playerGlobalLightAttack.SetActive(true);
+                playerGlobalLightDefense.SetActive(false);
+                break;
+            case Side.Defense:
+                playerGlobalLightDefense.SetActive(true);
+                playerGlobalLightAttack.SetActive(false);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(side), side, null);
         }
     }
 }

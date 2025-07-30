@@ -22,7 +22,7 @@ public class PlayerHealth : NetworkIdentity
         {
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
-        // Is the owner of this player object on Red team?
+        /* Is the owner of this player object on Red team?
         if (gameController.GlobalTeams[GameController.Team.Red].Contains(owner.Value))
         {
             SetColor(Color.red);
@@ -32,12 +32,12 @@ public class PlayerHealth : NetworkIdentity
         {
             SetColor(Color.blue);
         }
+        */
 
-        if (isOwner)
-        {
-            InstanceHandler.GetInstance<RoundView>().UpdateHealth(health.value);
-            health.onChanged += OnHealthChanged;
-        }
+        if (!isOwner) 
+            return;
+        InstanceHandler.GetInstance<RoundView>().UpdateHealth(health.value);
+        health.onChanged += OnHealthChanged;
     }
 
     protected override void OnDestroy()

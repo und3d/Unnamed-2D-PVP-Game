@@ -66,6 +66,8 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
         
+        if (!isCurrentState) return;
+        
         // Stops Update loop if Objective has not been planted yet
         if (!gameController.isPlanted.value)
             return;

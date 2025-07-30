@@ -31,6 +31,7 @@ public class PlaceGadgetPreview : MonoBehaviour
     {
         owner = manager;
         playerTransform = player;
+        ownerID = id;
         sr = GetComponent<SpriteRenderer>();
     }
 
@@ -46,6 +47,9 @@ public class PlaceGadgetPreview : MonoBehaviour
 
     private void Update()
     {
+        if (!playerTransform)
+            return;
+        
         Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 playerToMouse = mouseWorld - playerTransform.position;
         if (playerToMouse.magnitude > maxPlacementDistance)

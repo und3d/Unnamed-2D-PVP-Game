@@ -2,6 +2,7 @@ using System.Collections;
 using PurrNet;
 using PurrNet.StateMachine;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class CharacterSelectionState : StateNode
 {

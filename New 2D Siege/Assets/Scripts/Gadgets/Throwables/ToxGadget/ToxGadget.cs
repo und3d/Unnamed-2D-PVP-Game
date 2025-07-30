@@ -8,6 +8,8 @@ public class ToxGadget : ThrowableGadget
     {
         if (!isOwner)
             return;
+        if (!playerObject)
+            return;
         
         if (Input.GetKeyDown(KeyCode.F) && gameController.canActivateThrownGadget && !gadgetBeingPickedUp)
         {

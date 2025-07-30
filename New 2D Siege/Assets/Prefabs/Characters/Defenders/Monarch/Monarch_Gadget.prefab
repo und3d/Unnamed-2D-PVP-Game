@@ -59,6 +59,7 @@ MonoBehaviour:
   pickUpKey: 102
   playerPickupDistance: 1
   cursorPickupDistance: 1
+  canBePickedUp: 0
 --- !u!212 &5042808587619449925
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -82,7 +83,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 998445421b9c2bb4f9aa65597dca02bc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -100,8 +101,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 411185361
-  m_SortingLayer: 2
+  m_SortingLayerID: -2088725361
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.49411765, g: 0.34117648, b: 0.7607843, a: 1}

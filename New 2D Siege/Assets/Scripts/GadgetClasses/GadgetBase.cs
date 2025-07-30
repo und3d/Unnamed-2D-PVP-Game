@@ -75,32 +75,33 @@ public class GadgetBase : NetworkIdentity
         }
         
         gadgetBeingPickedUp = true;
-        
-        if (Input.GetKey(pickUpKey))
+
+        if (!Input.GetKey(pickUpKey)) return;
+        if (!progressBar)
+            return;
+        progressBar.BeginInteraction( new InteractionRequest
         {
-            if (!progressBar)
-                return;
-            progressBar.BeginInteraction( new InteractionRequest
-            {
-                duration = pickupHoldTime,
-                key = pickUpKey,
-                canStart = () => true,
-                onComplete = PickupGadget
-            });
-        }
+            duration = pickupHoldTime,
+            key = pickUpKey,
+            canStart = () => true,
+            onComplete = PickupGadget
+        });
     }
 
     protected virtual bool IsCursorNearGadget()
     {
         Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        float distance = Vector2.Distance(transform.position, mouseWorldPos);
+        var distance = Vector2.Distance(transform.position, mouseWorldPos);
 
         return distance <= cursorPickupDistance;
     }
 
     protected virtual bool PlayerIsInRange()
     {
-        float distance = Vector2.Distance(transform.position, playerObject.transform.position);
+        if (!playerObject)
+            return false;
+        
+        var distance = Vector2.Distance(transform.position, playerObject.transform.position);
         
         return distance <= playerPickupDistance;
     }

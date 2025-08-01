@@ -15,4 +15,9 @@ MonoBehaviour:
   toggleSprint: 0
   walkSpeed: 3
   sprintSpeed: 5
-  moveSpeed: 3
+  interactRange: 2
+  placementTime: 3
+  interactKey: 102
+  interactLayers:
+    serializedVersion: 2
+    m_Bits: 16384

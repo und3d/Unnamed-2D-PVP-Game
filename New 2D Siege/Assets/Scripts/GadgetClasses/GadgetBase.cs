@@ -7,8 +7,8 @@ public class GadgetBase : NetworkIdentity
     [Header("Settings")]
     [SerializeField] protected float pickupHoldTime = 2f;
     [SerializeField] protected KeyCode pickUpKey = KeyCode.F;
-    [SerializeField] protected float playerPickupDistance = 1f;
-    [SerializeField] protected float cursorPickupDistance = 1f;
+    [SerializeField] protected float playerPickupDistance = 2f;
+    [SerializeField] protected float cursorPickupDistance = 2f;
     
     protected ProgressBarController progressBar;
     protected bool isBeingPickedUp = false;

@@ -20,6 +20,7 @@ public class playerController : NetworkIdentity
     private float moveSpeed;
     private GameController gameController;
     private GameObject currentPreview;
+    private ProgressBarController progressBar;
     private Rigidbody2D _rigidbody;
     private StateNode lastState;
     Vector2 moveDirection;
@@ -29,6 +30,11 @@ public class playerController : NetworkIdentity
     private bool lastSprintState;
     private bool lastGadgetState;
     private bool lastWeaponHiddenState;
+    private bool isPlacing;
+    private bool isDefender;
+
+    public bool barricadeDetected;
+    public bool barricadeInRange;
 
     private void Awake()
     {
@@ -39,6 +45,7 @@ public class playerController : NetworkIdentity
             return;
         }
         gameController = _gameController;
+        progressBar = gameController.progressBar;
         lastState = weaponStates[0];
     }
 
@@ -48,9 +55,13 @@ public class playerController : NetworkIdentity
 
         enabled = isOwner;
 
-        if (isOwner)
+        if (!isOwner) 
+            return;
+        
+        var visionObj = Instantiate(playerVision, transform, false);
+        if (GetPlayerSide() == GameController.Side.Defense)
         {
-            var visionObj = Instantiate(playerVision, transform, false);
+            isDefender = true;
         }
     }
 
@@ -112,6 +123,11 @@ public class playerController : NetworkIdentity
         if (!gameController.canMove)
             return;
         
+        if (isDefender)
+        {
+            BarricadeInteraction();
+        }
+        
         HandleWeaponSwitching();
     }
 
@@ -143,11 +159,66 @@ public class playerController : NetworkIdentity
         lastWeaponHiddenState = shouldHideWeapon;
     }
 
+    private void BarricadeInteraction()
+    {
+        var obj = GetObjectUnderCursor();
+
+        if (!obj || !obj.GetComponent<Barricade>())
+        {
+            barricadeDetected = false;
+            return;
+        }
+        
+        barricadeDetected = true;
+        var sqrDistance = (obj.transform.position - transform.position).sqrMagnitude;
+        if (sqrDistance <= playerSettings.interactRange * playerSettings.interactRange)
+        {
+            barricadeInRange = true;
+            if (Input.GetKey(playerSettings.interactKey) && !isGadgetEquipped)
+            {
+                progressBar.BeginInteraction(new InteractionRequest
+                {
+                    duration = playerSettings.placementTime,
+                    key = playerSettings.interactKey,
+                    canStart = () => true,
+                    onComplete = obj.GetComponent<Barricade>().ToggleBarricade
+                });
+            }
+        }
+        else
+        {
+            barricadeDetected = false;
+        }
+    }
+
+    private GameObject GetObjectUnderCursor()
+    {
+        Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var hit = Physics2D.Raycast(cursorWorldPosition, Vector2.zero, 0f, playerSettings.interactLayers);
+        
+        if (!hit)
+        {
+            return null;
+        }
+        if (hit.collider.gameObject.GetComponent<Barricade>())
+        {
+            return hit.collider.gameObject;
+        }
+
+        return null;
+    }
+
     private void RotateTowardsMouse()
     {
         Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = mouseWorldPosition - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         _rigidbody.rotation = angle - 90f;
+    }
+
+    private GameController.Side GetPlayerSide()
+    {
+        Debug.Log($"Side: {gameController.GetPlayerSide(owner.Value)}");
+        return gameController.GetPlayerSide(owner.Value);
     }
 }

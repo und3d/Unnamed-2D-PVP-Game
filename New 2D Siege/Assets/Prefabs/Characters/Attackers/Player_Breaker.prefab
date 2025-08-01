@@ -118,6 +118,8 @@ MonoBehaviour:
   - {fileID: 2326740372766534828}
   - {fileID: 1261755061168148956}
   playerVision: {fileID: 822313523801803427, guid: 0bd52025989aa3049b2fc00467898724, type: 3}
+  barricadeDetected: 0
+  barricadeInRange: 0
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -574,7 +576,7 @@ MonoBehaviour:
   shootOrigin: {fileID: 6838778048533206435}
   hitLayer:
     serializedVersion: 2
-    m_Bits: 3031
+    m_Bits: 11223
   muzzleFlash: {fileID: 4731351591826490611}
   gameController: {fileID: 3806975639612252344, guid: 0fedf1bb60ce11b40835c7e34f3c38c2, type: 3}
   renderers:
@@ -1304,7 +1306,7 @@ MonoBehaviour:
   shootOrigin: {fileID: 6838778048533206435}
   hitLayer:
     serializedVersion: 2
-    m_Bits: 3031
+    m_Bits: 11223
   muzzleFlash: {fileID: 1471267271617475086}
   gameController: {fileID: 3806975639612252344, guid: 0fedf1bb60ce11b40835c7e34f3c38c2, type: 3}
   renderers:

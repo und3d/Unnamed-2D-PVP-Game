@@ -95,11 +95,17 @@ public class Gun : StateNode
             {
                 if (!hit.transform.TryGetComponent(out GadgetBase gadget))
                 {
-                    if (enviroHitEffect)
+                    if (!hit.transform.parent.parent.TryGetComponent(out Barricade barricade))
                     {
-                        EnvironmentHit(hit.point, hit.normal);
-                        return;
+                        if (enviroHitEffect)
+                        {
+                            EnvironmentHit(hit.point, hit.normal);
+                            return;
+                        }
                     }
+                    BarricadeHit(barricade);
+                    EnvironmentHit(hit.point, hit.normal);
+                    return;
                 }
                 GadgetHit(gadget);
                 return;
@@ -116,6 +122,13 @@ public class Gun : StateNode
     }
 
     [ServerRpc]
+    private void BarricadeHit(Barricade barricade)
+    {
+        Debug.Log("Barricade Hit");
+        barricade.Hit(-damage);
+    }
+
+    [ServerRpc]
     private void HandleHit(Ray2D ray, Double preciseTick, RPCInfo info = default)
     {
         var hitLayers = new ContactFilter2D();
@@ -125,7 +138,9 @@ public class Gun : StateNode
         if (rollbackModule.Raycast(preciseTick, ray, out var hit, range, hitLayers))
         {
             if (!hit.transform.TryGetComponent(out PlayerHealth playerHealth))
+            {
                 return;
+            }
 
             //Debug.Log($"Player should be losing health.");
             playerHealth.ChangeHealth(-damage, info.sender);

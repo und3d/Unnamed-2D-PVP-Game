@@ -57,8 +57,8 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   pickupHoldTime: 2
   pickUpKey: 102
-  playerPickupDistance: 1
-  cursorPickupDistance: 1
+  playerPickupDistance: 2
+  cursorPickupDistance: 2
   canBePickedUp: 0
 --- !u!212 &5042808587619449925
 SpriteRenderer:

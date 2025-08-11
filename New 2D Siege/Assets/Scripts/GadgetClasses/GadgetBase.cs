@@ -1,12 +1,12 @@
 using System;
 using PurrNet;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GadgetBase : NetworkIdentity
 {
     [Header("Settings")]
     [SerializeField] protected float pickupHoldTime = 2f;
-    [SerializeField] protected KeyCode pickUpKey = KeyCode.F;
     [SerializeField] protected float playerPickupDistance = 2f;
     [SerializeField] protected float cursorPickupDistance = 2f;
     
@@ -22,6 +22,7 @@ public class GadgetBase : NetworkIdentity
     protected float checkDelay = 0.2f;
     protected bool hasStopped;
     protected bool isFrozen;
+    protected InputAction interactKey;
 
     public static bool gadgetBeingPickedUp = false;
     public bool canBePickedUp;
@@ -51,6 +52,8 @@ public class GadgetBase : NetworkIdentity
         {
             Debug.Log("GadgetBase: gadgetCollider is null");
         }
+        
+        interactKey = InputManager.PlayerKeybinds.Get("Player/Interact");
     }
 
     public virtual void Initialize(GameObject player, PlayerID playerID)
@@ -76,13 +79,13 @@ public class GadgetBase : NetworkIdentity
         
         gadgetBeingPickedUp = true;
 
-        if (!Input.GetKey(pickUpKey)) return;
+        if (!interactKey.IsPressed()) return;
         if (!progressBar)
             return;
         progressBar.BeginInteraction( new InteractionRequest
         {
             duration = pickupHoldTime,
-            key = pickUpKey,
+            key = interactKey,
             canStart = () => true,
             onComplete = PickupGadget
         });

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class playerController : NetworkIdentity
@@ -17,6 +18,7 @@ public class playerController : NetworkIdentity
     public List<StateNode> weaponStates = new();
     [SerializeField] private GameObject playerVision;
 
+    #region Private Variables
     private float moveSpeed;
     private GameController gameController;
     private GameObject currentPreview;
@@ -25,29 +27,31 @@ public class playerController : NetworkIdentity
     private StateNode lastState;
     Vector2 moveDirection;
     Vector2 mousePosition;
-    bool canMove = true;
     private bool isSprinting;
     private bool lastSprintState;
     private bool lastGadgetState;
     private bool lastWeaponHiddenState;
     private bool isPlacing;
     private bool isDefender;
+    #endregion
+    
+    #region Keybinds
+    private InputAction _shoot;
+    private InputAction _aim;
+    private InputAction _sprint;
+    private InputAction _reload;
+    private InputAction _interact;
+    private InputAction _primaryWeapon;
+    private InputAction _secondaryWeapon;
+    private InputAction _primaryGadget;
+    private InputAction _secondaryGadget;
+    
+    #endregion
 
     public bool barricadeDetected;
     public bool barricadeInRange;
-
-    private void Awake()
-    {
-        TryGetComponent(out _rigidbody);
-        if (!InstanceHandler.TryGetInstance(out GameController _gameController))
-        {
-            Debug.LogError($"GameStartState failed to get gameController!", this);
-            return;
-        }
-        gameController = _gameController;
-        progressBar = gameController.progressBar;
-        lastState = weaponStates[0];
-    }
+    public bool destructibleWallDetected;
+    public bool destructibleWallInRange;
 
     protected override void OnSpawned()
     {
@@ -58,6 +62,18 @@ public class playerController : NetworkIdentity
         if (!isOwner) 
             return;
         
+        SetKeybindReferences();
+        
+        TryGetComponent(out _rigidbody);
+        if (!InstanceHandler.TryGetInstance(out GameController _gameController))
+        {
+            Debug.LogError($"GameStartState failed to get gameController!", this);
+            return;
+        }
+        gameController = _gameController;
+        progressBar = gameController.progressBar;
+        lastState = weaponStates[0];
+        
         var visionObj = Instantiate(playerVision, transform, false);
         if (GetPlayerSide() == GameController.Side.Defense)
         {
@@ -67,7 +83,10 @@ public class playerController : NetworkIdentity
 
     private void FixedUpdate()
     {
-        if (!gameController.canMove)
+        if (!_rigidbody)
+            return;
+        
+        if (gameController && !gameController.canMove)
         {
             _rigidbody.linearVelocity = new Vector2(0, 0);
             return;
@@ -75,7 +94,7 @@ public class playerController : NetworkIdentity
 
         if (!playerSettings.toggleSprint)
         {
-            if (Input.GetKey(KeyCode.LeftShift) && !isGadgetEquipped)
+            if (_sprint != null && _sprint.IsPressed() && !isGadgetEquipped)
             {
                 moveSpeed = playerSettings.sprintSpeed;
                 isSprinting = true;
@@ -90,7 +109,7 @@ public class playerController : NetworkIdentity
         {
             if (!isGadgetEquipped)
             {
-                if (Input.GetKeyDown(KeyCode.LeftShift))
+                if (_sprint != null && _sprint.WasPressedThisFrame() && !isGadgetEquipped)
                 {
                     // Swaps between sprint and walk. If sprinting, set speed to sprint, opposite if walking
                     isSprinting = !isSprinting;
@@ -120,12 +139,13 @@ public class playerController : NetworkIdentity
 
     private void Update()
     {
-        if (!gameController.canMove)
+        if (gameController && !gameController.canMove)
             return;
         
         if (isDefender)
         {
             BarricadeInteraction();
+            DestructibleWallInteraction();
         }
         
         HandleWeaponSwitching();
@@ -135,12 +155,12 @@ public class playerController : NetworkIdentity
     {
         if (isGadgetEquipped || isSprinting) return;
         
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (_primaryWeapon != null && _primaryWeapon.WasPressedThisFrame())
         {
             stateMachine.SetState(weaponStates[0]);
             lastState = weaponStates[0];
         }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (_secondaryWeapon != null && _secondaryWeapon.WasPressedThisFrame())
         {
             stateMachine.SetState(weaponStates[1]);
             lastState = weaponStates[1];
@@ -174,12 +194,12 @@ public class playerController : NetworkIdentity
         if (sqrDistance <= playerSettings.interactRange * playerSettings.interactRange)
         {
             barricadeInRange = true;
-            if (Input.GetKey(playerSettings.interactKey) && !isGadgetEquipped)
+            if (_interact != null && _interact.IsPressed() && !isGadgetEquipped)
             {
                 progressBar.BeginInteraction(new InteractionRequest
                 {
                     duration = playerSettings.placementTime,
-                    key = playerSettings.interactKey,
+                    key = _interact,
                     canStart = () => true,
                     onComplete = obj.GetComponent<Barricade>().ToggleBarricade
                 });
@@ -188,6 +208,38 @@ public class playerController : NetworkIdentity
         else
         {
             barricadeDetected = false;
+        }
+    }
+
+    private void DestructibleWallInteraction()
+    {
+        var obj = GetObjectUnderCursor();
+
+        if (!obj || !obj.GetComponent<DestructibleWall>() || obj.GetComponent<DestructibleWall>().IsReinforced)
+        {
+            destructibleWallDetected = false;
+            return;
+        }
+        
+        destructibleWallDetected = true;
+        var sqrDistance = (obj.transform.position - transform.position).sqrMagnitude;
+        if (sqrDistance <= playerSettings.interactRange * playerSettings.interactRange)
+        {
+            destructibleWallInRange = true;
+            if (_interact != null && _interact.IsPressed() && !isGadgetEquipped)
+            {
+                progressBar.BeginInteraction(new InteractionRequest
+                {
+                    duration = playerSettings.placementTime,
+                    key = _interact,
+                    canStart = () => true,
+                    onComplete = obj.GetComponent<DestructibleWall>().ReinforceWall
+                });
+            }
+        }
+        else
+        {
+            destructibleWallDetected = false;
         }
     }
 
@@ -200,7 +252,7 @@ public class playerController : NetworkIdentity
         {
             return null;
         }
-        if (hit.collider.gameObject.GetComponent<Barricade>())
+        if (hit.collider.gameObject.GetComponent<Barricade>() || hit.collider.gameObject.GetComponent<DestructibleWall>())
         {
             return hit.collider.gameObject;
         }
@@ -220,5 +272,21 @@ public class playerController : NetworkIdentity
     {
         Debug.Log($"Side: {gameController.GetPlayerSide(owner.Value)}");
         return gameController.GetPlayerSide(owner.Value);
+    }
+
+    private void SetKeybindReferences()
+    {
+        var keybinds = playerSettings.playerInput;
+
+        _aim = InputManager.PlayerKeybinds.Get("Player/Aim");
+        _shoot = InputManager.PlayerKeybinds.Get("Player/Shoot");
+        _sprint = InputManager.PlayerKeybinds.Get("Player/Sprint");
+        _reload = InputManager.PlayerKeybinds.Get("Player/Reload");
+        _interact = InputManager.PlayerKeybinds.Get("Player/Interact");
+        _primaryWeapon = InputManager.PlayerKeybinds.Get("Player/Primary Weapon");
+        _secondaryWeapon = InputManager.PlayerKeybinds.Get("Player/Secondary Weapon");
+        _primaryGadget = InputManager.PlayerKeybinds.Get("Player/Primary Gadget");
+        _secondaryGadget = InputManager.PlayerKeybinds.Get("Player/Secondary Gadget");
+
     }
 }

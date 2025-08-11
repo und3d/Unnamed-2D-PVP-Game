@@ -1,16 +1,17 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public abstract class HoldToInteract : MonoBehaviour
 {
     [SerializeField] protected ProgressBarController progressBar;
-    [SerializeField] protected KeyCode interactionKey;
+    [SerializeField] protected InputAction interactionKey;
     [SerializeField] protected float duration = 2f;
 
     protected bool isInteracting;
 
     protected virtual void Update()
     {
-        if (Input.GetKeyDown(interactionKey) && CanInteract())
+        if (interactionKey.WasPressedThisFrame() && CanInteract())
         {
             progressBar.BeginInteraction(new InteractionRequest
             {

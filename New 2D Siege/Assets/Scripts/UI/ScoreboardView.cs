@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using PurrNet;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class ScoreboardView : View
 {
@@ -9,10 +10,13 @@ public class ScoreboardView : View
     [SerializeField] private ScoreboardEntry scoreboardEntryPrefab;
     
     private GameViewManager _gameViewManager;
+    private InputAction _scoreboard;
     
     private void Awake()
     {
         InstanceHandler.RegisterInstance(this);
+        
+        _scoreboard = InputManager.PlayerKeybinds.Get("Player/Scoreboard");
     }
 
     private void Start()
@@ -41,11 +45,11 @@ public class ScoreboardView : View
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (_scoreboard.WasPressedThisFrame())
         {
             _gameViewManager.ShowView<ScoreboardView>(false);
         }
-        if (Input.GetKeyUp(KeyCode.Tab))
+        if (_scoreboard.WasReleasedThisFrame())
             _gameViewManager.HideView<ScoreboardView>();
     }
 

@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5592aa6217202a842992b59dfbffabee, type: 3}
   m_Name: DefaultPlayerSettings
   m_EditorClassIdentifier: 
+  playerInput: {fileID: -944628639613478452, guid: 1ec23dafbbaea434e895d16cfbbeecb2, type: 3}
   toggleSprint: 0
   walkSpeed: 3
   sprintSpeed: 5
   interactRange: 2
   placementTime: 3
-  interactKey: 102
   interactLayers:
     serializedVersion: 2
     m_Bits: 16384

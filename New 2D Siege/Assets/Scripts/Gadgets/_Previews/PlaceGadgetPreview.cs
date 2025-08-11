@@ -1,11 +1,11 @@
 using System;
 using PurrNet;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlaceGadgetPreview : MonoBehaviour
 {
     [Header("Placeable Settings")]
-    [SerializeField] private KeyCode placeKey = KeyCode.F;
     [SerializeField] private float placementTime = 2f;
     [SerializeField] private float maxPlacementDistance = 3f;
     [SerializeField] private Color validColor = Color.green;
@@ -26,6 +26,7 @@ public class PlaceGadgetPreview : MonoBehaviour
     private SpriteRenderer sr;
     private bool isPlacing = false;
     private bool canPlace = false;
+    private InputAction interactKey;
     
     public void Initialize(GadgetController manager, Transform player, PlayerID id)
     {
@@ -41,6 +42,8 @@ public class PlaceGadgetPreview : MonoBehaviour
         {
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
+
+        interactKey = InputManager.PlayerKeybinds.Get("Player/Interact");
         
         progressBar = gameController.progressBar;
     }
@@ -65,18 +68,18 @@ public class PlaceGadgetPreview : MonoBehaviour
 
         sr.color = canPlace ? validColor : invalidColor;
 
-        if (Input.GetKey(placeKey) && canPlace)
+        if (interactKey.IsPressed() && canPlace)
         {
             isPlacing = true;
             progressBar.BeginInteraction(new InteractionRequest
             {
                 duration = placementTime,
-                key = placeKey,
+                key = interactKey,
                 canStart = () => IsValidPlacement(transform.position),
                 onComplete = PlaceGadget
             });
         }
-        else if (!Input.GetKey(placeKey))
+        else if (!interactKey.IsPressed())
             isPlacing = false;
     }
 

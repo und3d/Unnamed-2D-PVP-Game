@@ -34,7 +34,7 @@ public class ProgressBarController : MonoBehaviour
 
         while (timer < currentRequest.duration)
         {
-            if (!Input.GetKey(currentRequest.key))
+            if (!currentRequest.key.IsPressed())
             {
                 Cancel(gameController);
                 yield break;

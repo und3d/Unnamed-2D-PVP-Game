@@ -26,11 +26,11 @@ public class GameController : NetworkBehaviour
         Attack, Defense
     }
     
-    public SyncDictionary<Team, int> roundScores = new();
-    public SyncDictionary<Side, Team> teamSides = new();
+    public Dictionary<Team, int> roundScores = new();
+    public Dictionary<Side, Team> teamSides = new();
     public SyncDictionary<PlayerID, int> redTeamSelections = new();
     public SyncDictionary<PlayerID, int> blueTeamSelections = new();
-    public SyncDictionary<Team, List<PlayerID>> GlobalTeams = new();
+    public Dictionary<Team, List<PlayerID>> GlobalTeams = new();
     public SyncVar<bool> isPlanting = new(false);
     public SyncVar<bool> isPlanted = new(false);
 
@@ -39,19 +39,19 @@ public class GameController : NetworkBehaviour
         InstanceHandler.RegisterInstance(this); //A safer singleton; needs a OnDestroy
         scores.onChanged += OnScoresChanged;
         
-        GlobalTeams = new SyncDictionary<Team, List<PlayerID>>()
+        GlobalTeams = new Dictionary<Team, List<PlayerID>>()
         {
             { Team.Red, new List<PlayerID>() },
             { Team.Blue, new List<PlayerID>() }
         };
 
-        roundScores = new SyncDictionary<Team, int>()
+        roundScores = new Dictionary<Team, int>()
         {
             { Team.Red, 0 },
             { Team.Blue, 0 }
         };
 
-        teamSides = new SyncDictionary<Side, Team>()
+        teamSides = new Dictionary<Side, Team>()
         {
             { Side.Attack, Team.Red },
             { Side.Defense, Team.Blue }
@@ -78,6 +78,8 @@ public class GameController : NetworkBehaviour
         var roundScoreData = roundScores[team];
         roundScoreData++;
         roundScores[team] = roundScoreData;
+
+        UpdateTeamRoundCount(team, roundScoreData);
     }
     
     public void AddKill(PlayerID playerID)
@@ -144,7 +146,8 @@ public class GameController : NetworkBehaviour
         }
     }
     
-    public Side GetPlayerSide(PlayerID playerId)
+    [ServerRpc]
+    public void GetPlayerSide(PlayerID playerId, playerController playerController)
     {
         // First, find the player's team
         foreach (var (team, players) in GlobalTeams)
@@ -156,13 +159,48 @@ public class GameController : NetworkBehaviour
                 {
                     if (sidePair.Value.Equals(team))
                     {
-                        return sidePair.Key;
+                        ReturnSide(playerId, sidePair.Key, playerController);
+                        return;
                     }
                 }
             }
         }
 
         throw new Exception($"PlayerID {playerId} not found in any team.");
+    }
+    
+    [TargetRpc]
+    private void ReturnSide(PlayerID playerId, Side side, playerController playerController)
+    {
+        playerController.SetPlayerSide(side);
+    }
+    
+    [ServerRpc]
+    public void GetTeam(PlayerID playerId, PlayerHealth playerHealth)
+    {
+        foreach (var (team, players) in GlobalTeams)
+        {
+            if (players.Contains(playerId))
+            {
+                Debug.Log($"PlayerID {playerId} matches {playerId} in team {team}");
+                
+                ReturnTeam(playerId, team, playerHealth);
+                return;
+            }
+        }
+        
+        throw new Exception($"PlayerID {playerId} not found in any team.");
+    }
+    
+    
+    private void ReturnTeam(PlayerID playerId, Team team, PlayerHealth playerHealth)
+    {
+        playerHealth.isRedTeam.value = team switch
+        {
+            Team.Red => true,
+            Team.Blue => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(team), team, null)
+        };
     }
 
     [TargetRpc]
@@ -180,6 +218,28 @@ public class GameController : NetworkBehaviour
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(side), side, null);
+        }
+    }
+
+    [ObserversRpc]
+    private void UpdateTeamRoundCount(Team team, int roundCount)
+    {
+        if (!InstanceHandler.TryGetInstance(out RoundView roundView))
+        {
+            Debug.LogError("GameController failed to get roundView");
+        }
+        
+        switch (team)
+        {
+            case Team.Red:
+                roundView.UpdateRedTeamRoundCount(roundCount);
+                break;
+            case Team.Blue:
+                roundView.UpdateBlueTeamRoundCount(roundCount);
+                break;
+            default:
+                Debug.LogError($"GameController failed to set round count for {team}");
+                break;
         }
     }
 }

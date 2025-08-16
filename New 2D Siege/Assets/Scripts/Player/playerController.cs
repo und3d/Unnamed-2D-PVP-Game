@@ -33,6 +33,7 @@ public class playerController : NetworkIdentity
     private bool lastWeaponHiddenState;
     private bool isPlacing;
     private bool isDefender;
+    private GameController.Side side;
     #endregion
     
     #region Keybinds
@@ -74,11 +75,11 @@ public class playerController : NetworkIdentity
         progressBar = gameController.progressBar;
         lastState = weaponStates[0];
         
+        GetPlayerSide();
+        
         var visionObj = Instantiate(playerVision, transform, false);
-        if (GetPlayerSide() == GameController.Side.Defense)
-        {
-            isDefender = true;
-        }
+        
+        //Debug.Log($"Checking if {owner.Value}'s side is Defense");
     }
 
     private void FixedUpdate()
@@ -267,11 +268,22 @@ public class playerController : NetworkIdentity
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         _rigidbody.rotation = angle - 90f;
     }
-
-    private GameController.Side GetPlayerSide()
+    
+    private void GetPlayerSide()
     {
-        Debug.Log($"Side: {gameController.GetPlayerSide(owner.Value)}");
-        return gameController.GetPlayerSide(owner.Value);
+        //Debug.Log($"Get Player {owner.Value}'s Side.");
+        gameController.GetPlayerSide(owner.Value, this);
+    }
+
+    public void SetPlayerSide(GameController.Side _side)
+    {
+        //Debug.Log($"Player {owner.Value}'s Side is {_side}.");
+        side = _side;
+        
+        if (side == GameController.Side.Defense)
+        {
+            isDefender = true;
+        }
     }
 
     private void SetKeybindReferences()

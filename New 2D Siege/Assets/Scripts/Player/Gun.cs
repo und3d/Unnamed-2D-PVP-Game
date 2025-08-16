@@ -4,14 +4,22 @@ using System.Collections.Generic;
 using PurrNet;
 using PurrNet.StateMachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Gun : StateNode
 {
-    [Header("Stats")]
+    [Header("Stats")] 
+    [SerializeField] private string gunName = "placeHolderGunName";
     [SerializeField] private float range = 20f;
     [SerializeField] private int damage = 10;
     [SerializeField] private float fireRate = 0.5f;
     [SerializeField] private bool automatic;
+    [SerializeField] private int magSize = 30;
+    [SerializeField] private int maxReserveAmmo = 150;
+    private int currentReserveAmmo;
+    private int currentAmmo;
+    private int magAmmoBeforeReload;
+    [SerializeField] private float reloadTime = 2.5f;
 
     [Header("Recoil")] 
     [SerializeField] private float recoilStrength = 1f;
@@ -30,6 +38,9 @@ public class Gun : StateNode
     private float _lastFireTime;
     private Vector2 _originalPosition;
     private Coroutine _recoilCoroutine;
+    private InputAction _reloadKey;
+    private bool isReloading;
+    private Coroutine _reloadCoroutine;
 
     protected override void OnSpawned()
     {
@@ -38,24 +49,44 @@ public class Gun : StateNode
         enabled = isOwner;
         
         _originalPosition = transform.localPosition;
-        
     }
 
     private void Awake()
     {
         ToggleVisuals(false);
+        
+        _reloadKey = InputManager.PlayerKeybinds.Get("Player/Reload");
+        
+        currentReserveAmmo = maxReserveAmmo;
+        currentAmmo = magSize + 1;
+        
+        UpdateAmmoCounter(currentAmmo, currentReserveAmmo);
+        UpdateWeaponText();
     }
 
     public override void Enter(bool asServer)
     {
         base.Enter(asServer);
         ToggleVisuals(true);
+        
+        UpdateAmmoCounter(currentAmmo, currentReserveAmmo);
+        
+        if (isOwner)
+        {
+            UpdateWeaponText();
+        }
     }
 
     public override void Exit(bool asServer)
     {
         base.Exit(asServer);
         ToggleVisuals(false);
+        
+        if (_reloadCoroutine == null)
+            return;
+        
+        isReloading = false;
+        StopCoroutine(_reloadCoroutine);
     }
 
     private void ToggleVisuals(bool toggle)
@@ -73,13 +104,37 @@ public class Gun : StateNode
 
         if (!isOwner)
             return;
+
+        if (_reloadKey.IsPressed() && currentReserveAmmo > 0 && !isReloading && currentAmmo < magSize + 1)
+        {
+            magAmmoBeforeReload = currentAmmo;
+            if (currentAmmo > 1)
+            {
+                currentReserveAmmo += magAmmoBeforeReload - 1;
+                currentAmmo = 1;
+                
+                UpdateAmmoCounter(currentAmmo, currentReserveAmmo);
+                _reloadCoroutine = StartCoroutine(StartReload());
+            }
+            else if (currentAmmo <= 1)
+            {
+                _reloadCoroutine = StartCoroutine(StartReload());
+            }
+            isReloading = true;
+        }
         
+        if (currentAmmo == 0 || isReloading)
+            return;
+        
+        // SWAP TO NEW INPUT SYSTEM
         if (automatic && !Input.GetKey(KeyCode.Mouse0) || !automatic && !Input.GetKeyDown(KeyCode.Mouse0))
             return;
 
         if (_lastFireTime + fireRate > Time.unscaledTime)
             return;
-        
+
+        currentAmmo -= 1;
+        UpdateAmmoCounter(currentAmmo, currentReserveAmmo);
         PlayShotEffect();
         _lastFireTime = Time.unscaledTime;
 
@@ -114,6 +169,26 @@ public class Gun : StateNode
             
         }
         HandleHit(ray, networkManager.tickModule.rollbackTick);
+    }
+
+    private void UpdateAmmoCounter(int _currentAmmo, int _currentReserveAmmo)
+    {
+        if (!InstanceHandler.TryGetInstance(out RoundView roundView))
+        {
+            Debug.LogError($"Gun failed to get roundView!", this);
+        }
+        
+        roundView.UpdateAmmoCounter(_currentAmmo, _currentReserveAmmo);
+    }
+
+    private void UpdateWeaponText()
+    {
+        if (!InstanceHandler.TryGetInstance(out RoundView roundView))
+        {
+            Debug.LogError($"Gun failed to get roundView!", this);
+        }
+
+        roundView.UpdateWeaponText(gunName);
     }
 
     private void GadgetHit(GadgetBase gadget)
@@ -173,21 +248,52 @@ public class Gun : StateNode
 
     private IEnumerator PlayRecoil()
     {
-        float elapsed = 0f;
+        var elapsed = 0f;
 
         while (elapsed < recoilDuration)
         {
             elapsed += Time.deltaTime;
-            float curveTime = elapsed / recoilDuration;
+            var curveTime = elapsed / recoilDuration;
             
-            float recoilValue = recoilCurve.Evaluate(curveTime);
-            Vector2 recoilOffset = Vector2.down * (recoilValue * recoilStrength);
+            var recoilValue = recoilCurve.Evaluate(curveTime);
+            var recoilOffset = Vector2.down * (recoilValue * recoilStrength);
             transform.localPosition = _originalPosition + recoilOffset;
             
             yield return null;
         }
         
         transform.localPosition = _originalPosition;
+    }
+
+    private IEnumerator StartReload()
+    {
+        var elapsed = 0f;
+
+        while (elapsed < reloadTime)
+        {
+            elapsed += Time.deltaTime;
+            
+            yield return null;
+        }
+
+        if (currentReserveAmmo >= magSize && isReloading)
+        {
+            Debug.Log($"Reserve is greater than {magSize}. Reloading...");
+            
+            currentReserveAmmo -= magSize;
+            currentAmmo += magSize;
+        }
+        else
+        {
+            if (!isReloading)
+                yield break;
+            Debug.Log($"Reserve is less than {magSize}. Reloading...");
+            currentAmmo += currentReserveAmmo;
+            currentReserveAmmo = 0;
+        }
+        
+        UpdateAmmoCounter(currentAmmo, currentReserveAmmo);
+        isReloading = false;
     }
 
     [ObserversRpc(runLocally:true)]

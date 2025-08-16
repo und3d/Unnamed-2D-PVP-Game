@@ -25,18 +25,26 @@ public class PlayerSpawningState : StateNode
     [SerializeField] private List<Transform> spawnPointsDefense = new();
 
     private GameController gameController;
+    private RoundView roundView;
     private Transform spawnPoint;
 
     public override void Enter(bool asServer)
     {
         base.Enter(asServer);
+
+        if (!InstanceHandler.TryGetInstance(out roundView))
+        {
+            Debug.LogError($"PlayerSpawningState failed to get roundView!", this);
+        }
+        
+        roundView.ResetAllPlayerIcons();
         
         if (!asServer)
             return;
         
         if (!InstanceHandler.TryGetInstance(out gameController))
         {
-            Debug.LogError($"GameStartState failed to get gameController!", this);
+            Debug.LogError($"PlayerSpawningState failed to get gameController!", this);
         }
         
         var spawnedPlayers = SpawnPlayersWithTeam();
@@ -44,8 +52,6 @@ public class PlayerSpawningState : StateNode
         //Debug.Log($"Sending {spawnedPlayers}");
         machine.Next(spawnedPlayers);
     }
-
-    
 
     private Dictionary<GameController.Team, List<PlayerHealth>> SpawnPlayersWithTeam()
     {
@@ -55,12 +61,8 @@ public class PlayerSpawningState : StateNode
             { GameController.Team.Blue, new List<PlayerHealth>() }
         };
         
-        
-        
-        Debug.Log("Red Players: " + string.Join(", ", gameController.redTeamSelections.Keys));
-
-        
-        Debug.Log("Blue Players: " + string.Join(", ", gameController.blueTeamSelections.Keys));
+        //Debug.Log("Red Players: " + string.Join(", ", gameController.redTeamSelections.Keys));
+        //Debug.Log("Blue Players: " + string.Join(", ", gameController.blueTeamSelections.Keys));
         
         var redSide = GetSideForTeam(GameController.Team.Red);
         
@@ -86,12 +88,14 @@ public class PlayerSpawningState : StateNode
             
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             newPlayer.GetComponent<PlayerHealth>().SetColor(Color.red);
+            newPlayer.GetComponent<PlayerHealth>().SetPlayerIconID(currentSpawnIndex);
+            SetPlayerIconAlive(currentSpawnIndex, GameController.Team.Red);
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Red].Add(newPlayer);
             currentSpawnIndex++;
         }
         
-        Debug.Log($"Spawned {currentSpawnIndex} Red team players");
+        //Debug.Log($"Spawned {currentSpawnIndex} Red team players");
         
         var blueSide = GetSideForTeam(GameController.Team.Blue);
         
@@ -117,12 +121,15 @@ public class PlayerSpawningState : StateNode
             
             var newPlayer = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             newPlayer.GetComponent<PlayerHealth>().SetColor(Color.blue);
+            newPlayer.GetComponent<PlayerHealth>().SetPlayerIconID(currentSpawnIndex);
+            SetPlayerIconAlive(currentSpawnIndex, GameController.Team.Blue);
             newPlayer.GiveOwnership(player);
             spawnedPlayers[GameController.Team.Blue].Add(newPlayer);
             currentSpawnIndex++;
         }
         
-        Debug.Log($"Spawned {currentSpawnIndex} Blue team players");
+        //Debug.Log($"Spawned {currentSpawnIndex} Blue team players");
+        //Debug.Log($"Spawned {currentSpawnIndex} Blue team players");
         
         return spawnedPlayers;
     }
@@ -139,6 +146,16 @@ public class PlayerSpawningState : StateNode
 
         throw new System.Exception($"Team {team} not found in teamSides!");
     }
+
+    [ObserversRpc]
+    private void SetPlayerIconAlive(int playerIconID, GameController.Team team)
+    {
+        if (team == GameController.Team.Red)
+            roundView.SetRedPlayerIconAlive(playerIconID);
+        else
+            roundView.SetBluePlayerIconAlive(playerIconID);
+    }
+    
     public override void Exit(bool asServer)
     {
         base.Exit(asServer);

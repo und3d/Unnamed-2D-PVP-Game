@@ -174,6 +174,8 @@ MonoBehaviour:
   playerVision: {fileID: 822313523801803427, guid: cbd0a3a89107bce4abe4cad91fdf3a17, type: 3}
   barricadeDetected: 0
   barricadeInRange: 0
+  destructibleWallDetected: 0
+  destructibleWallInRange: 0
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,7 +288,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2088725361
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -2135585597343286014, guid: 5aa8b770bc43046bc8d993d0d5b7f4a5, type: 3}
   m_Color: {r: 0.7830189, g: 0.32368883, b: 0.24007656, a: 1}
@@ -560,10 +562,14 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
+  gunName: Pistol
   range: 50
   damage: 25
   fireRate: 0.25
   automatic: 0
+  magSize: 30
+  maxReserveAmmo: 150
+  reloadTime: 2.5
   recoilStrength: 0.3
   recoilDuration: 0.15
   recoilCurve:
@@ -679,7 +685,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2088725361
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1018,7 +1024,7 @@ MeshRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -280665433
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &9016894858707106519
@@ -1234,7 +1240,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2088725361
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   m_Color: {r: 0.5568628, g: 0.14117648, b: 0.6666667, a: 1}
@@ -1302,10 +1308,14 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
+  gunName: AssaultRifle
   range: 50
   damage: 20
   fireRate: 0.15
   automatic: 1
+  magSize: 30
+  maxReserveAmmo: 150
+  reloadTime: 2.5
   recoilStrength: 0.15
   recoilDuration: 0.1
   recoilCurve:
@@ -1421,7 +1431,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2088725361
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}

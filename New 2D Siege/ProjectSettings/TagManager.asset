@@ -44,14 +44,17 @@ TagManager:
   - name: Background
     uniqueID: 2640980677
     locked: 0
-  - name: Map Objects
-    uniqueID: 411185361
-    locked: 0
   - name: Attackers
     uniqueID: 2868286749
     locked: 0
   - name: Defenders
     uniqueID: 2206241935
+    locked: 0
+  - name: Hidden Map Objects
+    uniqueID: 3358366469
+    locked: 0
+  - name: Map Objects
+    uniqueID: 411185361
     locked: 0
   - name: UI
     uniqueID: 4014301863

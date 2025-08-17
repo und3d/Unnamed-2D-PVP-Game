@@ -8,18 +8,25 @@ using UnityEngine.UI;
 
 public class RoundView : View
 {
+    [Header("References")]
     [SerializeField] private TMP_Text healthText;
     [SerializeField] private TMP_Text roundTimerText;
     [SerializeField] private TMP_Text blueTeamRoundCount;
     [SerializeField] private TMP_Text redTeamRoundCount;
     [SerializeField] private TMP_Text ammoCounter;
     [SerializeField] private TMP_Text weaponNameText;
+    [SerializeField] private TMP_Text gadgetPrimaryText;
+    [SerializeField] private TMP_Text gadgetSecondaryText;
+    [SerializeField] private TMP_Text gadgetPrimaryCount;
+    [SerializeField] private TMP_Text gadgetSecondaryCount;
+    [SerializeField] private List<Image> RedTeamPlayerIcons = new List<Image>();
+    [SerializeField] private List<Image> BlueTeamPlayerIcons = new List<Image>();
+    
+    [Header("Variables")]
     [SerializeField] private Color redTeamIconDead;
     [SerializeField] private Color redTeamIconAlive;
-    [SerializeField] private List<Image> RedTeamPlayerIcons = new List<Image>();
     [SerializeField] private Color blueTeamIconDead;
     [SerializeField] private Color blueTeamIconAlive;
-    [SerializeField] private List<Image> BlueTeamPlayerIcons = new List<Image>();
 
     private int minutes, seconds, centiSeconds;
 
@@ -86,6 +93,26 @@ public class RoundView : View
     public void UpdateWeaponText(string gunName)
     {
         weaponNameText.text = gunName;
+    }
+
+    public void UpdateGadgetPrimaryText(string gadgetName)
+    {
+        gadgetPrimaryText.text = gadgetName + ":";
+    }
+
+    public void UpdateGadgetSecondaryText(string gadgetName)
+    {
+        gadgetSecondaryText.text = gadgetName + ":";
+    }
+
+    public void UpdateGadgetPrimaryCount(int gadgetCount)
+    {
+        gadgetPrimaryCount.text = gadgetCount.ToString();
+    }
+
+    public void UpdateGadgetSecondaryCount(int gadgetCount)
+    {
+        gadgetSecondaryCount.text = gadgetCount.ToString();
     }
     
     public void SetRedPlayerIconOnDeath(int iconID)

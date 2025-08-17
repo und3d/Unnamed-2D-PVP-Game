@@ -48,6 +48,8 @@ public class GadgetController : NetworkBehaviour
     [SerializeField] private GameObject gadgetPrefab;
 
     private bool isGadgetPulledOut = false;
+    private RoundView roundView;
+    private string gadgetName;
     
     private void Awake()
     {
@@ -62,6 +64,29 @@ public class GadgetController : NetworkBehaviour
         base.OnSpawned();
 
         enabled = isOwner;
+        
+        if (!InstanceHandler.TryGetInstance(out roundView))
+        {
+            Debug.LogError($"GadgetController failed to get RoundView!", this);
+        }
+
+        if (!isOwner)
+            return;
+
+        gadgetName = primaryGadget switch
+        {
+            GadgetType.Placeable => gadgetPlaceablePreview.GetComponent<PlaceGadgetPreview>().GetGadgetName(),
+            GadgetType.Throwable => gadgetPrefab.GetComponent<ThrowableGadget>().GetGadgetName(),
+            GadgetType.Drone => gadgetPrefab.GetComponent<DroneGadget>().GetGadgetName(),
+            GadgetType.Tool => gadgetPrefab.GetComponent<ToolGadget>().GetGadgetName(),
+            GadgetType.Toggle => "ToggleGadget",
+            _ => "None"
+        };
+        
+        roundView.UpdateGadgetPrimaryText(gadgetName);
+        roundView.UpdateGadgetPrimaryCount(primaryGadgetCount);
+        roundView.UpdateGadgetSecondaryCount(secondaryGadgetCount);
+        roundView.UpdateGadgetSecondaryText("None");
     }
 
     private void Update()
@@ -161,12 +186,14 @@ public class GadgetController : NetworkBehaviour
     {
         equippedGadget = null; // allow future placements
         primaryGadgetCount--;
+        roundView.UpdateGadgetPrimaryCount(primaryGadgetCount);
     }
 
     public void OnGadgetPickup()
     {
         Debug.Log("Pickup Gadget");
         primaryGadgetCount++;
+        roundView.UpdateGadgetPrimaryCount(primaryGadgetCount);
     }
 
     private void Throw()

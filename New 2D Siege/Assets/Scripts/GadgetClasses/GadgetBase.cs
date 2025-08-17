@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class GadgetBase : NetworkIdentity
 {
     [Header("Settings")]
+    [SerializeField] protected string gadgetName;
     [SerializeField] protected float pickupHoldTime = 2f;
     [SerializeField] protected float playerPickupDistance = 2f;
     [SerializeField] protected float cursorPickupDistance = 2f;
@@ -145,6 +146,11 @@ public class GadgetBase : NetworkIdentity
     protected bool CanStartPickup()
     {
         return PlayerIsInRange() && IsCursorNearGadget() && playerObject;
+    }
+
+    public string GetGadgetName()
+    {
+        return gadgetName;
     }
 
     protected override void OnDestroy()

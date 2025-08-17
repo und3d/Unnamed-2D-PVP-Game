@@ -53,10 +53,11 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
+  gadgetName: VisionGadgetName
   pickupHoldTime: 2
-  pickUpKey: 102
   playerPickupDistance: 1
   cursorPickupDistance: 1
+  canBePickedUp: 0
   hasActivator: 1
   useGadgetKey: 102
   gadgetPosition: {x: 0, y: 0.602, z: 0}

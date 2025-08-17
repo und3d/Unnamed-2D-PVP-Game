@@ -57,8 +57,8 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
+  gadgetName: ToxGadgetName
   pickupHoldTime: 2
-  pickUpKey: 102
   playerPickupDistance: 2
   cursorPickupDistance: 2
   canBePickedUp: 0
@@ -104,7 +104,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2088725361
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   m_Color: {r: 0.5568628, g: 0.14117648, b: 0.6666667, a: 1}

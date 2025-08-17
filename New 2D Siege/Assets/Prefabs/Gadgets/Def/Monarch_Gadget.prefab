@@ -55,8 +55,8 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
+  gadgetName: MonarchGadgetName
   pickupHoldTime: 2
-  pickUpKey: 102
   playerPickupDistance: 2
   cursorPickupDistance: 2
   canBePickedUp: 0
@@ -102,7 +102,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -2088725361
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0.49411765, g: 0.34117648, b: 0.7607843, a: 1}

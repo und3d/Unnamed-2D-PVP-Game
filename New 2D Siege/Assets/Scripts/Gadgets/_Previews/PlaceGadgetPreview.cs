@@ -113,4 +113,10 @@ public class PlaceGadgetPreview : MonoBehaviour
             AudioSource.PlayClipAtPoint(placeSound, transform.position);
         }
     }
+
+    public string GetGadgetName()
+    {
+        var gadgetName = gadgetPrefab.GetComponent<PlaceableGadget>().GetGadgetName();
+        return gadgetName;
+    }
 }

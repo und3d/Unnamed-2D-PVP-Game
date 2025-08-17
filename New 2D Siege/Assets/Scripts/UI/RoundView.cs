@@ -110,6 +110,24 @@ public class RoundView : View
         gadgetPrimaryCount.text = gadgetCount.ToString();
     }
 
+    public void UpdateGadgetPrimaryCountToggleTimer(float duration)
+    {
+        Debug.Log("Setting text to timer");
+        seconds = Mathf.FloorToInt(duration % 60);
+        gadgetPrimaryCount.text = seconds.ToString();
+    }
+
+    public void SetGadgetPrimaryCountInfinite()
+    {
+        Debug.Log("Setting text to infinite");
+        gadgetPrimaryCount.text = "\u221E";
+    }
+
+    public void UpdateGadgetPrimaryCountToolGun(int currentAmmo, int remainingAmmo)
+    {
+        gadgetPrimaryCount.text = $"{currentAmmo,0}/{remainingAmmo,0}";
+    }
+
     public void UpdateGadgetSecondaryCount(int gadgetCount)
     {
         gadgetSecondaryCount.text = gadgetCount.ToString();

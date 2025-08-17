@@ -85,10 +85,10 @@ MonoBehaviour:
   gadgetPlaceablePreview: {fileID: 0}
   throwOrigin: {fileID: 0}
   throwForce: 10
-  gadgetTool: {fileID: 3565984352568502889, guid: 5e05c177589e05043959389fe4d91c32, type: 3}
+  gadgetTool: {fileID: 2595348711344048262}
   gadgetToggle: {fileID: 0}
   gadgetVisual: {fileID: 2595348711344048262}
-  gadgetPrefab: {fileID: 3565984352568502889, guid: 5e05c177589e05043959389fe4d91c32, type: 3}
+  gadgetPrefab: {fileID: 2595348711344048262}
 --- !u!114 &3401231433800048838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,8 +173,13 @@ MonoBehaviour:
     _value: 100
     _ownerAuth: 0
     _sendIntervalInSeconds: 0
+  isRedTeam:
+    _value: 1
+    _ownerAuth: 0
+    _sendIntervalInSeconds: 0
   selfLayer: 6
   otherLayer: 7
+  playerIconID: 0
 --- !u!114 &3228059592462097586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -575,13 +580,14 @@ GameObject:
   m_Component:
   - component: {fileID: 8485999814940692276}
   - component: {fileID: 5801704734536818346}
+  - component: {fileID: 3568290688834716312}
   m_Layer: 11
-  m_Name: Vision_Gadget_Visual
+  m_Name: Vision_Gadget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8485999814940692276
 Transform:
   m_ObjectHideFlags: 0
@@ -652,6 +658,53 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3568290688834716312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2595348711344048262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aaefe4bb4d4fd8147897f37187f54f73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  gadgetName: VisionGadgetName
+  pickupHoldTime: 2
+  playerPickupDistance: 2
+  cursorPickupDistance: 2
+  toolGadgetType: 3
+  toggleGadgetType: 0
+  canBePickedUp: 0
+  gadgetPosition: {x: 0, y: 0, z: 0}
+  toolGunGadgetCount: 3
+  range: 20
+  reloadTime: 2.5
+  recoilStrength: 1
+  recoilDuration: 0.2
+  recoilCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  shootOrigin: {fileID: 0}
+  hitLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  muzzleFlash: {fileID: 0}
+  enviroHitEffect: {fileID: 0}
+  playerHitEffect: {fileID: 0}
 --- !u!1 &3166724633728627696
 GameObject:
   m_ObjectHideFlags: 0

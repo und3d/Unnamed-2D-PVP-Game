@@ -50,6 +50,9 @@ public class GadgetController : NetworkBehaviour
     private bool isGadgetPulledOut = false;
     private RoundView roundView;
     private string gadgetName;
+    private ToggleGadget toggleGadgetScript;
+    private ToolGadget toolGadgetScript;
+    private float _lastToggleTime;
     
     private void Awake()
     {
@@ -78,10 +81,28 @@ public class GadgetController : NetworkBehaviour
             GadgetType.Placeable => gadgetPlaceablePreview.GetComponent<PlaceGadgetPreview>().GetGadgetName(),
             GadgetType.Throwable => gadgetPrefab.GetComponent<ThrowableGadget>().GetGadgetName(),
             GadgetType.Drone => gadgetPrefab.GetComponent<DroneGadget>().GetGadgetName(),
-            GadgetType.Tool => gadgetPrefab.GetComponent<ToolGadget>().GetGadgetName(),
-            GadgetType.Toggle => "ToggleGadget",
+            GadgetType.Tool => gadgetTool.GetComponent<ToolGadget>().GetGadgetName(),
+            GadgetType.Toggle => gadgetToggle.GetComponent<ToggleGadget>().GetGadgetName(),
             _ => "None"
         };
+
+        switch (primaryGadget)
+        {
+            case GadgetType.Toggle:
+                toggleGadgetScript = gadgetToggle.GetComponent<ToggleGadget>();
+                toggleGadgetScript.Initialize(this);
+                break;
+            case GadgetType.Tool:
+                toolGadgetScript = gadgetTool.GetComponent<ToolGadget>();
+                break;
+            case GadgetType.Placeable:
+            case GadgetType.Throwable:
+            case GadgetType.Drone:
+                // Do nothing for other gadget types
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
         
         roundView.UpdateGadgetPrimaryText(gadgetName);
         roundView.UpdateGadgetPrimaryCount(primaryGadgetCount);
@@ -158,21 +179,51 @@ public class GadgetController : NetworkBehaviour
             case GadgetType.Tool:
                 if (Input.GetKeyDown(gadgetKey))
                 {
-                    if (!isGadgetPulledOut)
-                    {
-                        ToggleGadgetVisual();
-                        
-                    }
-                    else
-                    {
-                        PutAwayGadget();
-                    }
+                    ToolGadgetActivationToggle();
                 }
                 break;
             case GadgetType.Toggle:
-                Debug.Log("Toggle method not implemented");
+                if (Input.GetKeyDown(gadgetKey))
+                {
+                    // If gadget is active when key is pressed, disable gadget
+                    if (toggleGadgetScript.gadgetIsEnabled)
+                    {
+                        ToggleGadgetActivationToggle();
+                    }
+                    // If gadget is disabled and conditions are met, enable gadget
+                    else if (_lastToggleTime + toggleGadgetScript.GetTimeBetweenActivations() < Time.unscaledTime && toggleGadgetScript.CanActivateToggleGadget())
+                    {
+                        ToggleGadgetActivationToggle();
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Toggle Gadget is not active and cannot activate yet!");
+                    }
+                }
                 break;
         }
+    }
+    
+    // TOGGLE GADGET ACTIVATION
+
+    public void ToggleGadgetActivationToggle()
+    {
+        if (toggleGadgetScript.gadgetIsEnabled)
+            _lastToggleTime = Time.unscaledTime;
+        
+        toggleGadgetScript.gadgetIsEnabled = !toggleGadgetScript.gadgetIsEnabled;
+        toggleGadgetScript.ToggleGadgetVisuals();
+        isGadgetPulledOut = !isGadgetPulledOut;
+        playerController.isGadgetEquipped = isGadgetPulledOut;
+    }
+    
+    // TOOL GADGET ACTIVATION
+    private void ToolGadgetActivationToggle()
+    {
+        toolGadgetScript.gadgetIsEnabled = !toolGadgetScript.gadgetIsEnabled;
+        toolGadgetScript.ToggleGadgetVisuals();
+        isGadgetPulledOut = !isGadgetPulledOut;
+        playerController.isGadgetEquipped = isGadgetPulledOut;
     }
 
     private void PutAwayGadget()
@@ -233,12 +284,21 @@ public class GadgetController : NetworkBehaviour
     {
         isGadgetPulledOut = !isGadgetPulledOut;
         playerController.isGadgetEquipped = isGadgetPulledOut;
+        
+        if (primaryGadget == GadgetType.Tool)
+            gadgetTool.GetComponent<ToolGadget>().CancelReload();
+        
         ToggleGadgetVisualRPC();
     }
 
     public bool isGadgetEquipped()
     {
         return isGadgetPulledOut;
+    }
+
+    public int GetGadgetCountPrimary()
+    {
+        return primaryGadgetCount;
     }
     
     [ObserversRpc(runLocally:false)]

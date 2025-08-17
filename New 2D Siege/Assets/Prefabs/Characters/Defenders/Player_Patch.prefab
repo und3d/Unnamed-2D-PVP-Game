@@ -118,10 +118,10 @@ MonoBehaviour:
   gadgetPlaceablePreview: {fileID: 0}
   throwOrigin: {fileID: 0}
   throwForce: 10
-  gadgetTool: {fileID: 0}
+  gadgetTool: {fileID: 3644633855077495827}
   gadgetToggle: {fileID: 0}
   gadgetVisual: {fileID: 3644633855077495827}
-  gadgetPrefab: {fileID: 3565984352568502889, guid: f1d466ad611fe0b46a8a1652463742fe, type: 3}
+  gadgetPrefab: {fileID: 3644633855077495827}
 --- !u!114 &3401231433800048838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,8 +206,13 @@ MonoBehaviour:
     _value: 100
     _ownerAuth: 0
     _sendIntervalInSeconds: 0
+  isRedTeam:
+    _value: 1
+    _ownerAuth: 0
+    _sendIntervalInSeconds: 0
   selfLayer: 6
   otherLayer: 7
+  playerIconID: 0
 --- !u!114 &3228059592462097586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -606,13 +611,14 @@ GameObject:
   m_Component:
   - component: {fileID: 2346017703470028629}
   - component: {fileID: 8946049776740602468}
+  - component: {fileID: 8642501103358073976}
   m_Layer: 10
-  m_Name: Patch_Gadget_Visual
+  m_Name: Patch_Gadget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2346017703470028629
 Transform:
   m_ObjectHideFlags: 0
@@ -622,7 +628,7 @@ Transform:
   m_GameObject: {fileID: 3644633855077495827}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.647, y: 0.231, z: 0}
+  m_LocalPosition: {x: 0.6113, y: 0.231, z: 0}
   m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -635,7 +641,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3644633855077495827}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -683,6 +689,113 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8642501103358073976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3644633855077495827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab06ed7097e36024184b27f35e7be9ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isSetup: 0
+  _prefabId: -2147483648
+  _componentIndex: -2147483648
+  _shouldBePooled: 0
+  _parent: {fileID: 0}
+  _invertedPathToNearestParent: 
+  _directChildren: []
+  _networkRules: {fileID: 0}
+  _visitiblityRules: {fileID: 0}
+  gadgetName: PatchGadgetName
+  pickupHoldTime: 2
+  playerPickupDistance: 2
+  cursorPickupDistance: 2
+  toolGadgetType: 1
+  toggleGadgetType: 0
+  canBePickedUp: 0
+  gadgetIsEnabled:
+    _value: 0
+    _ownerAuth: 0
+    _sendIntervalInSeconds: 0
+  gadgetVisual: {fileID: 8946049776740602468}
+  gadgetPosition: {x: 0, y: 0, z: 0}
+  toolGunGadgetCount: 3
+  range: 50
+  reloadTime: 2.5
+  recoilStrength: 0.3
+  recoilDuration: 0.15
+  playerTransform: {fileID: 1196152672649150724}
+  recoilCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.02477845
+      value: 0.23941666
+      inSlope: 10.273896
+      outSlope: 10.273896
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.098652855
+    - serializedVersion: 3
+      time: 0.1
+      value: 1
+      inSlope: 0.15801328
+      outSlope: 0.15801328
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.18065815
+    - serializedVersion: 3
+      time: 0.15497774
+      value: 0.95903015
+      inSlope: -1.1390747
+      outSlope: -1.1390747
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.08153461
+    - serializedVersion: 3
+      time: 0.97263575
+      value: 0.024453253
+      inSlope: -1.0640544
+      outSlope: -1.0640544
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  shootOrigin: {fileID: 6838778048533206435}
+  hitLayer:
+    serializedVersion: 2
+    m_Bits: 11223
+  muzzleFlash: {fileID: 2209106316185702619, guid: e5604ae253fea944eabc48fa064f406a, type: 3}
+  enviroHitEffect: {fileID: 1139405373673853330, guid: 19f0d4be9333ff242a0b9c7507bf4fcc, type: 3}
+  playerHitEffect: {fileID: 2627313458879499329, guid: 1021aeb84a2c5ca47a11a0587ebe4b32, type: 3}
 --- !u!1 &3933407679709339849
 GameObject:
   m_ObjectHideFlags: 0

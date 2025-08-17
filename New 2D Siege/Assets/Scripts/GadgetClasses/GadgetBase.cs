@@ -24,6 +24,21 @@ public class GadgetBase : NetworkIdentity
     protected bool hasStopped;
     protected bool isFrozen;
     protected InputAction interactKey;
+    protected Coroutine _reloadCoroutine;
+    
+    // Tool Types
+    public enum ToolGadgetType
+    {
+        None, Gun, Durability, Infinite
+    }
+    [SerializeField] protected ToolGadgetType toolGadgetType;
+    
+    // Toggle Types
+    public enum ToggleGadgetType
+    {
+        None, Timer, Infinite
+    }
+    [SerializeField] protected ToggleGadgetType toggleGadgetType;
 
     public static bool gadgetBeingPickedUp = false;
     public bool canBePickedUp;
@@ -31,8 +46,9 @@ public class GadgetBase : NetworkIdentity
     protected override void OnSpawned()
     {
         base.OnSpawned();
-        
-        
+
+        if (!isOwner)
+            return;
         
         progressBar = gameController.progressBar;
     }
@@ -41,7 +57,7 @@ public class GadgetBase : NetworkIdentity
     {
         if (!InstanceHandler.TryGetInstance(out gameController))
         {
-            Debug.LogError($"GameStartState failed to get gameController!", this);
+            Debug.LogError($"GadgetBase failed to get gameController!", this);
         }
         
         if (!TryGetComponent(out gadgetRigidbody))
@@ -54,6 +70,9 @@ public class GadgetBase : NetworkIdentity
             Debug.Log("GadgetBase: gadgetCollider is null");
         }
         
+        if (!isOwner)
+            return;
+        
         interactKey = InputManager.PlayerKeybinds.Get("Player/Interact");
     }
 
@@ -62,6 +81,11 @@ public class GadgetBase : NetworkIdentity
         playerObject = player;
         gadgetController = playerObject.GetComponent<GadgetController>();
         ownerID = playerID;
+    }
+
+    public virtual void Initialize(GadgetController _gadgetController)
+    {
+        this.gadgetController = _gadgetController;
     }
 
     protected virtual void Update()
@@ -151,6 +175,16 @@ public class GadgetBase : NetworkIdentity
     public string GetGadgetName()
     {
         return gadgetName;
+    }
+
+    public ToolGadgetType GetToolGadgetType()
+    {
+        return toolGadgetType;
+    }
+
+    public ToggleGadgetType GetToggleGadgetType()
+    {
+        return toggleGadgetType;
     }
 
     protected override void OnDestroy()

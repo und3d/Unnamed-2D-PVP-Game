@@ -29,6 +29,7 @@ public class RoundView : View
     [SerializeField] private Color blueTeamIconAlive;
 
     private int minutes, seconds, centiSeconds;
+    private GameController gameController;
 
     private void Awake()
     {
@@ -42,7 +43,10 @@ public class RoundView : View
     
     public override void OnShow()
     {
-        
+        if (!InstanceHandler.TryGetInstance(out gameController))
+        {
+            Debug.LogError($"RoundView failed to get gameController!", this);
+        }
     }
 
     public override void OnHide()
@@ -56,17 +60,23 @@ public class RoundView : View
         seconds = Mathf.FloorToInt(roundTimer % 60);
         centiSeconds = Mathf.FloorToInt((roundTimer % 1f) * 100);
 
-        if (minutes <= 0 && seconds <= 0 && centiSeconds <= 0)
+        if (gameController.isPrepPhase)
         {
-            roundTimerText.text = "00:00";
+            roundTimerText.text = $"{minutes:00}:{seconds:00}";
+            return;
         }
-        else if (minutes <= 0 && seconds < 10)
+        
+        switch (minutes)
         {
-            roundTimerText.text = string.Format("{0:00}:{1:00}", seconds, centiSeconds);
-        }
-        else
-        {
-            roundTimerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+            case <= 0 when seconds <= 0 && centiSeconds <= 0:
+                roundTimerText.text = "00:00";
+                break;
+            case <= 0 when seconds < 10:
+                roundTimerText.text = $"{seconds:00}:{centiSeconds:00}";
+                break;
+            default:
+                roundTimerText.text = $"{minutes:00}:{seconds:00}";
+                break;
         }
     }
 

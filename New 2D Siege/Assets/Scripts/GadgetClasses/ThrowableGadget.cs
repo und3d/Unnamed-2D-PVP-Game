@@ -4,9 +4,9 @@ using UnityEngine;
 
 public abstract class ThrowableGadget : GadgetBase
 {
-    protected override void Awake()
+    protected override void OnSpawned()
     {
-        base.Awake();
+        base.OnSpawned();
         
         InvokeRepeating(nameof(CheckIfStopped), checkDelay, checkDelay);
     }

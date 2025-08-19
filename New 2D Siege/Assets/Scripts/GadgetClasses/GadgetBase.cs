@@ -10,6 +10,11 @@ public class GadgetBase : NetworkIdentity
     [SerializeField] protected float pickupHoldTime = 2f;
     [SerializeField] protected float playerPickupDistance = 2f;
     [SerializeField] protected float cursorPickupDistance = 2f;
+    [SerializeField] protected float timeBeforePickup = 1f;
+    
+    [Header("References")]
+    [SerializeField] protected Rigidbody2D gadgetRigidbody;
+    [SerializeField] protected Collider2D gadgetCollider;
     
     protected ProgressBarController progressBar;
     protected bool isBeingPickedUp = false;
@@ -17,20 +22,23 @@ public class GadgetBase : NetworkIdentity
     protected GameObject playerObject;
     protected GadgetController gadgetController;
     protected GameController gameController;
-    protected Rigidbody2D gadgetRigidbody;
-    protected Collider2D gadgetCollider;
+    protected InputManager inputManager;
+    
     protected float stopThreshold = 0.1f;
     protected float checkDelay = 0.2f;
     protected bool hasStopped;
     protected bool isFrozen;
     protected InputAction interactKey;
     protected Coroutine _reloadCoroutine;
+
+    private float timeAtPlacement = 1000000000000;
     
     // Tool Types
     public enum ToolGadgetType
     {
         None, Gun, Durability, Infinite
     }
+    [Header("Tool Types")]
     [SerializeField] protected ToolGadgetType toolGadgetType;
     
     // Toggle Types
@@ -38,6 +46,7 @@ public class GadgetBase : NetworkIdentity
     {
         None, Timer, Infinite
     }
+    [Header("Toggle Types")]
     [SerializeField] protected ToggleGadgetType toggleGadgetType;
 
     public static bool gadgetBeingPickedUp = false;
@@ -50,30 +59,21 @@ public class GadgetBase : NetworkIdentity
         if (!isOwner)
             return;
         
-        progressBar = gameController.progressBar;
-    }
-
-    protected virtual void Awake()
-    {
         if (!InstanceHandler.TryGetInstance(out gameController))
         {
             Debug.LogError($"GadgetBase failed to get gameController!", this);
         }
         
-        if (!TryGetComponent(out gadgetRigidbody))
-        {
-            Debug.Log("GadgetBase: gadgetRigidbody is null");
-        }
+        progressBar = gameController.progressBar;
 
-        if (!TryGetComponent(out gadgetCollider))
+        if (!InstanceHandler.TryGetInstance(out inputManager))
         {
-            Debug.Log("GadgetBase: gadgetCollider is null");
+            Debug.LogError($"GadgetBase failed to get inputManager!", this);
         }
         
-        if (!isOwner)
-            return;
-        
-        interactKey = InputManager.PlayerKeybinds.Get("Player/Interact");
+        interactKey = inputManager.Get("Player/Interact");
+
+        timeAtPlacement = Time.unscaledTime;
     }
 
     public virtual void Initialize(GameObject player, PlayerID playerID)
@@ -90,7 +90,7 @@ public class GadgetBase : NetworkIdentity
 
     protected virtual void Update()
     {
-        if (isOwner)
+        if (isOwner && !(Time.unscaledTime < timeAtPlacement + timeBeforePickup))
             HandlePickup();
     }
 
@@ -104,7 +104,8 @@ public class GadgetBase : NetworkIdentity
         
         gadgetBeingPickedUp = true;
 
-        if (!interactKey.IsPressed()) return;
+        if (!interactKey.IsPressed()) 
+            return;
         if (!progressBar)
             return;
         progressBar.BeginInteraction( new InteractionRequest

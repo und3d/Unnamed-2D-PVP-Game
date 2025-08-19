@@ -35,6 +35,7 @@ public class Gun : StateNode
     [SerializeField] private List<Renderer> renderers = new();
     [SerializeField] private ParticleSystem enviroHitEffect, playerHitEffect;
 
+    private InputManager inputManager;
     private float _lastFireTime;
     private Vector2 _originalPosition;
     private Coroutine _recoilCoroutine;
@@ -49,13 +50,19 @@ public class Gun : StateNode
         enabled = isOwner;
         
         _originalPosition = transform.localPosition;
+
+        if (!InstanceHandler.TryGetInstance(out inputManager))
+        {
+            Debug.LogError("Gun failed to get input manager!", this);
+            return;
+        }
+        
+        _reloadKey = inputManager.Get("Player/Reload");
     }
 
     private void Awake()
     {
         ToggleVisuals(false);
-        
-        _reloadKey = InputManager.PlayerKeybinds.Get("Player/Reload");
         
         currentReserveAmmo = maxReserveAmmo;
         currentAmmo = magSize + 1;

@@ -13,5 +13,6 @@ public class PlayerSettings : ScriptableObject
     public float sprintSpeed = 6f;
     public float interactRange = 2f;
     public float placementTime = 3f;
+    public float timeBetweenBarricadeInteractions = 1f;
     public LayerMask interactLayers;
 }

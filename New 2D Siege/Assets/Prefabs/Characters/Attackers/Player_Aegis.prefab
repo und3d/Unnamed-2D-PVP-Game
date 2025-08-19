@@ -146,6 +146,8 @@ MonoBehaviour:
   pickupHoldTime: 2
   playerPickupDistance: 2
   cursorPickupDistance: 2
+  gadgetRigidbody: {fileID: 0}
+  gadgetCollider: {fileID: 0}
   toolGadgetType: 0
   toggleGadgetType: 1
   canBePickedUp: 0
@@ -155,10 +157,7 @@ MonoBehaviour:
   minimumActivationDuration: 10
   timeBetweenActivations: 5
   gadgetVisual: {fileID: 1855141737538936253}
-  gadgetIsEnabled:
-    _value: 0
-    _ownerAuth: 1
-    _sendIntervalInSeconds: 0
+  gadgetIsEnabled: 0
 --- !u!1 &1437286425798109518
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,7 +193,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 514349198410903886}

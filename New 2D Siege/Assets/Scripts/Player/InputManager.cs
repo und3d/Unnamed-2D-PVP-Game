@@ -1,10 +1,9 @@
+using PurrNet;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class InputManager : NetworkBehaviour
 {
-    public static InputManager PlayerKeybinds { get; private set; }
-
     [Header("Assign your .inputactions asset here")]
     [SerializeField] private InputActionAsset actions;
 
@@ -12,9 +11,7 @@ public class InputManager : MonoBehaviour
 
     private void Awake()
     {
-        if (PlayerKeybinds != null) { Destroy(gameObject); return; }
-        PlayerKeybinds = this;
-        DontDestroyOnLoad(gameObject);
+        InstanceHandler.RegisterInstance(this);
 
         if (actions == null)
         {
@@ -37,4 +34,9 @@ public class InputManager : MonoBehaviour
 
     public void EnableMap(string mapName)  => actions.FindActionMap(mapName, true).Enable();
     public void DisableMap(string mapName) => actions.FindActionMap(mapName, true).Disable();
+
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
 }

@@ -27,6 +27,7 @@ public class PlaceGadgetPreview : MonoBehaviour
     private bool isPlacing = false;
     private bool canPlace = false;
     private InputAction interactKey;
+    private InputManager inputManager;
     
     public void Initialize(GadgetController manager, Transform player, PlayerID id)
     {
@@ -40,10 +41,17 @@ public class PlaceGadgetPreview : MonoBehaviour
     {
         if (!InstanceHandler.TryGetInstance(out GameController gameController))
         {
-            Debug.LogError($"GameStartState failed to get gameController!", this);
+            Debug.LogError($"PlaceGadgetPreview failed to get gameController!", this);
+            return;
         }
 
-        interactKey = InputManager.PlayerKeybinds.Get("Player/Interact");
+        if (!InstanceHandler.TryGetInstance(out inputManager))
+        {
+            Debug.LogError($"PlaceGadgetPreview failed to get inputManager!", this);
+            return;
+        }
+
+        interactKey = inputManager.Get("Player/Interact");
         
         progressBar = gameController.progressBar;
     }

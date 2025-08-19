@@ -53,13 +53,8 @@ public abstract class ToolGadget : GadgetBase
         }
         
         UpdateGadgetCounter(currentAmmo, toolGunGadgetCount);
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
         
-        _reloadKey = InputManager.PlayerKeybinds.Get("Player/Reload");
+        _reloadKey = inputManager.Get("Player/Reload");
     }
 
     protected override void Update()

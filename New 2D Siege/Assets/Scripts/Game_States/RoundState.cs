@@ -12,8 +12,10 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
     private List<PlayerID> _playersRed = new();
     private List<PlayerID> _playersBlue = new();
     //private Coroutine roundTimer;
+    private float preparationPhaseTimeLeft;
     private float timeLeft;
     private float objectiveTimeLeft;
+    [SerializeField] private float preparationPhaseTime = 45f;
     [SerializeField] private float roundTime = 180f;
     [SerializeField] private float objectiveTime = 45f;
     
@@ -37,11 +39,14 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
         if (!InstanceHandler.TryGetInstance(out GameController gameController))
         {
             Debug.LogError($"GameStartState failed to get gameController!", this);
+            return;
         }
         
         _playersRed.Clear();
         _playersBlue.Clear();
 
+        gameController.isPrepPhase.value = true;
+        preparationPhaseTimeLeft = preparationPhaseTime;
         timeLeft = roundTime;
         objectiveTimeLeft = objectiveTime;
         
@@ -72,11 +77,30 @@ public class RoundState : StateNode<Dictionary<GameController.Team, List<PlayerH
             Debug.LogError($"GameStartState failed to get gameController!", this);
         }
 
+        if (gameController.isPrepPhase.value)
+        {
+            preparationPhaseTimeLeft -= Time.deltaTime;
+            UpdateClientRoundTimer(preparationPhaseTimeLeft);
+
+            if (preparationPhaseTimeLeft > 0) 
+                return;
+            
+            preparationPhaseTimeLeft = 0;
+            gameController.isPrepPhase.value = false;
+            UpdateClientRoundTimer(preparationPhaseTimeLeft);
+
+            return;
+        }
+        
+        
         if (!gameController.isPlanted.value)
         {
             // Ends round if time hits 0 and ATK is not planting or has not planted the package
             if (timeLeft <= 0 && !gameController.isPlanted.value && !gameController.isPlanted.value)
             {
+                timeLeft = 0;
+                UpdateClientRoundTimer(timeLeft);
+                
                 machine.Next(data: false);
             }
 

@@ -61,6 +61,10 @@ MonoBehaviour:
   pickupHoldTime: 2
   playerPickupDistance: 2
   cursorPickupDistance: 2
+  gadgetRigidbody: {fileID: 8720234917371845864}
+  gadgetCollider: {fileID: 9220870455286546091}
+  toolGadgetType: 0
+  toggleGadgetType: 0
   canBePickedUp: 0
 --- !u!212 &5042808587619449925
 SpriteRenderer:

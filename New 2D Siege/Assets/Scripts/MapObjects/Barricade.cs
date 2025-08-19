@@ -31,7 +31,7 @@ public class Barricade : NetworkIdentity
 
     private void OnHealthChanged(int newHealth)
     {
-        Debug.Log($"New Barricade Health: {newHealth}");
+        //Debug.Log($"New Barricade Health: {newHealth}");
         if (newHealth <= 0)
         {
             ToggleBarricade();

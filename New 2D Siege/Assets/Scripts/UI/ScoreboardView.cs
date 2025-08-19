@@ -10,13 +10,20 @@ public class ScoreboardView : View
     [SerializeField] private ScoreboardEntry scoreboardEntryPrefab;
     
     private GameViewManager _gameViewManager;
+    private InputManager _inputManager;
     private InputAction _scoreboard;
     
     private void Awake()
     {
         InstanceHandler.RegisterInstance(this);
+
+        if (!InstanceHandler.TryGetInstance(out _inputManager))
+        {
+            Debug.LogError("ScoreboardView: _inputManager not found.", this);
+            return;
+        }
         
-        _scoreboard = InputManager.PlayerKeybinds.Get("Player/Scoreboard");
+        _scoreboard = _inputManager.Get("Player/Scoreboard");
     }
 
     private void Start()

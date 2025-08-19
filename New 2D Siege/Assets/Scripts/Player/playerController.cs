@@ -21,7 +21,9 @@ public class playerController : NetworkIdentity
     #region Private Variables
     private float moveSpeed;
     private GameController gameController;
+    private InputManager inputManager;
     private GameObject currentPreview;
+    private GameObject barricadeObj;
     private ProgressBarController progressBar;
     private Rigidbody2D _rigidbody;
     private StateNode lastState;
@@ -34,6 +36,7 @@ public class playerController : NetworkIdentity
     private bool isPlacing;
     private bool isDefender;
     private GameController.Side side;
+    private float timeAtBarricadeInteraction;
     #endregion
     
     #region Keybinds
@@ -63,14 +66,21 @@ public class playerController : NetworkIdentity
         if (!isOwner) 
             return;
         
+        if (!InstanceHandler.TryGetInstance(out inputManager))
+        {
+            Debug.LogError($"PlayerController failed to get inputManager!", this);
+            return;
+        }
+        
         SetKeybindReferences();
         
         TryGetComponent(out _rigidbody);
         if (!InstanceHandler.TryGetInstance(out GameController _gameController))
         {
-            Debug.LogError($"GameStartState failed to get gameController!", this);
+            Debug.LogError($"PlayerController failed to get gameController!", this);
             return;
         }
+        
         gameController = _gameController;
         progressBar = gameController.progressBar;
         lastState = weaponStates[0];
@@ -182,16 +192,19 @@ public class playerController : NetworkIdentity
 
     private void BarricadeInteraction()
     {
-        var obj = GetObjectUnderCursor();
+        if (Time.unscaledTime < timeAtBarricadeInteraction + playerSettings.timeBetweenBarricadeInteractions)
+            return;
+        
+        barricadeObj = GetObjectUnderCursor();
 
-        if (!obj || !obj.GetComponent<Barricade>())
+        if (!barricadeObj || !barricadeObj.GetComponent<Barricade>())
         {
             barricadeDetected = false;
             return;
         }
         
         barricadeDetected = true;
-        var sqrDistance = (obj.transform.position - transform.position).sqrMagnitude;
+        var sqrDistance = (barricadeObj.transform.position - transform.position).sqrMagnitude;
         if (sqrDistance <= playerSettings.interactRange * playerSettings.interactRange)
         {
             barricadeInRange = true;
@@ -202,7 +215,7 @@ public class playerController : NetworkIdentity
                     duration = playerSettings.placementTime,
                     key = _interact,
                     canStart = () => true,
-                    onComplete = obj.GetComponent<Barricade>().ToggleBarricade
+                    onComplete = ToggleBarricade
                 });
             }
         }
@@ -210,6 +223,12 @@ public class playerController : NetworkIdentity
         {
             barricadeDetected = false;
         }
+    }
+
+    private void ToggleBarricade()
+    {
+        barricadeObj.GetComponent<Barricade>().ToggleBarricade();
+        timeAtBarricadeInteraction = Time.unscaledTime;
     }
 
     private void DestructibleWallInteraction()
@@ -288,17 +307,15 @@ public class playerController : NetworkIdentity
 
     private void SetKeybindReferences()
     {
-        var keybinds = playerSettings.playerInput;
-
-        _aim = InputManager.PlayerKeybinds.Get("Player/Aim");
-        _shoot = InputManager.PlayerKeybinds.Get("Player/Shoot");
-        _sprint = InputManager.PlayerKeybinds.Get("Player/Sprint");
-        _reload = InputManager.PlayerKeybinds.Get("Player/Reload");
-        _interact = InputManager.PlayerKeybinds.Get("Player/Interact");
-        _primaryWeapon = InputManager.PlayerKeybinds.Get("Player/Primary Weapon");
-        _secondaryWeapon = InputManager.PlayerKeybinds.Get("Player/Secondary Weapon");
-        _primaryGadget = InputManager.PlayerKeybinds.Get("Player/Primary Gadget");
-        _secondaryGadget = InputManager.PlayerKeybinds.Get("Player/Secondary Gadget");
+        _aim = inputManager.Get("Player/Aim");
+        _shoot = inputManager.Get("Player/Shoot");
+        _sprint = inputManager.Get("Player/Sprint");
+        _reload = inputManager.Get("Player/Reload");
+        _interact = inputManager.Get("Player/Interact");
+        _primaryWeapon = inputManager.Get("Player/Primary Weapon");
+        _secondaryWeapon = inputManager.Get("Player/Secondary Weapon");
+        _primaryGadget = inputManager.Get("Player/Primary Gadget");
+        _secondaryGadget = inputManager.Get("Player/Secondary Gadget");
 
     }
 }

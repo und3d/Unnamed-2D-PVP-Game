@@ -16,12 +16,6 @@ public abstract class ToggleGadget : GadgetBase
     private float durationLeft;
     private float _deactivationTime;
 
-    protected override void Awake()
-    {
-        base.Awake();
-        
-    }
-
     protected override void OnSpawned()
     {
         base.OnSpawned();

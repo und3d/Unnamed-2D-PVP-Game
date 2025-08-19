@@ -6,6 +6,9 @@ Shader "Universal Render Pipeline/2D/HideInShadow"
         _MaskTex("Mask", 2D) = "white" {}
         _NormalMap("Normal Map", 2D) = "bump" {}
 
+        // NEW: LOS toggle (set per-renderer via MPB; also visible in Inspector)
+        [Toggle] _UseUnshadowedMask("Use Vision-Only Mask", Float) = 0
+
         // Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.
         [HideInInspector] _Color("Tint", Color) = (1,1,1,1)
         [HideInInspector] _RendererColor("RendererColor", Color) = (1,1,1,1)
@@ -26,12 +29,15 @@ Shader "Universal Render Pipeline/2D/HideInShadow"
         Cull Off
         ZWrite Off
 
+        // ---------- 2D Lighting pass ----------
         Pass
         {
             Tags { "LightMode" = "Universal2D" }
             HLSLPROGRAM
             #pragma vertex CombinedShapeLightVertex
             #pragma fragment CombinedShapeLightFragment
+
+            // Keep your original blend-style keywords & layout
             #pragma multi_compile USE_SHAPE_LIGHT_TYPE_0 __
             #pragma multi_compile USE_SHAPE_LIGHT_TYPE_1 __
             #pragma multi_compile USE_SHAPE_LIGHT_TYPE_2 __
@@ -41,16 +47,16 @@ Shader "Universal Render Pipeline/2D/HideInShadow"
             {
                 float3 positionOS   : POSITION;
                 float4 color        : COLOR;
-                float2  uv           : TEXCOORD0;
+                float2 uv           : TEXCOORD0;
                 UNITY_VERTEX_INPUT_INSTANCE_ID
             };
 
             struct Varyings
             {
-                float4  positionCS  : SV_POSITION;
-                half4   color       : COLOR;
-                float2  uv          : TEXCOORD0;
-                half2   lightingUV  : TEXCOORD1;
+                float4 positionCS  : SV_POSITION;
+                half4  color       : COLOR;
+                float2 uv          : TEXCOORD0;
+                half2  lightingUV  : TEXCOORD1;
                 UNITY_VERTEX_OUTPUT_STEREO
             };
 
@@ -85,24 +91,26 @@ Shader "Universal Render Pipeline/2D/HideInShadow"
                 UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
 
                 o.positionCS = TransformObjectToHClip(v.positionOS);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.uv         = TRANSFORM_TEX(v.uv, _MainTex);
+                // Your original screen-space UVs (prevents "mini player" artifacts)
                 o.lightingUV = ComputeNormalizedDeviceCoordinates(o.positionCS);
-                o.color = v.color;
+                o.color      = v.color;
                 return o;
             }
 
+            // Our modified light combiner (strict Style0 vs Style1 gate)
             #include "CombinedShapeLightSharedHidden.hlsl"
 
             half4 CombinedShapeLightFragment(Varyings i) : SV_Target
             {
                 half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
                 half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
-
                 return CombinedShapeLightShared(main, mask, i.lightingUV);
             }
             ENDHLSL
         }
 
+        // ---------- Normals pass (unchanged) ----------
         Pass
         {
             Tags { "LightMode" = "NormalsRendering"}
@@ -134,7 +142,7 @@ Shader "Universal Render Pipeline/2D/HideInShadow"
             SAMPLER(sampler_MainTex);
             TEXTURE2D(_NormalMap);
             SAMPLER(sampler_NormalMap);
-            half4 _NormalMap_ST;  // Is this the right way to do this?
+            half4 _NormalMap_ST;
 
             Varyings NormalsRenderingVertex(Attributes attributes)
             {
@@ -161,6 +169,8 @@ Shader "Universal Render Pipeline/2D/HideInShadow"
             }
             ENDHLSL
         }
+
+        // ---------- Unlit forward (unchanged) ----------
         Pass
         {
             Tags { "LightMode" = "UniversalForward" "Queue"="Transparent" "RenderType"="Transparent"}

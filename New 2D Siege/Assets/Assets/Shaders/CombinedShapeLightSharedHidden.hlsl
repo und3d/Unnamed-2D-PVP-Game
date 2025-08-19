@@ -1,100 +1,78 @@
 #if !defined(COMBINED_SHAPE_LIGHT_PASS)
 #define COMBINED_SHAPE_LIGHT_PASS
 
+// These are provided by URP 2D / Sprite-Lit pipeline:
 half _HDREmulationScale;
 half _UseSceneLighting;
 half4 _RendererColor;
 
+// NEW uniform coming from the material (Property in the .shader above)
+half _UseUnshadowedMask;
+
+inline half Luma(half3 c) { return dot(c, half3(0.30h, 0.59h, 0.11h)); }
+
 half4 CombinedShapeLightShared(half4 color, half4 mask, half2 lightingUV)
 {
-    if (color.a == 0.0)
+    if (color.a == 0.0h) discard;
+
+    // Keep your original sprite tint behavior
+    color *= _RendererColor;
+    color.rgb = max(color.rgb, half3(0.05h, 0.05h, 0.05h));
+
+    // ---------------- Style 0 (shadowed cone) ----------------
+    #if USE_SHAPE_LIGHT_TYPE_0
+        half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, lightingUV);
+        if (any(_ShapeLightMaskFilter0))
+        {
+            half4 processedMask0 = (1 - _ShapeLightInvertedFilter0) * mask + _ShapeLightInvertedFilter0 * (1 - mask);
+            shapeLight0 *= dot(processedMask0, _ShapeLightMaskFilter0);
+        }
+        half3 s0m = shapeLight0.rgb * _ShapeLightBlendFactors0.x;
+        half3 s0a = shapeLight0.rgb * _ShapeLightBlendFactors0.y;
+    #else
+        half3 s0m = 0, s0a = 0;
+    #endif
+
+    // ---------------- Style 1 (unshadowed cone) ----------------
+    #if USE_SHAPE_LIGHT_TYPE_1
+        half4 shapeLight1 = SAMPLE_TEXTURE2D(_ShapeLightTexture1, sampler_ShapeLightTexture1, lightingUV);
+        if (any(_ShapeLightMaskFilter1))
+        {
+            half4 processedMask1 = (1 - _ShapeLightInvertedFilter1) * mask + _ShapeLightInvertedFilter1 * (1 - mask);
+            shapeLight1 *= dot(processedMask1, _ShapeLightMaskFilter1);
+        }
+        half3 s1m = shapeLight1.rgb * _ShapeLightBlendFactors1.x;
+        half3 s1a = shapeLight1.rgb * _ShapeLightBlendFactors1.y;
+    #else
+        half3 s1m = 0, s1a = 0;
+    #endif
+
+    // ------- Visibility gates: ONLY Style0 and Style1 control visibility -------
+    half3 visShadowedRGB   = s0m + s0a; // light reaching this pixel when shadows apply
+    half3 visUnshadowedRGB = s1m + s1a; // pure cone mask without shadows
+
+    half lumShadowed = Luma(visShadowedRGB);
+    half lumNoShadow = Luma(visUnshadowedRGB);
+
+    // Choose which to gate by (0 = shadowed cone, 1 = unshadowed cone)
+    half gateLum = lerp(lumShadowed, lumNoShadow, _UseUnshadowedMask);
+
+    // Hide when not visible by the chosen mask
+    if (gateLum < 0.01h)
         discard;
 
-    color = color * _RendererColor; // This is needed for sprite shape
-    color.rgb = max(color.rgb, float3(0.05, 0.05, 0.05)); // Ensures black sprites get minimum light contribution
+    // ---------------- Final color ----------------
+    // If using unshadowed mask: show the sprite color (ignore cross-shadows)
+    // If using shadowed mask:   shade only by Style0 so other lights can't reveal it
+    half3 rgbShadowedOnly = _HDREmulationScale * (color.rgb * s0m + s0a);
+    half3 outRGB          = lerp(rgbShadowedOnly, color.rgb, _UseUnshadowedMask);
 
-#if USE_SHAPE_LIGHT_TYPE_0
-    half4 shapeLight0 = SAMPLE_TEXTURE2D(_ShapeLightTexture0, sampler_ShapeLightTexture0, lightingUV);
-
-    if (any(_ShapeLightMaskFilter0))
-    {
-        half4 processedMask = (1 - _ShapeLightInvertedFilter0) * mask + _ShapeLightInvertedFilter0 * (1 - mask);
-        shapeLight0 *= dot(processedMask, _ShapeLightMaskFilter0);
-    }
-
-    half4 shapeLight0Modulate = shapeLight0 * _ShapeLightBlendFactors0.x;
-    half4 shapeLight0Additive = shapeLight0 * _ShapeLightBlendFactors0.y;
-#else
-    half4 shapeLight0Modulate = 0;
-    half4 shapeLight0Additive = 0;
-#endif
-
-#if USE_SHAPE_LIGHT_TYPE_1
-    half4 shapeLight1 = SAMPLE_TEXTURE2D(_ShapeLightTexture1, sampler_ShapeLightTexture1, lightingUV);
-
-    if (any(_ShapeLightMaskFilter1))
-    {
-        half4 processedMask = (1 - _ShapeLightInvertedFilter1) * mask + _ShapeLightInvertedFilter1 * (1 - mask);
-        shapeLight1 *= dot(processedMask, _ShapeLightMaskFilter1);
-    }
-
-    half4 shapeLight1Modulate = shapeLight1 * _ShapeLightBlendFactors1.x;
-    half4 shapeLight1Additive = shapeLight1 * _ShapeLightBlendFactors1.y;
-#else
-    half4 shapeLight1Modulate = 0;
-    half4 shapeLight1Additive = 0;
-#endif
-
-#if USE_SHAPE_LIGHT_TYPE_2
-    half4 shapeLight2 = SAMPLE_TEXTURE2D(_ShapeLightTexture2, sampler_ShapeLightTexture2, lightingUV);
-
-    if (any(_ShapeLightMaskFilter2))
-    {
-        half4 processedMask = (1 - _ShapeLightInvertedFilter2) * mask + _ShapeLightInvertedFilter2 * (1 - mask);
-        shapeLight2 *= dot(processedMask, _ShapeLightMaskFilter2);
-    }
-
-    half4 shapeLight2Modulate = shapeLight2 * _ShapeLightBlendFactors2.x;
-    half4 shapeLight2Additive = shapeLight2 * _ShapeLightBlendFactors2.y;
-#else
-    half4 shapeLight2Modulate = 0;
-    half4 shapeLight2Additive = 0;
-#endif
-
-#if USE_SHAPE_LIGHT_TYPE_3
-    half4 shapeLight3 = SAMPLE_TEXTURE2D(_ShapeLightTexture3, sampler_ShapeLightTexture3, lightingUV);
-
-    if (any(_ShapeLightMaskFilter3))
-    {
-        half4 processedMask = (1 - _ShapeLightInvertedFilter3) * mask + _ShapeLightInvertedFilter3 * (1 - mask);
-        shapeLight3 *= dot(processedMask, _ShapeLightMaskFilter3);
-    }
-
-    half4 shapeLight3Modulate = shapeLight3 * _ShapeLightBlendFactors3.x;
-    half4 shapeLight3Additive = shapeLight3 * _ShapeLightBlendFactors3.y;
-#else
-    half4 shapeLight3Modulate = 0;
-    half4 shapeLight3Additive = 0;
-#endif
-
+    // Alpha respects chosen visibility and sprite alpha
     half4 finalOutput;
-#if !USE_SHAPE_LIGHT_TYPE_0 && !USE_SHAPE_LIGHT_TYPE_1 && !USE_SHAPE_LIGHT_TYPE_2 && ! USE_SHAPE_LIGHT_TYPE_3
-    finalOutput = color;
-#else
-    half4 finalModulate = shapeLight0Modulate + shapeLight1Modulate + shapeLight2Modulate + shapeLight3Modulate;
-    half4 finalAdditve = shapeLight0Additive + shapeLight1Additive + shapeLight2Additive + shapeLight3Additive;
-    finalOutput = _HDREmulationScale * (color * finalModulate + finalAdditve);
+    finalOutput.rgb = outRGB;
+    finalOutput.a   = min(gateLum * 2.0h, color.a);
 
-    // Hide completely if not lit
-    half luminance = dot(finalOutput.rgb, half3(0.3, 0.59, 0.11)); // perceived brightness
-    if (luminance < 0.01)
-        discard;
-    
-    finalOutput.a = min(luminance * 2, color.a);
-#endif
-
-    finalOutput = finalOutput *_UseSceneLighting + (1 - _UseSceneLighting)*color;
-    
+    // Keep your original "Use Scene Lighting" blend
     finalOutput = finalOutput * _UseSceneLighting + (1 - _UseSceneLighting) * color;
 
     return finalOutput;

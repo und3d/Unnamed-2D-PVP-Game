@@ -118,6 +118,7 @@ MonoBehaviour:
   - {fileID: 2326740372766534828}
   - {fileID: 6956864156573897517}
   playerVision: {fileID: 822313523801803427, guid: 0bd52025989aa3049b2fc00467898724, type: 3}
+  playerVisionNoShadows: {fileID: 3172948042392980911, guid: 69e0b70fd1d29cb428d6b18e7550d8be, type: 3}
   barricadeDetected: 0
   barricadeInRange: 0
   destructibleWallDetected: 0
@@ -793,6 +794,7 @@ MonoBehaviour:
   pickupHoldTime: 2
   playerPickupDistance: 2
   cursorPickupDistance: 2
+  timeBeforePickup: 1
   gadgetRigidbody: {fileID: 0}
   gadgetCollider: {fileID: 0}
   toolGadgetType: 1

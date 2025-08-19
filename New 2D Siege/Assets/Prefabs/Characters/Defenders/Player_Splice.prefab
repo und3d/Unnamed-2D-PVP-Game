@@ -118,6 +118,7 @@ MonoBehaviour:
   - {fileID: 2326740372766534828}
   - {fileID: 8480033773381041042}
   playerVision: {fileID: 822313523801803427, guid: cbd0a3a89107bce4abe4cad91fdf3a17, type: 3}
+  playerVisionNoShadows: {fileID: 3172948042392980911, guid: 2089b36ba050ff54e877b6e19e88d248, type: 3}
   barricadeDetected: 0
   barricadeInRange: 0
   destructibleWallDetected: 0

@@ -34,7 +34,8 @@ public class GameController : NetworkBehaviour
     public SyncVar<bool> isPrepPhase = new(false);
     public SyncVar<bool> isPlanting = new(false);
     public SyncVar<bool> isPlanted = new(false);
-
+    public Transform playerTransform;
+    
     private void Awake()
     {
         InstanceHandler.RegisterInstance(this); //A safer singleton; needs a OnDestroy

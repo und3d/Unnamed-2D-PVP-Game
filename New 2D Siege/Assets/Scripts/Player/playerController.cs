@@ -17,6 +17,7 @@ public class playerController : NetworkIdentity
     public StateMachine stateMachine;
     public List<StateNode> weaponStates = new();
     [SerializeField] private GameObject playerVision;
+    [SerializeField] private GameObject playerVisionNoShadows;
 
     #region Private Variables
     private float moveSpeed;
@@ -82,12 +83,14 @@ public class playerController : NetworkIdentity
         }
         
         gameController = _gameController;
+        gameController.playerTransform = transform;
         progressBar = gameController.progressBar;
         lastState = weaponStates[0];
         
         GetPlayerSide();
         
         var visionObj = Instantiate(playerVision, transform, false);
+        var visionObjNoShadows = Instantiate(playerVisionNoShadows, transform, false);
         
         //Debug.Log($"Checking if {owner.Value}'s side is Defense");
     }

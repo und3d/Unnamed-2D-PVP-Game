@@ -146,6 +146,7 @@ MonoBehaviour:
   pickupHoldTime: 2
   playerPickupDistance: 2
   cursorPickupDistance: 2
+  timeBeforePickup: 1
   gadgetRigidbody: {fileID: 0}
   gadgetCollider: {fileID: 0}
   toolGadgetType: 0
@@ -276,6 +277,7 @@ MonoBehaviour:
   - {fileID: 2326740372766534828}
   - {fileID: 2471195006000672239}
   playerVision: {fileID: 822313523801803427, guid: 0bd52025989aa3049b2fc00467898724, type: 3}
+  playerVisionNoShadows: {fileID: 3172948042392980911, guid: 69e0b70fd1d29cb428d6b18e7550d8be, type: 3}
   barricadeDetected: 0
   barricadeInRange: 0
   destructibleWallDetected: 0
@@ -920,7 +922,7 @@ Transform:
   m_GameObject: {fileID: 3933407679709339849}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -13.333334}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -269,6 +269,7 @@ GameObject:
   - component: {fileID: 7027737231955704878}
   - component: {fileID: 8138368844968794330}
   - component: {fileID: 1690311154546492699}
+  - component: {fileID: 1596402096173461286}
   m_Layer: 12
   m_Name: Body
   m_TagString: Untagged
@@ -384,14 +385,14 @@ MonoBehaviour:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
       m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0.5, y: 0.5, z: 0}
+      m_Extent: {x: 0, y: 0, z: 0}
     m_EdgeProcessing: 1
-    m_TrimEdge: 0
+    m_TrimEdge: 1
     m_FlipX: 0
     m_FlipY: 0
     m_InitialTrim: 0
   m_CastingOption: 1
-  m_PreviousTrimEdge: 0
+  m_PreviousTrimEdge: 1
   m_PreviousEdgeProcessing: 1
   m_PreviousShadowCastingSource: 2
   m_PreviousShadowShape2DSource: {fileID: 8138368844968794330}
@@ -401,3 +402,26 @@ MonoBehaviour:
     - rid: 2209571307328110671
       type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
+--- !u!114 &1596402096173461286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9193348843327990735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 590cb78b65bbde54a81c560833a33303, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  occluders:
+    serializedVersion: 2
+    m_Bits: 4608
+  samples: 5
+  minClearSamples: 1
+  stopShortEpsilon: 0.02
+  drawRays: 0
+  CheckClear: 0
+  __UseUnshadowedMaskID: 0
+  sr: {fileID: 8138368844968794330}
+  col: {fileID: 3614781369924699763}

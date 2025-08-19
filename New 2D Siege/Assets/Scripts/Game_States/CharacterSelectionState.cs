@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using PurrNet;
 using PurrNet.StateMachine;
@@ -7,9 +8,10 @@ using UnityEngine.Rendering.Universal;
 public class CharacterSelectionState : StateNode
 {
     [SerializeField] private CharacterSelectController characterSelectController;
+    [SerializeField] private CharacterSelectView characterSelectView;
     [SerializeField] private float _selectionDuration = 30f;
     
-    private Coroutine selectionTimer;
+    private float timeLeft;
     private GameController gameController;
     private GameViewManager gameViewManager;
     
@@ -28,7 +30,7 @@ public class CharacterSelectionState : StateNode
         DespawnGadgets();
         
         ClearValues();
-        selectionTimer = StartCoroutine(SelectionTimer(_selectionDuration));
+        timeLeft = _selectionDuration;
         CheckTeam();
     }
 
@@ -36,7 +38,6 @@ public class CharacterSelectionState : StateNode
     {
         gameController.redTeamSelections.Clear();
         gameController.blueTeamSelections.Clear();
-        characterSelectController.ClearTeams();
     }
 
     private void CheckTeam()
@@ -52,27 +53,29 @@ public class CharacterSelectionState : StateNode
         }
     }
 
-    private IEnumerator SelectionTimer(float selectionDuration)
+    private void FixedUpdate()
     {
-        float timeLeft = selectionDuration;
+        if (!isServer || !isCurrentState)
+            return;
         
-        // Timer
-        while (timeLeft > 0)
+        if (timeLeft <= 0)
         {
-            timeLeft -= Time.deltaTime;
+            timeLeft = 0;
+            UpdateClientSelectionTimer(timeLeft);
 
-            if (gameController.redTeamSelections.Count + gameController.blueTeamSelections.Count ==
-                networkManager.players.Count)
+            machine.Next();
+        }
+        else if (timeLeft > 0)
+        {
+            if (timeLeft > 3f && gameController.redTeamSelections.Count + gameController.blueTeamSelections.Count == networkManager.players.Count)
             {
-                machine.Next();
-                StopCoroutine(selectionTimer);
+                Debug.Log($"Red Team Selection Count: {networkManager.players.Count} + Blue Team Selection Count: {gameController.blueTeamSelections.Count} == Total Players: {networkManager.players.Count}");
+                timeLeft = 3f;
             }
             
-            yield return null;
+            timeLeft -= Time.deltaTime;
+            UpdateClientSelectionTimer(timeLeft);
         }
-        
-        
-        machine.Next();
     }
 
     private void GetReferences()
@@ -106,6 +109,12 @@ public class CharacterSelectionState : StateNode
         {
             Destroy(gadget.gameObject);
         }
+    }
+
+    [ObserversRpc]
+    private void UpdateClientSelectionTimer(float selectionTimeLeft)
+    {
+        characterSelectView.UpdateSelectionTimer(selectionTimeLeft);
     }
     
     public override void Exit(bool asServer)

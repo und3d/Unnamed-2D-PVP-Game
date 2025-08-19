@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6618599435579058412}
   - component: {fileID: 6170507428990610685}
-  - component: {fileID: 5242712726982350734}
+  - component: {fileID: 8381526066848139953}
   m_Layer: 12
   m_Name: Body
   m_TagString: Untagged
@@ -90,7 +90,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &5242712726982350734
+--- !u!114 &8381526066848139953
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -110,17 +110,17 @@ MonoBehaviour:
   m_CastsShadows: 1
   m_SelfShadows: 0
   m_AlphaCutoff: 0.1
-  m_ApplyToSortingLayers: 00000000c52a6a9dd13082188f948083a76245ef1d95f6aa
+  m_ApplyToSortingLayers: 00000000c52a6a9d1d95f6aa8f948083d1308218a76245ef059b2cc8
   m_ShapePath:
   - {x: -0.5, y: -0.5, z: 0}
   - {x: -0.5, y: 0.5, z: 0}
-  - {x: 0.49999994, y: 0.5, z: 0}
-  - {x: 0.49999994, y: -0.5, z: 0}
+  - {x: 0.5, y: 0.5, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
   m_ShapePathHash: 0
   m_InstanceId: 0
   m_ShadowShape2DComponent: {fileID: 6170507428990610685}
   m_ShadowShape2DProvider:
-    rid: 8582559733227978885
+    rid: 2209571307328110669
   m_ShadowCastingSource: 2
   m_ShadowMesh:
     m_Mesh: {fileID: 0}
@@ -140,7 +140,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 8582559733227978885
+    - rid: 2209571307328110669
       type: {class: ShadowShape2DProvider_SpriteRenderer, ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
       data: 
 --- !u!1 &7015902441503872906
@@ -152,7 +152,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1689226526566232986}
-  - component: {fileID: 9188089332190851308}
+  - component: {fileID: 2329808465207784685}
   - component: {fileID: 3788299731863827171}
   m_Layer: 14
   m_Name: Barricade
@@ -177,7 +177,7 @@ Transform:
   - {fileID: 6618599435579058412}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &9188089332190851308
+--- !u!114 &2329808465207784685
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

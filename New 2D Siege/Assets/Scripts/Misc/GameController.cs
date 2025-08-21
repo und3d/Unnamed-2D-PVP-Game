@@ -29,7 +29,9 @@ public class GameController : NetworkBehaviour
     public Dictionary<Team, int> roundScores = new();
     public Dictionary<Side, Team> teamSides = new();
     public SyncDictionary<PlayerID, int> redTeamSelections = new();
+    public SyncList<int> redTeamRemainingIDs = new();
     public SyncDictionary<PlayerID, int> blueTeamSelections = new();
+    public SyncList<int> blueTeamRemainingIDs = new();
     public Dictionary<Team, List<PlayerID>> GlobalTeams = new();
     public SyncVar<bool> isPrepPhase = new(false);
     public SyncVar<bool> isPlanting = new(false);

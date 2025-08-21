@@ -11,7 +11,7 @@ public class CharacterSelectController : NetworkBehaviour
     private static GameObject attackerViewObjectStatic;
     private static GameObject defenderViewObjectStatic;
     private PlayerID selectingPlayer;
-    private int selectedCharacter = -1;
+    private int previousSelection = -1;
     private GameController gameController;
     private static bool hasSelected = false;
     
@@ -63,56 +63,76 @@ public class CharacterSelectController : NetworkBehaviour
     public void SelectedAttacker(int characterID)
     {
         if (!hasSelected)
+        {
             hasSelected = true;
+            previousSelection = characterID;
+            SelectedCharacterRPC(characterID, GameController.Side.Attack);
+        }
         else
-            ToggleCharacterButton(selectedCharacter, GameController.Side.Attack);
-        
-        selectedCharacter = characterID;
-        SelectedAttackCharacterRPC(characterID);
+        {
+            SelectedCharacterRPC(characterID, previousSelection, GameController.Side.Attack);
+            previousSelection = characterID;
+        }
     }
 
     public void SelectedDefender(int characterID)
     {
         if (!hasSelected)
+        {
             hasSelected = true;
+            previousSelection = characterID;
+            SelectedCharacterRPC(characterID, GameController.Side.Defense);
+        }
         else
-            ToggleCharacterButton(selectedCharacter, GameController.Side.Defense);
-        
-        selectedCharacter = characterID;
-        SelectedDefenderCharacterRPC(characterID);
+        {
+            SelectedCharacterRPC(characterID, previousSelection, GameController.Side.Defense);
+            previousSelection = characterID;
+        }
     }
     
+    // Tells server who picked what character
+    // FIRST SELECTION
     [ServerRpc(requireOwnership:false)]
-    private void SelectedAttackCharacterRPC(int characterID, RPCInfo info = default)
+    private void SelectedCharacterRPC(int selectedCharacterID, GameController.Side side, RPCInfo info = default)
     {
-        ToggleCharacterButton(characterID, GameController.Side.Attack);
-        switch (gameController.teamSides[GameController.Side.Attack])
+        ToggleCharacterButton(selectedCharacterID, side);
+        
+        switch (gameController.teamSides[side])
         {
             case GameController.Team.Red:
-                gameController.redTeamSelections[info.sender] = characterID;
+                gameController.redTeamSelections[info.sender] = selectedCharacterID;
+                gameController.redTeamRemainingIDs.Remove(selectedCharacterID);
                 //Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
                 break;
             case GameController.Team.Blue:
                 
-                gameController.blueTeamSelections[info.sender] = characterID;
+                gameController.blueTeamSelections[info.sender] = selectedCharacterID;
+                gameController.blueTeamRemainingIDs.Remove(selectedCharacterID);
                 //Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
                 break;
         }
-        
     }
     
+    // Tells server who picked what character and their PREVIOUS selection
+    // HAS SELECTED PREVIOUSLY
     [ServerRpc(requireOwnership:false)]
-    private void SelectedDefenderCharacterRPC(int characterID, RPCInfo info = default)
+    private void SelectedCharacterRPC(int selectedCharacterID, int previousCharacterID, GameController.Side side, RPCInfo info = default)
     {
-        ToggleCharacterButton(characterID, GameController.Side.Defense);
-        switch (gameController.teamSides[GameController.Side.Defense])
+        ToggleCharacterButton(selectedCharacterID, side);
+        ToggleCharacterButton(previousCharacterID, side);
+        
+        switch (gameController.teamSides[side])
         {
             case GameController.Team.Red:
-                gameController.redTeamSelections[info.sender] = characterID;
+                gameController.redTeamSelections[info.sender] = selectedCharacterID;
+                gameController.redTeamRemainingIDs.Remove(selectedCharacterID);
+                gameController.redTeamRemainingIDs.Add(previousCharacterID);
                 //Debug.Log($"{info.sender} has been added to Red Players dictionary: {gameController.redTeamSelections.ContainsKey(info.sender)}");
                 break;
             case GameController.Team.Blue:
-                gameController.blueTeamSelections[info.sender] = characterID;
+                gameController.blueTeamSelections[info.sender] = selectedCharacterID;
+                gameController.blueTeamRemainingIDs.Remove(selectedCharacterID);
+                gameController.blueTeamRemainingIDs.Add(previousCharacterID);
                 //Debug.Log($"{info.sender} has been added to Blue Players dictionary: {gameController.blueTeamSelections.ContainsKey(info.sender)}");
                 break;
         }
@@ -148,17 +168,35 @@ public class CharacterSelectController : NetworkBehaviour
                 break;
         }
     }
-
+    
+    // Toggles the button for the selected character
     [ObserversRpc]
-    private void ToggleCharacterButton(int characterID, GameController.Side side)
+    private void ToggleCharacterButton(int selectedCharacterID, GameController.Side side)
     {
         switch (side)
         {
             case GameController.Side.Attack:
-                attackerButtons[characterID].interactable = !attackerButtons[characterID].interactable;
+                attackerButtons[selectedCharacterID].interactable = !attackerButtons[selectedCharacterID].interactable;
                 break;
             case GameController.Side.Defense:
-                defenderButtons[characterID].interactable = !defenderButtons[characterID].interactable;
+                defenderButtons[selectedCharacterID].interactable = !defenderButtons[selectedCharacterID].interactable;
+                break;
+        }
+    }
+    
+    // Toggles the button for the current and previous selections
+    [ObserversRpc]
+    private void ToggleCharacterButton(int selectedCharacterID, int previousCharacterID, GameController.Side side)
+    {
+        switch (side)
+        {
+            case GameController.Side.Attack:
+                attackerButtons[selectedCharacterID].interactable = !attackerButtons[selectedCharacterID].interactable;
+                attackerButtons[previousCharacterID].interactable = !attackerButtons[previousCharacterID].interactable;
+                break;
+            case GameController.Side.Defense:
+                defenderButtons[selectedCharacterID].interactable = !defenderButtons[selectedCharacterID].interactable;
+                defenderButtons[previousCharacterID].interactable = !defenderButtons[previousCharacterID].interactable;
                 break;
         }
     }

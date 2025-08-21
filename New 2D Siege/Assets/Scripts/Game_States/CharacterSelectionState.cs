@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
+using NUnit.Framework.Interfaces;
 using PurrNet;
 using PurrNet.StateMachine;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using Random = UnityEngine.Random;
 
 public class CharacterSelectionState : StateNode
 {
@@ -38,6 +40,16 @@ public class CharacterSelectionState : StateNode
     {
         gameController.redTeamSelections.Clear();
         gameController.blueTeamSelections.Clear();
+        
+        gameController.redTeamRemainingIDs = new SyncList<int>()
+        {
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+        };
+
+        gameController.blueTeamRemainingIDs = new SyncList<int>()
+        {
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+        };
     }
 
     private void CheckTeam()
@@ -62,6 +74,8 @@ public class CharacterSelectionState : StateNode
         {
             timeLeft = 0;
             UpdateClientSelectionTimer(timeLeft);
+            RandomlySelectCharacters(GameController.Side.Attack);
+            RandomlySelectCharacters(GameController.Side.Defense);
 
             machine.Next();
         }
@@ -108,6 +122,38 @@ public class CharacterSelectionState : StateNode
         foreach (var gadget in allGadgets)
         {
             Destroy(gadget.gameObject);
+        }
+    }
+
+    private void RandomlySelectCharacters(GameController.Side side)
+    {
+        var randomCharacterID = - 1;
+        switch (gameController.teamSides[side])
+        {
+            case GameController.Team.Red:
+                foreach (var player in gameController.GlobalTeams[GameController.Team.Red])
+                {
+                    if (gameController.redTeamSelections.ContainsKey(player))
+                        continue;
+                        
+                    randomCharacterID = gameController.redTeamRemainingIDs[Random.Range(0, gameController.redTeamRemainingIDs.Count)];
+                    
+                    gameController.redTeamRemainingIDs.Remove(randomCharacterID);
+                    gameController.redTeamSelections.Add(player, randomCharacterID);
+                }
+                break;
+            case GameController.Team.Blue:
+                foreach (var player in gameController.GlobalTeams[GameController.Team.Blue])
+                {
+                    if (gameController.blueTeamSelections.ContainsKey(player))
+                        continue;
+                        
+                    randomCharacterID = gameController.blueTeamRemainingIDs[Random.Range(0, gameController.blueTeamRemainingIDs.Count)];
+                    
+                    gameController.blueTeamRemainingIDs.Remove(randomCharacterID);
+                    gameController.blueTeamSelections.Add(player, randomCharacterID);
+                }
+                break;
         }
     }
 

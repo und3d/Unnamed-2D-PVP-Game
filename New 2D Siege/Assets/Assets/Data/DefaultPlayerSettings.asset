@@ -16,8 +16,12 @@ MonoBehaviour:
   toggleSprint: 0
   walkSpeed: 3
   sprintSpeed: 5
-  interactRange: 2
-  placementTime: 3
+  barricadeInteractRange: 0.5
+  barricadePlacementTime: 1.5
+  timeBetweenBarricadeInteractions: 1
+  wallInteractRange: 0.5
+  reinforcementTime: 3.5
+  timeBetweenReinforcements: 1
   interactLayers:
     serializedVersion: 2
     m_Bits: 16384

@@ -11,8 +11,18 @@ public class PlayerSettings : ScriptableObject
     public bool toggleSprint = false;
     public float walkSpeed = 4f;
     public float sprintSpeed = 6f;
-    public float interactRange = 2f;
-    public float placementTime = 3f;
+    
+    [Header("Barricade Settings")]
+    public float barricadeInteractRange = 1f;
+    public float barricadePlacementTime = 1.5f;
     public float timeBetweenBarricadeInteractions = 1f;
+    
+    
+    [Header("Wall Settings")]
+    public float wallInteractRange = 1f;
+    public float reinforcementTime = 3.5f;
+    public float timeBetweenReinforcements = 1f;
+    
+    [Header("Interaction Layers")]
     public LayerMask interactLayers;
 }

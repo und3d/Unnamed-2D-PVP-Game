@@ -25,6 +25,7 @@ public class playerController : NetworkIdentity
     private InputManager inputManager;
     private GameObject currentPreview;
     private GameObject barricadeObj;
+    private GameObject reinforcementObj;
     private ProgressBarController progressBar;
     private Rigidbody2D _rigidbody;
     private StateNode lastState;
@@ -38,6 +39,7 @@ public class playerController : NetworkIdentity
     private bool isDefender;
     private GameController.Side side;
     private float timeAtBarricadeInteraction;
+    private float timeAtReinforcementInteraction;
     #endregion
     
     #region Keybinds
@@ -53,10 +55,10 @@ public class playerController : NetworkIdentity
     
     #endregion
 
-    public bool barricadeDetected;
-    public bool barricadeInRange;
-    public bool destructibleWallDetected;
-    public bool destructibleWallInRange;
+    [Header("Debug Vars")]
+    public bool drawRays = false;
+    public Color inRangeColor = new Color(0f, 1f, 0f, 0.95f);
+    public Color outRangeColor = new Color(1f, 0f, 0f, 0.95f);
 
     protected override void OnSpawned()
     {
@@ -201,30 +203,17 @@ public class playerController : NetworkIdentity
         barricadeObj = GetObjectUnderCursor();
 
         if (!barricadeObj || !barricadeObj.GetComponent<Barricade>())
-        {
-            barricadeDetected = false;
             return;
-        }
         
-        barricadeDetected = true;
-        var sqrDistance = (barricadeObj.transform.position - transform.position).sqrMagnitude;
-        if (sqrDistance <= playerSettings.interactRange * playerSettings.interactRange)
+        if (_interact != null && _interact.IsPressed() && !isGadgetEquipped)
         {
-            barricadeInRange = true;
-            if (_interact != null && _interact.IsPressed() && !isGadgetEquipped)
+            progressBar.BeginInteraction(new InteractionRequest
             {
-                progressBar.BeginInteraction(new InteractionRequest
-                {
-                    duration = playerSettings.placementTime,
-                    key = _interact,
-                    canStart = () => true,
-                    onComplete = ToggleBarricade
-                });
-            }
-        }
-        else
-        {
-            barricadeDetected = false;
+                duration = playerSettings.barricadePlacementTime,
+                key = _interact,
+                canStart = () => true,
+                onComplete = ToggleBarricade
+            });
         }
     }
 
@@ -236,34 +225,31 @@ public class playerController : NetworkIdentity
 
     private void DestructibleWallInteraction()
     {
-        var obj = GetObjectUnderCursor();
-
-        if (!obj || !obj.GetComponent<DestructibleWall>() || obj.GetComponent<DestructibleWall>().IsReinforced)
-        {
-            destructibleWallDetected = false;
+        if (Time.unscaledTime < timeAtReinforcementInteraction + playerSettings.timeBetweenReinforcements)
             return;
-        }
         
-        destructibleWallDetected = true;
-        var sqrDistance = (obj.transform.position - transform.position).sqrMagnitude;
-        if (sqrDistance <= playerSettings.interactRange * playerSettings.interactRange)
+        reinforcementObj = GetObjectUnderCursor();
+
+        if (!reinforcementObj || !reinforcementObj.GetComponent<DestructibleWall>() ||
+            reinforcementObj.GetComponent<DestructibleWall>().IsReinforced)
+            return;
+        
+        if (_interact != null && _interact.IsPressed() && !isGadgetEquipped)
         {
-            destructibleWallInRange = true;
-            if (_interact != null && _interact.IsPressed() && !isGadgetEquipped)
+            progressBar.BeginInteraction(new InteractionRequest
             {
-                progressBar.BeginInteraction(new InteractionRequest
-                {
-                    duration = playerSettings.placementTime,
-                    key = _interact,
-                    canStart = () => true,
-                    onComplete = obj.GetComponent<DestructibleWall>().ReinforceWall
-                });
-            }
+                duration = playerSettings.reinforcementTime,
+                key = _interact,
+                canStart = () => true,
+                onComplete = ReinforceWall
+            });
         }
-        else
-        {
-            destructibleWallDetected = false;
-        }
+    }
+    
+    private void ReinforceWall()
+    {
+        reinforcementObj.GetComponent<DestructibleWall>().ReinforceWall();
+        timeAtReinforcementInteraction = Time.unscaledTime;
     }
 
     private GameObject GetObjectUnderCursor()
@@ -275,9 +261,45 @@ public class playerController : NetworkIdentity
         {
             return null;
         }
-        if (hit.collider.gameObject.GetComponent<Barricade>() || hit.collider.gameObject.GetComponent<DestructibleWall>())
+        
+        // If a barricade is under the cursor, check the distance. If in range, return the object
+        if (hit.collider.gameObject.GetComponent<Barricade>())
         {
-            return hit.collider.gameObject;
+            var hitInRange = Physics2D.Raycast(transform.position, (hit.point - (Vector2)transform.position).normalized, playerSettings.barricadeInteractRange, playerSettings.interactLayers);
+            
+            if (drawRays)
+            {
+                var debugRay = Physics2D.Raycast(transform.position, (hit.point - (Vector2)transform.position).normalized, 50, playerSettings.interactLayers);
+                
+                if (hitInRange && hit.collider.gameObject == hitInRange.collider.gameObject)
+                    Debug.DrawLine(transform.position, debugRay.point, inRangeColor);
+                else
+                    Debug.DrawLine(transform.position, debugRay.point, outRangeColor);
+            }
+
+            if (hitInRange && hit.collider.gameObject == hitInRange.collider.gameObject)
+                return hit.collider.gameObject;
+             
+            return null;
+        }
+        
+        // If a destructive wall is under the cursor, check the distance. If in range, return the object
+        if (hit.collider.gameObject.GetComponent<DestructibleWall>())
+        {
+            var hitInRange = Physics2D.Raycast(transform.position, (hit.point - (Vector2)transform.position).normalized, playerSettings.wallInteractRange, playerSettings.interactLayers);
+            
+            if (drawRays)
+            {
+                var debugRay = Physics2D.Raycast(transform.position, (hit.point - (Vector2)transform.position).normalized, 50, playerSettings.interactLayers);
+                
+                if (hitInRange && hit.collider.gameObject == hitInRange.collider.gameObject)
+                    Debug.DrawLine(transform.position, debugRay.point, inRangeColor);
+                else
+                    Debug.DrawLine(transform.position, debugRay.point, outRangeColor);
+            }
+
+            if (hitInRange && hit.collider.gameObject == hitInRange.collider.gameObject)
+                return hit.collider.gameObject;
         }
 
         return null;

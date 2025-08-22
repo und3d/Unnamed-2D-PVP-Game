@@ -29,6 +29,7 @@ public class GadgetControllerEditor : Editor
     // Throwable
     private SerializedProperty throwOrigin;
     private SerializedProperty throwForce;
+    private SerializedProperty timeBeforeActivation;
     
     private void OnEnable()
     {
@@ -59,6 +60,7 @@ public class GadgetControllerEditor : Editor
         // Throwable
         throwOrigin = serializedObject.FindProperty("throwOrigin");
         throwForce = serializedObject.FindProperty("throwForce");
+        timeBeforeActivation = serializedObject.FindProperty("timeBeforeActivation");
     }
 
     public override void OnInspectorGUI()
@@ -150,6 +152,7 @@ public class GadgetControllerEditor : Editor
             case GadgetController.GadgetType.Throwable:
                 EditorGUILayout.PropertyField(throwOrigin);
                 EditorGUILayout.PropertyField(throwForce);
+                EditorGUILayout.PropertyField(timeBeforeActivation);
                 break;
             case GadgetController.GadgetType.Drone:
                 EditorGUILayout.PropertyField(throwOrigin);

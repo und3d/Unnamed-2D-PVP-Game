@@ -24,6 +24,7 @@ public class GadgetController : NetworkBehaviour
     [SerializeField] private float primaryGadgetDuration = 30f;     // How long can a tool or toggle be used (If timer needed)
     [SerializeField] private float primaryGadgetDelay = 2f;         // How long until tool or toggle can be enabled/pulled-out after being disabled/put-away
     [SerializeField] private int secondaryGadgetCount = 2;
+    public bool gadgetBeingPickedUp;
     
     [Header("Gadget Type")]
     [SerializeField] private GadgetType primaryGadget;
@@ -35,6 +36,9 @@ public class GadgetController : NetworkBehaviour
     [Header("Throwable")]
     [SerializeField] private Transform throwOrigin;
     [SerializeField] private float throwForce = 10f;
+    public float timeBeforeActivation;
+    public float timeAtPickup;
+    public bool thrownGadgetIsBeingPickedUp;
     
     [Header("Drone")]
     
@@ -47,7 +51,7 @@ public class GadgetController : NetworkBehaviour
     [SerializeField] private GameObject gadgetVisual;
     [SerializeField] private GameObject gadgetPrefab;
 
-    private bool isGadgetPulledOut = false;
+    public bool isGadgetPulledOut = false;
     private RoundView roundView;
     private string gadgetName;
     private ToggleGadget toggleGadgetScript;
@@ -115,7 +119,6 @@ public class GadgetController : NetworkBehaviour
         if (gameController.justThrewGadget)
         {
             gameController.justThrewGadget = false;
-            gameController.canActivateThrownGadget = true;
         }
         
         switch (primaryGadget)
@@ -162,11 +165,13 @@ public class GadgetController : NetworkBehaviour
                 {
                     if (!isGadgetPulledOut)
                     {
+                        gameController.isGadgetEquipped = true;
                         ToggleGadgetVisual();
                         
                     }
                     else
                     {
+                        gameController.isGadgetEquipped = false;
                         PutAwayGadget();
                     }
                 }
@@ -237,18 +242,21 @@ public class GadgetController : NetworkBehaviour
     {
         equippedGadget = null; // allow future placements
         primaryGadgetCount--;
+        ToggleGadgetVisual();
         roundView.UpdateGadgetPrimaryCount(primaryGadgetCount);
     }
 
     public void OnGadgetPickup()
     {
-        Debug.Log("Pickup Gadget");
         primaryGadgetCount++;
         roundView.UpdateGadgetPrimaryCount(primaryGadgetCount);
     }
 
     private void Throw()
     {
+        if (primaryGadgetCount <= 0)
+            return;
+        
         Vector2 throwDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - throwOrigin.position).normalized;
         GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, transform.rotation);
         
@@ -258,15 +266,16 @@ public class GadgetController : NetworkBehaviour
             script.Throw(throwDir, throwForce);
         }
         
-        gameController.canActivateThrownGadget = false;
         gameController.justThrewGadget = true;
         gameController.isGadgetEquipped = false;
         OnGadgetPlaced();
-        ToggleGadgetVisual();
     }
 
     private void ThrowDrone()
     {
+        if (primaryGadgetCount <= 0)
+            return;
+        
         Vector2 throwDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - throwOrigin.position).normalized;
         GameObject gadget = Instantiate(gadgetPrefab, throwOrigin.position, transform.rotation * Quaternion.Euler(0f, 0f, 90f));
         
@@ -276,8 +285,8 @@ public class GadgetController : NetworkBehaviour
             script.Throw(throwDir, throwForce);
         }
         
+        gameController.isGadgetEquipped = false;
         OnGadgetPlaced();
-        ToggleGadgetVisual();
     }
 
     private void ToggleGadgetVisual()

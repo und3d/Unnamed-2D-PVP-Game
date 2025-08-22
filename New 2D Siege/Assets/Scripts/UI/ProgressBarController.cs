@@ -23,6 +23,7 @@ public class ProgressBarController : MonoBehaviour
         
         currentRequest = request;
         gameObject.SetActive(true);
+        currentRequest.onStart?.Invoke();
         currentCoroutine = StartCoroutine(ProgressRoutine(gameController));
         
     }
@@ -37,6 +38,7 @@ public class ProgressBarController : MonoBehaviour
             if (!currentRequest.key.IsPressed())
             {
                 Cancel(gameController);
+                currentRequest.onCancel?.Invoke();
                 yield break;
             }
             

@@ -57,8 +57,9 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   gadgetName: ScrambleGadgetName
   pickupHoldTime: 2
-  playerPickupDistance: 2
-  cursorPickupDistance: 2
+  playerPickupDistance: 1
+  cursorPickupDistance: 0.5
+  timeBeforePickup: 1
   gadgetRigidbody: {fileID: 0}
   gadgetCollider: {fileID: 5051641891680670756}
   toolGadgetType: 0

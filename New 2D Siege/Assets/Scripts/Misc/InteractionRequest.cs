@@ -9,5 +9,7 @@ public class InteractionRequest
     public float duration;
     public InputAction key;
     public Func<bool> canStart;
+    public Action onStart;
     public Action onComplete;
+    public Action onCancel;
 }

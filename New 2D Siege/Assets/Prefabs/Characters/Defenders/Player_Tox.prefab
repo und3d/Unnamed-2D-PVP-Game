@@ -139,6 +139,8 @@ MonoBehaviour:
   gadgetPlaceablePreview: {fileID: 0}
   throwOrigin: {fileID: 4627275655915200179}
   throwForce: 10
+  timeBeforeActivation: 1
+  timeAtPickup: 0
   gadgetTool: {fileID: 0}
   gadgetToggle: {fileID: 0}
   gadgetVisual: {fileID: 6715999282040090811}
@@ -173,10 +175,9 @@ MonoBehaviour:
   - {fileID: 3175825797976977132}
   playerVision: {fileID: 822313523801803427, guid: cbd0a3a89107bce4abe4cad91fdf3a17, type: 3}
   playerVisionNoShadows: {fileID: 3172948042392980911, guid: 2089b36ba050ff54e877b6e19e88d248, type: 3}
-  barricadeDetected: 0
-  barricadeInRange: 0
-  destructibleWallDetected: 0
-  destructibleWallInRange: 0
+  drawRays: 0
+  inRangeColor: {r: 0, g: 1, b: 0, a: 0.95}
+  outRangeColor: {r: 1, g: 0, b: 0, a: 0.95}
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0

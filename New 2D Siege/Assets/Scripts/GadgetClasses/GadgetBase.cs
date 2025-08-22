@@ -17,21 +17,22 @@ public class GadgetBase : NetworkIdentity
     [SerializeField] protected Collider2D gadgetCollider;
     
     protected ProgressBarController progressBar;
-    protected bool isBeingPickedUp = false;
     protected PlayerID ownerID;
     protected GameObject playerObject;
     protected GadgetController gadgetController;
     protected GameController gameController;
     protected InputManager inputManager;
+    protected RoundView roundView;
     
     protected float stopThreshold = 0.1f;
     protected float checkDelay = 0.2f;
     protected bool hasStopped;
     protected bool isFrozen;
+    protected bool thrownGadgetPickedUpLocal;
     protected InputAction interactKey;
     protected Coroutine _reloadCoroutine;
 
-    private float timeAtPlacement = 1000000000000;
+    protected float timeAtPlacement = 1000000000000f;
     
     // Tool Types
     public enum ToolGadgetType
@@ -49,7 +50,6 @@ public class GadgetBase : NetworkIdentity
     [Header("Toggle Types")]
     [SerializeField] protected ToggleGadgetType toggleGadgetType;
 
-    public static bool gadgetBeingPickedUp = false;
     public bool canBePickedUp;
 
     protected override void OnSpawned()
@@ -62,6 +62,7 @@ public class GadgetBase : NetworkIdentity
         if (!InstanceHandler.TryGetInstance(out gameController))
         {
             Debug.LogError($"GadgetBase failed to get gameController!", this);
+            return;
         }
         
         progressBar = gameController.progressBar;
@@ -69,6 +70,13 @@ public class GadgetBase : NetworkIdentity
         if (!InstanceHandler.TryGetInstance(out inputManager))
         {
             Debug.LogError($"GadgetBase failed to get inputManager!", this);
+            return;
+        }
+
+        if (!InstanceHandler.TryGetInstance(out roundView))
+        {
+            Debug.LogError($"GadgetBase failed to get roundView!", this);
+            return;
         }
         
         interactKey = inputManager.Get("Player/Interact");
@@ -85,7 +93,7 @@ public class GadgetBase : NetworkIdentity
 
     public virtual void Initialize(GadgetController _gadgetController)
     {
-        this.gadgetController = _gadgetController;
+        gadgetController = _gadgetController;
     }
 
     protected virtual void Update()
@@ -98,22 +106,24 @@ public class GadgetBase : NetworkIdentity
     {
         if (!CanStartPickup())
         {
-            gadgetBeingPickedUp = false;
+            gadgetController.gadgetBeingPickedUp = false;
             return;
         }
         
-        gadgetBeingPickedUp = true;
+        gadgetController.gadgetBeingPickedUp = true;
 
         if (!interactKey.IsPressed()) 
             return;
         if (!progressBar)
             return;
+        gadgetController.thrownGadgetIsBeingPickedUp = true;
         progressBar.BeginInteraction( new InteractionRequest
         {
             duration = pickupHoldTime,
             key = interactKey,
             canStart = () => true,
-            onComplete = PickupGadget
+            onComplete = PickupGadget,
+            onCancel = CancelPickup
         });
     }
 
@@ -138,7 +148,18 @@ public class GadgetBase : NetworkIdentity
     protected virtual void PickupGadget()
     {
         gadgetController.OnGadgetPickup();
+        roundView.HideGadgetPickupText(this);
+        thrownGadgetPickedUpLocal = true;
+        gadgetController.timeAtPickup = Time.unscaledTime;
+        gadgetController.thrownGadgetIsBeingPickedUp = false;
+        gadgetController.gadgetBeingPickedUp = false;
         Destroy(gameObject);
+    }
+
+    protected virtual void CancelPickup()
+    {
+        gadgetController.thrownGadgetIsBeingPickedUp = false;
+        gadgetController.gadgetBeingPickedUp = false;
     }
 
     public virtual void GadgetShot()
@@ -170,7 +191,19 @@ public class GadgetBase : NetworkIdentity
 
     protected bool CanStartPickup()
     {
-        return PlayerIsInRange() && IsCursorNearGadget() && playerObject;
+        if (PlayerIsInRange() && IsCursorNearGadget() && playerObject)
+        {
+            roundView.ShowGadgetPickupText(interactKey, this);
+            
+            return true;
+        }
+
+        if (!gadgetController.gadgetBeingPickedUp)
+        {
+            roundView.HideGadgetPickupText(this);
+        }
+
+        return false;
     }
 
     public string GetGadgetName()

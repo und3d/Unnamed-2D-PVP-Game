@@ -28,7 +28,7 @@ public abstract class ToolGadget : GadgetBase
     private Coroutine _recoilCoroutine;
     private InputAction _reloadKey;
     private bool isReloading;
-    private Coroutine _reloadCoroutine;
+    private Coroutine _reloadGadgetCoroutine;
     
     
     private GadgetController ownerGadgetController;
@@ -99,7 +99,7 @@ public abstract class ToolGadget : GadgetBase
     {
         if (_reloadKey.IsPressed() && toolGunGadgetCount > 0 && !isReloading && currentAmmo < 1)
         {
-            _reloadCoroutine = StartCoroutine(StartReload());
+            _reloadGadgetCoroutine = StartCoroutine(StartReload());
             isReloading = true;
         }
         
@@ -223,7 +223,7 @@ public abstract class ToolGadget : GadgetBase
             return;
         
         isReloading = false;
-        StopCoroutine(_reloadCoroutine);
+        StopCoroutine(_reloadGadgetCoroutine);
     }
     
     [ObserversRpc]

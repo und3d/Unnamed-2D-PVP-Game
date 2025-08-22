@@ -119,10 +119,9 @@ MonoBehaviour:
   - {fileID: 4874076880525803434}
   playerVision: {fileID: 822313523801803427, guid: cbd0a3a89107bce4abe4cad91fdf3a17, type: 3}
   playerVisionNoShadows: {fileID: 3172948042392980911, guid: 2089b36ba050ff54e877b6e19e88d248, type: 3}
-  barricadeDetected: 0
-  barricadeInRange: 0
-  destructibleWallDetected: 0
-  destructibleWallInRange: 0
+  drawRays: 0
+  inRangeColor: {r: 0, g: 1, b: 0, a: 0.95}
+  outRangeColor: {r: 1, g: 0, b: 0, a: 0.95}
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -611,7 +610,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2595348711344048262}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -691,7 +690,7 @@ MonoBehaviour:
   toggleGadgetType: 0
   canBePickedUp: 0
   gadgetIsEnabled: 0
-  gadgetVisual: {fileID: 0}
+  gadgetVisual: {fileID: 5801704734536818346}
   gadgetPosition: {x: 0, y: 0, z: 0}
   toolGunGadgetCount: 3
   range: 20
@@ -856,7 +855,7 @@ Transform:
   m_GameObject: {fileID: 3933407679709339849}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -13.333334}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

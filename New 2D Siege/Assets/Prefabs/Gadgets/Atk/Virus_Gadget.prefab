@@ -59,8 +59,9 @@ MonoBehaviour:
   _visitiblityRules: {fileID: 0}
   gadgetName: VirusGadgetName
   pickupHoldTime: 2
-  playerPickupDistance: 2
-  cursorPickupDistance: 2
+  playerPickupDistance: 1
+  cursorPickupDistance: 0.5
+  timeBeforePickup: 1
   gadgetRigidbody: {fileID: 8720234917371845864}
   gadgetCollider: {fileID: 9220870455286546091}
   toolGadgetType: 0

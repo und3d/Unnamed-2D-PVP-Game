@@ -330,6 +330,24 @@ public class playerController : NetworkIdentity
         }
     }
 
+    public InputAction GetInputAction(string action)
+    {
+        var returnAction = action switch
+        {
+            "Aim" => _aim,
+            "Shoot" => _shoot,
+            "Sprint" => _sprint,
+            "Reload" => _reload,
+            "Interact" => _interact,
+            "Primary Weapon" => _primaryWeapon,
+            "Secondary Weapon" => _secondaryWeapon,
+            "Primary Gadget" => _primaryGadget,
+            "Secondary Gadget" => _secondaryGadget,
+            _ => null
+        };
+        return returnAction;
+    }
+
     private void SetKeybindReferences()
     {
         _aim = inputManager.Get("Player/Aim");

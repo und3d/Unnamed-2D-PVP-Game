@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using PurrNet;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class RoundView : View
@@ -21,6 +22,9 @@ public class RoundView : View
     [SerializeField] private TMP_Text gadgetSecondaryCount;
     [SerializeField] private List<Image> RedTeamPlayerIcons = new List<Image>();
     [SerializeField] private List<Image> BlueTeamPlayerIcons = new List<Image>();
+    [SerializeField] private TMP_Text gadgetPickupText;
+    [SerializeField] private TMP_Text objectivePlaceText;
+    [SerializeField] private TMP_Text objectiveDisableText;
     
     [Header("Variables")]
     [SerializeField] private Color redTeamIconDead;
@@ -30,6 +34,7 @@ public class RoundView : View
 
     private int minutes, seconds, centiSeconds;
     private GameController gameController;
+    private GadgetBase pickupOwner = null;
 
     private void Awake()
     {
@@ -161,6 +166,52 @@ public class RoundView : View
     public void SetBluePlayerIconAlive(int iconID)
     {
         BlueTeamPlayerIcons[iconID].color = blueTeamIconAlive;
+    }
+
+    public void ShowGadgetPickupText(InputAction interactKey, GadgetBase caller)
+    {
+        pickupOwner = caller;
+        
+        gadgetPickupText.gameObject.SetActive(true);
+        gadgetPickupText.text = $"{interactKey.GetBindingDisplayString()} To Pick Up!";
+    }
+
+    public void HideGadgetPickupText(GadgetBase caller)
+    {
+        Debug.Log($"Comparing {pickupOwner} to {caller}: {pickupOwner == caller}");
+        if (!pickupOwner || pickupOwner != caller)
+            return;
+        
+        gadgetPickupText.gameObject.SetActive(false);
+        pickupOwner = null;
+    }
+
+    public bool IsGadgetPickupTextActive()
+    {
+        return gadgetPickupText.gameObject.activeSelf;
+    }
+
+    public void ToggleObjectivePlaceText(InputAction interactKey)
+    {
+        if (interactKey == null)
+        {
+            objectivePlaceText.gameObject.SetActive(!objectivePlaceText.gameObject.activeSelf);
+            return;
+        }
+        objectivePlaceText.text = $"Press '{interactKey.GetBindingDisplayString()}' To Place Objective!";
+        objectivePlaceText.gameObject.SetActive(!objectivePlaceText.gameObject.activeSelf);
+    }
+
+    public void ToggleObjectiveDisableText(InputAction interactKey)
+    {
+        if (interactKey == null)
+        {
+            objectiveDisableText.gameObject.SetActive(!objectiveDisableText.gameObject.activeSelf);
+            return;
+        }
+        
+        objectiveDisableText.text = $"Press '{interactKey.GetBindingDisplayString()}' To Disable Objective!";
+        objectiveDisableText.gameObject.SetActive(!objectiveDisableText.gameObject.activeSelf);
     }
 
     public void ResetAllPlayerIcons()

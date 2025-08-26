@@ -16,8 +16,10 @@ public class playerController : NetworkIdentity
     [Header("References")]
     public StateMachine stateMachine;
     public List<StateNode> weaponStates = new();
+    [SerializeField] private PlayerCamera playerCamera;
     [SerializeField] private GameObject playerVision;
     [SerializeField] private GameObject playerVisionNoShadows;
+    [SerializeField] private GameObject drone;
 
     #region Private Variables
     private float moveSpeed;
@@ -26,6 +28,8 @@ public class playerController : NetworkIdentity
     private GameObject currentPreview;
     private GameObject barricadeObj;
     private GameObject reinforcementObj;
+    private GameObject visionObj;
+    private GameObject visionObjNoShadows;
     private ProgressBarController progressBar;
     private Rigidbody2D _rigidbody;
     private StateNode lastState;
@@ -37,6 +41,7 @@ public class playerController : NetworkIdentity
     private bool lastWeaponHiddenState;
     private bool isPlacing;
     private bool isDefender;
+    public bool isOnCameras;
     private GameController.Side side;
     private float timeAtBarricadeInteraction;
     private float timeAtReinforcementInteraction;
@@ -52,6 +57,8 @@ public class playerController : NetworkIdentity
     private InputAction _secondaryWeapon;
     private InputAction _primaryGadget;
     private InputAction _secondaryGadget;
+    private InputAction _throwDrone;
+    private InputAction _enterCameras;
     
     #endregion
 
@@ -91,8 +98,8 @@ public class playerController : NetworkIdentity
         
         GetPlayerSide();
         
-        var visionObj = Instantiate(playerVision, transform, false);
-        var visionObjNoShadows = Instantiate(playerVisionNoShadows, transform, false);
+        visionObj = Instantiate(playerVision, transform, false);
+        visionObjNoShadows = Instantiate(playerVisionNoShadows, transform, false);
         
         //Debug.Log($"Checking if {owner.Value}'s side is Defense");
     }
@@ -102,7 +109,7 @@ public class playerController : NetworkIdentity
         if (!_rigidbody)
             return;
         
-        if (gameController && !gameController.canMove)
+        if ((gameController && !gameController.canMove) || (gameController && isOnCameras))
         {
             _rigidbody.linearVelocity = new Vector2(0, 0);
             return;
@@ -158,6 +165,24 @@ public class playerController : NetworkIdentity
         if (gameController && !gameController.canMove)
             return;
         
+        if (_enterCameras != null)
+        {
+            if (_enterCameras.WasPressedThisFrame())
+            {
+                if (!isOnCameras)
+                {
+                    InstanceHandler.GetInstance<PlayerCameraManager>().GoOnDrones(playerCamera, this);
+                }
+                else
+                {
+                    InstanceHandler.GetInstance<PlayerCameraManager>().ExitDrones(playerCamera, this);
+                }
+            }
+        }
+
+        if (isOnCameras)
+            return;
+        
         if (isDefender)
         {
             BarricadeInteraction();
@@ -183,7 +208,7 @@ public class playerController : NetworkIdentity
         }
     }
 
-    private void ToggleWeaponEquipped()
+    public void ToggleWeaponEquipped()
     {
         var shouldHideWeapon = isSprinting || isGadgetEquipped;
 
@@ -343,6 +368,8 @@ public class playerController : NetworkIdentity
             "Secondary Weapon" => _secondaryWeapon,
             "Primary Gadget" => _primaryGadget,
             "Secondary Gadget" => _secondaryGadget,
+            "Throw Drone" => _throwDrone,
+            "Enter Cameras" => _enterCameras,
             _ => null
         };
         return returnAction;
@@ -359,6 +386,20 @@ public class playerController : NetworkIdentity
         _secondaryWeapon = inputManager.Get("Player/Secondary Weapon");
         _primaryGadget = inputManager.Get("Player/Primary Gadget");
         _secondaryGadget = inputManager.Get("Player/Secondary Gadget");
+        _throwDrone = inputManager.Get("Player/Throw Drone");
+        _enterCameras = inputManager.Get("Player/Enter Cameras");
 
+    }
+
+    public bool IsDefender()
+    {
+        return isDefender;
+    }
+
+    public void OnCamerasToggle(bool toggle)
+    {
+        isOnCameras = toggle;
+        visionObj.SetActive(!toggle);
+        visionObjNoShadows.SetActive(!toggle);
     }
 }

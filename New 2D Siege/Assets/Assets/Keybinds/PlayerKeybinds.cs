@@ -189,6 +189,24 @@ public partial class @PlayerKeybinds: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Throw Drone"",
+                    ""type"": ""Button"",
+                    ""id"": ""b5a7c828-7425-452b-ab06-fb661f18026d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Enter Cameras"",
+                    ""type"": ""Button"",
+                    ""id"": ""0a045ec8-2681-4cca-985b-9c2c38e5a44a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -400,6 +418,28 @@ public partial class @PlayerKeybinds: IInputActionCollection2, IDisposable
                     ""action"": ""Scoreboard"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""de13e541-43bd-4c9b-8099-c02c9dcb7ef7"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Throw Drone"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd60e595-2865-4d24-9c59-f12000c99559"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Enter Cameras"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -419,6 +459,8 @@ public partial class @PlayerKeybinds: IInputActionCollection2, IDisposable
         m_Player_PrimaryGadget = m_Player.FindAction("Primary Gadget", throwIfNotFound: true);
         m_Player_SecondaryGadget = m_Player.FindAction("Secondary Gadget", throwIfNotFound: true);
         m_Player_Scoreboard = m_Player.FindAction("Scoreboard", throwIfNotFound: true);
+        m_Player_ThrowDrone = m_Player.FindAction("Throw Drone", throwIfNotFound: true);
+        m_Player_EnterCameras = m_Player.FindAction("Enter Cameras", throwIfNotFound: true);
     }
 
     ~@PlayerKeybinds()
@@ -510,6 +552,8 @@ public partial class @PlayerKeybinds: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_PrimaryGadget;
     private readonly InputAction m_Player_SecondaryGadget;
     private readonly InputAction m_Player_Scoreboard;
+    private readonly InputAction m_Player_ThrowDrone;
+    private readonly InputAction m_Player_EnterCameras;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -565,6 +609,14 @@ public partial class @PlayerKeybinds: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Scoreboard".
         /// </summary>
         public InputAction @Scoreboard => m_Wrapper.m_Player_Scoreboard;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/ThrowDrone".
+        /// </summary>
+        public InputAction @ThrowDrone => m_Wrapper.m_Player_ThrowDrone;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/EnterCameras".
+        /// </summary>
+        public InputAction @EnterCameras => m_Wrapper.m_Player_EnterCameras;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -624,6 +676,12 @@ public partial class @PlayerKeybinds: IInputActionCollection2, IDisposable
             @Scoreboard.started += instance.OnScoreboard;
             @Scoreboard.performed += instance.OnScoreboard;
             @Scoreboard.canceled += instance.OnScoreboard;
+            @ThrowDrone.started += instance.OnThrowDrone;
+            @ThrowDrone.performed += instance.OnThrowDrone;
+            @ThrowDrone.canceled += instance.OnThrowDrone;
+            @EnterCameras.started += instance.OnEnterCameras;
+            @EnterCameras.performed += instance.OnEnterCameras;
+            @EnterCameras.canceled += instance.OnEnterCameras;
         }
 
         /// <summary>
@@ -668,6 +726,12 @@ public partial class @PlayerKeybinds: IInputActionCollection2, IDisposable
             @Scoreboard.started -= instance.OnScoreboard;
             @Scoreboard.performed -= instance.OnScoreboard;
             @Scoreboard.canceled -= instance.OnScoreboard;
+            @ThrowDrone.started -= instance.OnThrowDrone;
+            @ThrowDrone.performed -= instance.OnThrowDrone;
+            @ThrowDrone.canceled -= instance.OnThrowDrone;
+            @EnterCameras.started -= instance.OnEnterCameras;
+            @EnterCameras.performed -= instance.OnEnterCameras;
+            @EnterCameras.canceled -= instance.OnEnterCameras;
         }
 
         /// <summary>
@@ -785,5 +849,19 @@ public partial class @PlayerKeybinds: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnScoreboard(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Throw Drone" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnThrowDrone(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Enter Cameras" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEnterCameras(InputAction.CallbackContext context);
     }
 }

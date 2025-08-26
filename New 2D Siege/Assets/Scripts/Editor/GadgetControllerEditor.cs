@@ -8,7 +8,7 @@ public class GadgetControllerEditor : Editor
     
     private SerializedProperty primaryGadget;
     private SerializedProperty secondaryGadget;
-
+    
     private SerializedProperty gadgetKey;
     private SerializedProperty primaryGadgetCount;
     private SerializedProperty secondaryGadgetCount;
@@ -25,6 +25,11 @@ public class GadgetControllerEditor : Editor
     private SerializedProperty gadgetToggle;
     private SerializedProperty gadgetVisual;
     private SerializedProperty gadgetPrefab;
+
+    private SerializedProperty dronesCount;
+    private SerializedProperty dronePrefab;
+    private SerializedProperty droneThrowOrigin;
+    private SerializedProperty droneThrowForce;
     
     // Throwable
     private SerializedProperty throwOrigin;
@@ -33,11 +38,11 @@ public class GadgetControllerEditor : Editor
     
     private void OnEnable()
     {
-        playerController = serializedObject.FindProperty("playerController");
+        playerController = serializedObject.FindProperty("_playerController");
         
         primaryGadget = serializedObject.FindProperty("primaryGadget");
         secondaryGadget = serializedObject.FindProperty("secondaryGadget");
-
+        
         gadgetKey = serializedObject.FindProperty("gadgetKey");
         primaryGadgetCount = serializedObject.FindProperty("primaryGadgetCount");
         secondaryGadgetCount = serializedObject.FindProperty("secondaryGadgetCount");
@@ -56,6 +61,10 @@ public class GadgetControllerEditor : Editor
         gadgetPrefab = serializedObject.FindProperty("gadgetPrefab");
         gadgetVisual = serializedObject.FindProperty("gadgetVisual");
         
+        dronesCount = serializedObject.FindProperty("dronesCount");
+        dronePrefab = serializedObject.FindProperty("dronePrefab");
+        droneThrowOrigin = serializedObject.FindProperty("droneThrowOrigin");
+        droneThrowForce = serializedObject.FindProperty("droneThrowForce");
         
         // Throwable
         throwOrigin = serializedObject.FindProperty("throwOrigin");
@@ -125,6 +134,10 @@ public class GadgetControllerEditor : Editor
         
         EditorGUILayout.PropertyField(primaryGadget);
         EditorGUILayout.PropertyField(secondaryGadget);
+        EditorGUILayout.PropertyField(dronesCount);
+        EditorGUILayout.PropertyField(dronePrefab);
+        EditorGUILayout.PropertyField(droneThrowOrigin);
+        EditorGUILayout.PropertyField(droneThrowForce);
         if (gadgetType != GadgetController.GadgetType.Toggle)
         {
             EditorGUILayout.PropertyField(gadgetVisual);

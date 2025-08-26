@@ -69,7 +69,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  playerController: {fileID: 3401231433800048838}
+  _playerController: {fileID: 3401231433800048838}
   gadgetKey: 103
   useGadgetKey: 102
   primaryGadgetCount: 3
@@ -80,15 +80,24 @@ MonoBehaviour:
   primaryGadgetDuration: 30
   primaryGadgetDelay: 2
   secondaryGadgetCount: 2
+  gadgetBeingPickedUp: 0
   primaryGadget: 0
   secondaryGadget: 0
   gadgetPlaceablePreview: {fileID: 3565984352568502889, guid: ab63b3fae7b580442a6e9de2cce0eaf5, type: 3}
   throwOrigin: {fileID: 0}
   throwForce: 10
+  timeBeforeActivation: 0
+  timeAtPickup: 0
+  thrownGadgetIsBeingPickedUp: 0
   gadgetTool: {fileID: 0}
   gadgetToggle: {fileID: 0}
+  dronesCount: 2
+  dronePrefab: {fileID: 8611227618059364269, guid: a1dd1cf86b90e1e4b846b3100c515441, type: 3}
+  droneThrowOrigin: {fileID: 0}
+  droneThrowForce: 0
   gadgetVisual: {fileID: 3611782744561073187}
   gadgetPrefab: {fileID: 0}
+  isGadgetPulledOut: 0
 --- !u!114 &3401231433800048838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,12 +126,14 @@ MonoBehaviour:
   - {fileID: 4139357833510178640}
   - {fileID: 2326740372766534828}
   - {fileID: 1847968994030636789}
+  playerCamera: {fileID: 711885471427292266}
   playerVision: {fileID: 822313523801803427, guid: cbd0a3a89107bce4abe4cad91fdf3a17, type: 3}
   playerVisionNoShadows: {fileID: 3172948042392980911, guid: 2089b36ba050ff54e877b6e19e88d248, type: 3}
-  barricadeDetected: 0
-  barricadeInRange: 0
-  destructibleWallDetected: 0
-  destructibleWallInRange: 0
+  drone: {fileID: 0}
+  isOnCameras: 0
+  drawRays: 0
+  inRangeColor: {r: 0, g: 1, b: 0, a: 0.95}
+  outRangeColor: {r: 1, g: 0, b: 0, a: 0.95}
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -685,7 +696,7 @@ Transform:
   m_GameObject: {fileID: 3933407679709339849}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -13.333334}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -127,14 +127,14 @@ public class RoundView : View
 
     public void UpdateGadgetPrimaryCountToggleTimer(float duration)
     {
-        Debug.Log("Setting text to timer");
+        //Debug.Log("Setting text to timer");
         seconds = Mathf.FloorToInt(duration % 60);
         gadgetPrimaryCount.text = seconds.ToString();
     }
 
     public void SetGadgetPrimaryCountInfinite()
     {
-        Debug.Log("Setting text to infinite");
+        //Debug.Log("Setting text to infinite");
         gadgetPrimaryCount.text = "\u221E";
     }
 
@@ -178,7 +178,7 @@ public class RoundView : View
 
     public void HideGadgetPickupText(GadgetBase caller)
     {
-        Debug.Log($"Comparing {pickupOwner} to {caller}: {pickupOwner == caller}");
+        //Debug.Log($"Comparing {pickupOwner} to {caller}: {pickupOwner == caller}");
         if (!pickupOwner || pickupOwner != caller)
             return;
         

@@ -27,6 +27,7 @@ public class Gun : StateNode
     [SerializeField] private AnimationCurve recoilCurve;
     
     [Header("References")]
+    private playerController _player;
     [SerializeField] private Transform playerTransform;
     [SerializeField] private Transform shootOrigin;
     [SerializeField] private LayerMask hitLayer;
@@ -56,6 +57,8 @@ public class Gun : StateNode
             Debug.LogError("Gun failed to get input manager!", this);
             return;
         }
+        
+        _player = playerTransform.gameObject.GetComponent<playerController>();
         
         _reloadKey = inputManager.Get("Player/Reload");
     }
@@ -112,6 +115,9 @@ public class Gun : StateNode
         if (!isOwner)
             return;
 
+        if (_player.isOnCameras)
+            return;
+        
         if (_reloadKey.IsPressed() && currentReserveAmmo > 0 && !isReloading && currentAmmo < magSize + 1)
         {
             magAmmoBeforeReload = currentAmmo;

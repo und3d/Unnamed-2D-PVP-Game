@@ -161,6 +161,7 @@ Transform:
   - {fileID: 8251610409718722025}
   - {fileID: 905266581656876405}
   - {fileID: 6838778048533206435}
+  - {fileID: 3433779722605245114}
   - {fileID: 4314948513794855648}
   - {fileID: 4499722983209084798}
   m_Father: {fileID: 0}
@@ -186,7 +187,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  playerController: {fileID: 3401231433800048838}
+  _playerController: {fileID: 3401231433800048838}
   gadgetKey: 103
   useGadgetKey: 102
   primaryGadgetCount: 3
@@ -197,15 +198,24 @@ MonoBehaviour:
   primaryGadgetDuration: 30
   primaryGadgetDelay: 2
   secondaryGadgetCount: 2
+  gadgetBeingPickedUp: 0
   primaryGadget: 0
   secondaryGadget: 0
   gadgetPlaceablePreview: {fileID: 3565984352568502889, guid: f4d92a73ce5ef3f43a9fef1b07e036cd, type: 3}
   throwOrigin: {fileID: 0}
   throwForce: 10
+  timeBeforeActivation: 0
+  timeAtPickup: 0
+  thrownGadgetIsBeingPickedUp: 0
   gadgetTool: {fileID: 0}
   gadgetToggle: {fileID: 0}
+  dronesCount: 2
+  dronePrefab: {fileID: 8611227618059364269, guid: a1dd1cf86b90e1e4b846b3100c515441, type: 3}
+  droneThrowOrigin: {fileID: 3433779722605245114}
+  droneThrowForce: 5
   gadgetVisual: {fileID: 7647414497785386322}
   gadgetPrefab: {fileID: 0}
+  isGadgetPulledOut: 0
 --- !u!114 &3401231433800048838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,12 +244,14 @@ MonoBehaviour:
   - {fileID: 4139357833510178640}
   - {fileID: 2326740372766534828}
   - {fileID: 5120434703724925736}
+  playerCamera: {fileID: 711885471427292266}
   playerVision: {fileID: 822313523801803427, guid: 0bd52025989aa3049b2fc00467898724, type: 3}
   playerVisionNoShadows: {fileID: 3172948042392980911, guid: 69e0b70fd1d29cb428d6b18e7550d8be, type: 3}
-  barricadeDetected: 0
-  barricadeInRange: 0
-  destructibleWallDetected: 0
-  destructibleWallInRange: 0
+  drone: {fileID: 8611227618059364269, guid: a1dd1cf86b90e1e4b846b3100c515441, type: 3}
+  isOnCameras: 0
+  drawRays: 0
+  inRangeColor: {r: 0, g: 1, b: 0, a: 0.95}
+  outRangeColor: {r: 1, g: 0, b: 0, a: 0.95}
 --- !u!114 &2468881062887719266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -768,7 +780,7 @@ Transform:
   m_GameObject: {fileID: 3933407679709339849}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -13.333334}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1238,6 +1250,51 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &7204273889023579754
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3433779722605245114}
+  - component: {fileID: 5501385290107697953}
+  m_Layer: 0
+  m_Name: ThrowOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3433779722605245114
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7204273889023579754}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalScale: {x: 0.14630666, y: 0.14630666, z: 0.14630666}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1196152672649150724}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5501385290107697953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7204273889023579754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 861253df98c87ae4b99919c38bb47241, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  throwOrigin: {fileID: 3433779722605245114}
 --- !u!1 &7647414497785386322
 GameObject:
   m_ObjectHideFlags: 0

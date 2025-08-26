@@ -1,7 +1,24 @@
+using System;
 using UnityEngine;
 
 public abstract class DroneGadget : GadgetBase
 {
+    [SerializeField] private GameObject droneVision;
+    [SerializeField] private GameObject droneVisionNoShadows;
+    
+    private GameObject visionObj;
+    private GameObject visionObjNoShadows;
+    private bool canMove;
+
+    private void Awake()
+    {
+        visionObj = Instantiate(droneVision, transform, false);
+        //visionObj.gameObject.transform.Rotate(new Vector3(0, 0, 270));
+        visionObjNoShadows = Instantiate(droneVisionNoShadows, transform, false);
+        //visionObjNoShadows.gameObject.transform.Rotate(new Vector3(0, 0, 270));
+        ToggleActive(false, isOwner);
+    }
+
     protected override void OnSpawned()
     {
         base.OnSpawned();
@@ -30,5 +47,13 @@ public abstract class DroneGadget : GadgetBase
             return;
 
         FreezeGadget(false);
+    }
+
+    public virtual void ToggleActive(bool toggle, bool droneOwner)
+    {
+        if (droneOwner)
+            canMove = toggle;
+        visionObj.SetActive(toggle);
+        visionObjNoShadows.SetActive(toggle);
     }
 }

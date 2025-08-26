@@ -203,6 +203,7 @@ Transform:
   - {fileID: 8251610409718722025}
   - {fileID: 7888560710018710230}
   - {fileID: 6838778048533206435}
+  - {fileID: 6488845481206086852}
   - {fileID: 3013231460927421348}
   - {fileID: 613936876806871193}
   m_Father: {fileID: 0}
@@ -228,7 +229,7 @@ MonoBehaviour:
   _directChildren: []
   _networkRules: {fileID: 0}
   _visitiblityRules: {fileID: 0}
-  playerController: {fileID: 3401231433800048838}
+  _playerController: {fileID: 3401231433800048838}
   gadgetKey: 103
   useGadgetKey: 102
   primaryGadgetCount: 3
@@ -239,15 +240,24 @@ MonoBehaviour:
   primaryGadgetDuration: 30
   primaryGadgetDelay: 2
   secondaryGadgetCount: 2
+  gadgetBeingPickedUp: 0
   primaryGadget: 4
   secondaryGadget: 0
   gadgetPlaceablePreview: {fileID: 0}
   throwOrigin: {fileID: 0}
   throwForce: 10
+  timeBeforeActivation: 0
+  timeAtPickup: 0
+  thrownGadgetIsBeingPickedUp: 0
   gadgetTool: {fileID: 0}
   gadgetToggle: {fileID: 1269787995325631307}
+  dronesCount: 2
+  dronePrefab: {fileID: 8611227618059364269, guid: a1dd1cf86b90e1e4b846b3100c515441, type: 3}
+  droneThrowOrigin: {fileID: 6488845481206086852}
+  droneThrowForce: 5
   gadgetVisual: {fileID: 0}
   gadgetPrefab: {fileID: 0}
+  isGadgetPulledOut: 0
 --- !u!114 &3401231433800048838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,12 +286,14 @@ MonoBehaviour:
   - {fileID: 4139357833510178640}
   - {fileID: 2326740372766534828}
   - {fileID: 2471195006000672239}
+  playerCamera: {fileID: 711885471427292266}
   playerVision: {fileID: 822313523801803427, guid: 0bd52025989aa3049b2fc00467898724, type: 3}
   playerVisionNoShadows: {fileID: 3172948042392980911, guid: 69e0b70fd1d29cb428d6b18e7550d8be, type: 3}
-  barricadeDetected: 0
-  barricadeInRange: 0
-  destructibleWallDetected: 0
-  destructibleWallInRange: 0
+  drone: {fileID: 8611227618059364269, guid: a1dd1cf86b90e1e4b846b3100c515441, type: 3}
+  isOnCameras: 0
+  drawRays: 0
+  inRangeColor: {r: 0, g: 1, b: 0, a: 0.95}
+  outRangeColor: {r: 1, g: 0, b: 0, a: 0.95}
 --- !u!114 &4980798662954896818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -750,6 +762,51 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &2181078945708074860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6488845481206086852}
+  - component: {fileID: 5633181249431679534}
+  m_Layer: 0
+  m_Name: ThrowOrigin
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6488845481206086852
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2181078945708074860}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
+  m_LocalScale: {x: 0.14630666, y: 0.14630666, z: 0.14630666}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1196152672649150724}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5633181249431679534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2181078945708074860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 861253df98c87ae4b99919c38bb47241, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  throwOrigin: {fileID: 6488845481206086852}
 --- !u!1 &3136159881994308338
 GameObject:
   m_ObjectHideFlags: 0

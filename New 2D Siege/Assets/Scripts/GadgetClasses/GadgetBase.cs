@@ -167,7 +167,7 @@ public class GadgetBase : NetworkIdentity
         Destroy(gameObject);
     }
 
-    protected void CheckIfStopped()
+    protected virtual void CheckIfStopped()
     {
         if (hasStopped || !isOwner) return;
 

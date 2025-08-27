@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1984890583056520933}
   - component: {fileID: 4392390363032689478}
-  m_Layer: 13
+  m_Layer: 17
   m_Name: BulletCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 131072
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 3959
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 5356822142109623968}
   - component: {fileID: 3614781369924699763}
   - component: {fileID: 1297517230831384914}
-  m_Layer: 14
+  m_Layer: 18
   m_Name: Destructible Wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 16384
+    m_Bits: 262144
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -190,7 +190,7 @@ GameObject:
   m_Component:
   - component: {fileID: 480600095823282995}
   - component: {fileID: 8434439619546513861}
-  m_Layer: 12
+  m_Layer: 16
   m_Name: PlayerCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,7 +225,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 4160
+    m_Bits: 65600
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 4023
@@ -270,7 +270,7 @@ GameObject:
   - component: {fileID: 8138368844968794330}
   - component: {fileID: 1690311154546492699}
   - component: {fileID: 1596402096173461286}
-  m_Layer: 12
+  m_Layer: 16
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -421,6 +421,8 @@ MonoBehaviour:
   minClearSamples: 1
   stopShortEpsilon: 0.02
   drawRays: 0
+  clearColor: {r: 0, g: 1, b: 0, a: 0.95}
+  blockedColor: {r: 1, g: 0, b: 0, a: 0.95}
   CheckClear: 0
   __UseUnshadowedMaskID: 0
   sr: {fileID: 8138368844968794330}

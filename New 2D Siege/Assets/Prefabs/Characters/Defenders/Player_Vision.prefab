@@ -520,7 +520,7 @@ MonoBehaviour:
   shootOrigin: {fileID: 6838778048533206435}
   hitLayer:
     serializedVersion: 2
-    m_Bits: 11223
+    m_Bits: 175063
   muzzleFlash: {fileID: 4731351591826490611}
   gameController: {fileID: 3806975639612252344, guid: 0fedf1bb60ce11b40835c7e34f3c38c2, type: 3}
   renderers:
@@ -1328,7 +1328,7 @@ MonoBehaviour:
   shootOrigin: {fileID: 6838778048533206435}
   hitLayer:
     serializedVersion: 2
-    m_Bits: 11223
+    m_Bits: 175063
   muzzleFlash: {fileID: 1471267271617475086}
   gameController: {fileID: 3806975639612252344, guid: 0fedf1bb60ce11b40835c7e34f3c38c2, type: 3}
   renderers:

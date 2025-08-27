@@ -70,9 +70,10 @@ public class PlayerCameraManager : MonoBehaviour
     {
         if (_allDroneCameras.Contains(cam))
             _allDroneCameras.Remove(cam);
+        
         if (cam.droneCamera.Priority == 10)
         {
-            ExitDrones(_player.gameObject.GetComponentInChildren<PlayerCamera>(), _player);
+            DroneSwitchNext();
         }
     }
 
@@ -102,6 +103,11 @@ public class PlayerCameraManager : MonoBehaviour
         
         if (cam.isOwner)
         {
+            foreach (var drone in _allDroneCameras)
+            {
+                drone.GetComponentInParent<DroneController>().PlayerIsOnCamerasToggle(true);
+            }
+            
             player.ToggleWeaponEquipped();
             player.OnCamerasToggle(true);
             _player = player;
@@ -116,6 +122,11 @@ public class PlayerCameraManager : MonoBehaviour
     {
         if (cam.isOwner)
         {
+            foreach (var drone in _allDroneCameras)
+            {
+                drone.GetComponentInParent<DroneController>().PlayerIsOnCamerasToggle(false);
+            }
+            
             player.ToggleWeaponEquipped();
             player.OnCamerasToggle(false);
             _canSwitchDroneCamera = false;

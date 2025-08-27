@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7890050303591392893}
   - component: {fileID: 2112356907888673373}
   - component: {fileID: 7552892372153607217}
-  m_Layer: 6
+  m_Layer: 15
   m_Name: DroneCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,8 +142,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6971941365912585242}
   - component: {fileID: 6124299610121053636}
-  - component: {fileID: 6840818786336682152}
-  m_Layer: 6
+  - component: {fileID: 2612263329819210240}
+  m_Layer: 15
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,8 +220,8 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!70 &6840818786336682152
-CapsuleCollider2D:
+--- !u!58 &2612263329819210240
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -236,7 +236,7 @@ CapsuleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 37056
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -255,8 +255,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 2}
-  m_Direction: 0
+  m_Radius: 0.75
 --- !u!1 &8611227618059364269
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +268,7 @@ GameObject:
   - component: {fileID: 1668783078616904537}
   - component: {fileID: 1477956301312472473}
   - component: {fileID: 4651840096216842732}
-  m_Layer: 6
+  m_Layer: 15
   m_Name: Drone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -347,7 +346,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
@@ -378,9 +377,10 @@ MonoBehaviour:
   cursorPickupDistance: 2
   timeBeforePickup: 1
   gadgetRigidbody: {fileID: 1477956301312472473}
-  gadgetCollider: {fileID: 6840818786336682152}
+  gadgetCollider: {fileID: 2612263329819210240}
   toolGadgetType: 0
   toggleGadgetType: 0
   canBePickedUp: 0
   droneVision: {fileID: 822313523801803427, guid: 0bd52025989aa3049b2fc00467898724, type: 3}
   droneVisionNoShadows: {fileID: 3172948042392980911, guid: 69e0b70fd1d29cb428d6b18e7550d8be, type: 3}
+  moveSpeed: 3

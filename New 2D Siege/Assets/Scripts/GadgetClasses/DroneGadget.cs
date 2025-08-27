@@ -8,14 +8,13 @@ public abstract class DroneGadget : GadgetBase
     
     private GameObject visionObj;
     private GameObject visionObjNoShadows;
-    private bool canMove;
+    protected bool canMove;
+    protected bool isOnCameras;
 
     private void Awake()
     {
         visionObj = Instantiate(droneVision, transform, false);
-        //visionObj.gameObject.transform.Rotate(new Vector3(0, 0, 270));
         visionObjNoShadows = Instantiate(droneVisionNoShadows, transform, false);
-        //visionObjNoShadows.gameObject.transform.Rotate(new Vector3(0, 0, 270));
         ToggleActive(false, isOwner);
     }
 
@@ -31,6 +30,8 @@ public abstract class DroneGadget : GadgetBase
         if (!playerObject)
             return;
         if (!canBePickedUp)
+            return;
+        if (isOnCameras)
             return;
         base.Update();
     }
@@ -55,5 +56,22 @@ public abstract class DroneGadget : GadgetBase
             canMove = toggle;
         visionObj.SetActive(toggle);
         visionObjNoShadows.SetActive(toggle);
+    }
+
+    protected override void CheckIfStopped()
+    {
+        if (hasStopped || !isOwner) return;
+
+        Debug.Log("Checking if stopped. ");
+        
+        if (gadgetRigidbody.linearVelocity.magnitude < stopThreshold)
+        {
+            FreezeGadget(false);
+        }
+    }
+
+    public virtual void PlayerIsOnCamerasToggle(bool toggle)
+    {
+        isOnCameras = toggle;
     }
 }

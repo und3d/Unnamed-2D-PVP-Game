@@ -358,6 +358,11 @@ public class GadgetController : NetworkBehaviour
         return primaryGadgetCount;
     }
 
+    public void ChangeDroneCount(int change)
+    {
+        dronesCount += change;
+    }
+
     private void SetLateVariables()
     {
         throwDroneKeybind = _playerController.GetInputAction("Throw Drone");

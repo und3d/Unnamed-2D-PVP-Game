@@ -67,6 +67,7 @@ public abstract class DroneGadget : GadgetBase
         if (gadgetRigidbody.linearVelocity.magnitude < stopThreshold)
         {
             FreezeGadget(false);
+            CancelInvoke(nameof(CheckIfStopped));
         }
     }
 

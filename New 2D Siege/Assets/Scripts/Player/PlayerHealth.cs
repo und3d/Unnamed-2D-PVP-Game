@@ -6,6 +6,7 @@ public class PlayerHealth : NetworkIdentity
 {
     [SerializeField] private SyncVar<int> health = new(100);
     [SerializeField] public SyncVar<bool> isRedTeam = new(true);
+    [SerializeField] private SyncVar<bool> canBeShot = new SyncVar<bool>(true, ownerAuth:true);
     [SerializeField] private int selfLayer, otherLayer;
     [SerializeField] private int playerIconID;
     
@@ -94,6 +95,18 @@ public class PlayerHealth : NetworkIdentity
     public void SetPlayerIconID(int iconID)
     {
         playerIconID = iconID;
+    }
+    
+    public void CanBeShotToggle(bool toggle)
+    {
+        Debug.Log($"Setting canBeShot to: {toggle}");
+        
+        canBeShot.value = toggle;
+    }
+
+    public bool GetCanBeShotValue()
+    {
+        return canBeShot.value;
     }
     
     [ObserversRpc]

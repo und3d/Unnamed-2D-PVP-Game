@@ -31,6 +31,7 @@ public class GadgetBase : NetworkIdentity
     protected bool thrownGadgetPickedUpLocal;
     protected InputAction interactKey;
     protected Coroutine _reloadCoroutine;
+    protected Camera mainCamera;
 
     protected float timeAtPlacement = 1000000000000f;
     
@@ -78,6 +79,8 @@ public class GadgetBase : NetworkIdentity
             Debug.LogError($"GadgetBase failed to get roundView!", this);
             return;
         }
+        
+        mainCamera = Camera.main;
         
         interactKey = inputManager.Get("Player/Interact");
 
@@ -129,7 +132,7 @@ public class GadgetBase : NetworkIdentity
 
     protected virtual bool IsCursorNearGadget()
     {
-        Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         var distance = Vector2.Distance(transform.position, mouseWorldPos);
 
         return distance <= cursorPickupDistance;

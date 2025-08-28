@@ -15,6 +15,9 @@ public abstract class ToggleGadget : GadgetBase
 
     private float durationLeft;
     private float _deactivationTime;
+    protected playerController _playerController;
+    protected PlayerHealth _playerHealth;
+    protected bool gadgetActiveCheck;
 
     protected override void OnSpawned()
     {
@@ -25,22 +28,15 @@ public abstract class ToggleGadget : GadgetBase
         if (!isOwner)
             return;
         
-        if (!InstanceHandler.TryGetInstance(out RoundView roundView))
-        {
-            Debug.LogError($"Gun failed to get roundView!", this);
-        }
-        
         durationLeft = timerDuration;
+        
+        _playerController = GetComponentInParent<playerController>();
+        _playerHealth = GetComponentInParent<PlayerHealth>();
         
         if (toggleGadgetType == ToggleGadgetType.Timer)
             UpdateGadgetDurationVisual(durationLeft);
         else if (toggleGadgetType == ToggleGadgetType.Infinite)
             roundView.SetGadgetPrimaryCountInfinite();
-    }
-
-    protected override void Update()
-    {
-        
     }
 
     protected virtual void FixedUpdate()
@@ -57,15 +53,21 @@ public abstract class ToggleGadget : GadgetBase
                     gadgetIsEnabled = false;
                     break;
                 case ToggleGadgetType.Infinite:
-                    // Gadget Functionality
+                    if (gadgetActiveCheck)
+                        break;
+                    gadgetActiveCheck = true;
+                    GadgetFunctionalityToggle(gadgetIsEnabled);
                     break;
                 case ToggleGadgetType.Timer:
                     if (durationLeft > 0)
                     {
                         durationLeft -= Time.deltaTime;
                         UpdateGadgetDurationVisual(durationLeft);
-
-                        // Gadget Functionality
+                        
+                        if (gadgetActiveCheck)
+                            break;
+                        gadgetActiveCheck = true;
+                        GadgetFunctionalityToggle(gadgetIsEnabled);
 
                         break; // Exit case
                     }
@@ -82,9 +84,19 @@ public abstract class ToggleGadget : GadgetBase
                     // Default case, do nothing.
                     break;
                 case ToggleGadgetType.Infinite:
-                    // Do nothing when disabled
+                    if (gadgetActiveCheck)
+                    {
+                        GadgetFunctionalityToggle(gadgetIsEnabled);
+                        gadgetActiveCheck = false;
+                    }
                     break;
                 case ToggleGadgetType.Timer:
+                    if (gadgetActiveCheck)
+                    {
+                        GadgetFunctionalityToggle(gadgetIsEnabled);
+                        gadgetActiveCheck = false;
+                    }
+                    
                     if (!doesRecharge || durationLeft >= timerDuration)
                         break;
                     durationLeft = Mathf.MoveTowards(
@@ -100,11 +112,8 @@ public abstract class ToggleGadget : GadgetBase
 
     private void UpdateGadgetDurationVisual(float duration)
     {
-        if (!InstanceHandler.TryGetInstance(out RoundView roundView))
-        {
-            Debug.LogError($"Gun failed to get roundView!", this);
-        }
-        
+        if (!roundView)
+            return;
         roundView.UpdateGadgetPrimaryCountToggleTimer(duration);
     }
 
@@ -116,6 +125,11 @@ public abstract class ToggleGadget : GadgetBase
     public float GetTimeBetweenActivations()
     {
         return timeBetweenActivations;
+    }
+
+    protected virtual void GadgetFunctionalityToggle(bool toggle)
+    {
+        // Override this method in the specific gadget script
     }
 
     [ObserversRpc]

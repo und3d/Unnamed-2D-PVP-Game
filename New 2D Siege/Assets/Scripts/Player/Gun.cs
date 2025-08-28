@@ -231,7 +231,10 @@ public class Gun : StateNode
             }
 
             //Debug.Log($"Player should be losing health.");
-            playerHealth.ChangeHealth(-damage, info.sender);
+            if (playerHealth.GetCanBeShotValue())
+            {
+                playerHealth.ChangeHealth(-damage, info.sender);
+            }
             PlayerHitConfirmation(playerHealth, playerHealth.transform.InverseTransformPoint(hit.point), hit.normal);
         }
     }
@@ -244,9 +247,13 @@ public class Gun : StateNode
     
     private void PlayerHit(PlayerHealth player, Vector3 localPosition, Vector3 normal)
     {
-        if (playerHitEffect && player)
+        if (playerHitEffect && player && player.GetCanBeShotValue())
         {
             Instantiate(playerHitEffect, player.transform.TransformPoint(localPosition), Quaternion.LookRotation(normal));
+        }
+        else if (enviroHitEffect && player && !player.GetCanBeShotValue())
+        {
+            Instantiate(enviroHitEffect, player.transform.TransformPoint(localPosition), Quaternion.LookRotation(normal));
         }
     }
     

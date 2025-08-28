@@ -242,6 +242,10 @@ MonoBehaviour:
     _value: 1
     _ownerAuth: 0
     _sendIntervalInSeconds: 0
+  canBeShot:
+    _value: 1
+    _ownerAuth: 1
+    _sendIntervalInSeconds: 0
   selfLayer: 6
   otherLayer: 7
   playerIconID: 0

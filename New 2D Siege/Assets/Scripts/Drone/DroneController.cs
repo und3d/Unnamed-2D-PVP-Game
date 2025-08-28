@@ -6,6 +6,7 @@ public class DroneController : DroneGadget
     [SerializeField] private float moveSpeed = 3f;
     
     private playerController _playerController;
+    private Vector2 _move;
     
     protected override void OnSpawned()
     {
@@ -36,9 +37,9 @@ public class DroneController : DroneGadget
     
     private void RotateTowardsMouse()
     {
-        if (!Camera.main) return;
+        if (!mainCamera) return;
         
-        var mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         var direction = mouseWorldPosition - transform.position;
         var angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         gadgetRigidbody.rotation = angle - 90f;

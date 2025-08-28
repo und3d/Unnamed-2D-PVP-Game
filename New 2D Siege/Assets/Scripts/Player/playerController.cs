@@ -13,6 +13,7 @@ public class playerController : NetworkIdentity
     [SerializeField] private PlayerSettings playerSettings;
     public bool isGadgetEquipped;
     
+    
     [Header("References")]
     public StateMachine stateMachine;
     public List<StateNode> weaponStates = new();

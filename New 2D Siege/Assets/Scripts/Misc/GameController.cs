@@ -212,12 +212,12 @@ public class GameController : NetworkBehaviour
         switch (side)
         {
             case Side.Attack:
-                playerGlobalLightAttack.SetActive(true);
                 playerGlobalLightDefense.SetActive(false);
+                playerGlobalLightAttack.SetActive(true);
                 break;
             case Side.Defense:
-                playerGlobalLightDefense.SetActive(true);
                 playerGlobalLightAttack.SetActive(false);
+                playerGlobalLightDefense.SetActive(true);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(side), side, null);

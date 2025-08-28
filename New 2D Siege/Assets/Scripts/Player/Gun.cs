@@ -212,6 +212,11 @@ public class Gun : StateNode
     [ServerRpc]
     private void BarricadeHit(Barricade barricade)
     {
+        if (barricade.getLockdownActive())
+        {
+            return;
+        }
+        
         Debug.Log("Barricade Hit");
         barricade.Hit(-damage);
     }

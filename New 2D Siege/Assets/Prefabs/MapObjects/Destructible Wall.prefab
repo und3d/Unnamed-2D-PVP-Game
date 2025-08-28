@@ -416,7 +416,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   occluders:
     serializedVersion: 2
-    m_Bits: 4608
+    m_Bits: 70144
   samples: 5
   minClearSamples: 1
   stopShortEpsilon: 0.02

@@ -4,12 +4,15 @@ using UnityEngine;
 public class Barricade : NetworkIdentity
 {
     [SerializeField] private GameObject barricadeChild;
+    [SerializeField] private GameObject lockdownBarricade;
     [SerializeField] private SyncVar<int> barricadeHealth = new(100);
     [SerializeField] private bool enabledOnStart = false;
     [SerializeField] private float playerPlaceDistance = 2f;
 
     private GameObject playerObject;
     private bool isBeingPlaced = false;
+    private bool regularActive;
+    private bool lockdownActive;
     private GameController gameController;
     
     protected override void OnSpawned()
@@ -21,6 +24,7 @@ public class Barricade : NetworkIdentity
         if (enabledOnStart)
         {
             barricadeChild.SetActive(true);
+            regularActive = true;
         }
         
         if (!InstanceHandler.TryGetInstance(out gameController))
@@ -34,7 +38,7 @@ public class Barricade : NetworkIdentity
         //Debug.Log($"New Barricade Health: {newHealth}");
         if (newHealth <= 0)
         {
-            ToggleBarricade();
+            ToggleBarricade(true);
         }
     }
 
@@ -43,16 +47,35 @@ public class Barricade : NetworkIdentity
         barricadeHealth.value += damage;
     }
 
-    [ObserversRpc]
-    public void SetVisibility()
+    public bool GetRegularActive()
     {
-        barricadeChild.SetActive(!barricadeChild.activeSelf);
+        return regularActive;
+    }
+
+    public bool getLockdownActive()
+    {
+        return lockdownActive;
+    }
+
+    [ObserversRpc]
+    public void SetVisibility(bool regular)
+    {
+        if (regular)
+        {
+            barricadeChild.SetActive(!barricadeChild.activeSelf);
+            regularActive = !regularActive;
+        }
+        else
+        {
+            lockdownBarricade.SetActive(!lockdownBarricade.activeSelf);
+            lockdownActive = !lockdownActive;
+        }
     }
     
     [ServerRpc]
-    public void ToggleBarricade()
+    public void ToggleBarricade(bool regular)
     {
         barricadeHealth.value = 100;
-        SetVisibility();
+        SetVisibility(regular);
     }
 }

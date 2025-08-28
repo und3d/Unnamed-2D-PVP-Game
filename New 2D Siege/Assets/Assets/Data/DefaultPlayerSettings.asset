@@ -24,4 +24,4 @@ MonoBehaviour:
   timeBetweenReinforcements: 1
   interactLayers:
     serializedVersion: 2
-    m_Bits: 16384
+    m_Bits: 278528

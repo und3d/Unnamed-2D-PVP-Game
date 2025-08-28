@@ -201,6 +201,7 @@ MonoBehaviour:
   primaryGadget: 0
   secondaryGadget: 0
   gadgetPlaceablePreview: {fileID: 3565984352568502889, guid: 96631d03cb488d040ad24ee854f695bd, type: 3}
+  IsLockdown: 1
   throwOrigin: {fileID: 0}
   throwForce: 10
   timeBeforeActivation: 0

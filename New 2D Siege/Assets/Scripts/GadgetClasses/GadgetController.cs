@@ -33,6 +33,7 @@ public class GadgetController : NetworkBehaviour
     
     [Header("Placeable")]
     [SerializeField] private GameObject gadgetPlaceablePreview;
+    public bool IsLockdown;
 
     [Header("Throwable")]
     [SerializeField] private Transform throwOrigin;
@@ -148,6 +149,8 @@ public class GadgetController : NetworkBehaviour
             switch (primaryGadget)
             {
                 case GadgetType.Placeable:
+                    if (IsLockdown)
+                        return;
                     if (Input.GetKeyDown(gadgetKey) && primaryGadgetCount > 0)
                     {
                         if (!isGadgetPulledOut)
@@ -358,6 +361,11 @@ public class GadgetController : NetworkBehaviour
         return primaryGadgetCount;
     }
 
+    public void ChangeGadgetCountPrimary(int change)
+    {
+        primaryGadgetCount += change;
+    }
+    
     public void ChangeDroneCount(int change)
     {
         dronesCount += change;

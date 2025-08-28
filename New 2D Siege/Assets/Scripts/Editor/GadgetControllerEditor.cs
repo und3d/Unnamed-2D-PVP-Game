@@ -20,6 +20,7 @@ public class GadgetControllerEditor : Editor
     private SerializedProperty primaryGadgetDuration;
     private SerializedProperty primaryGadgetDelay;
 
+    private SerializedProperty isLockdown;
     private SerializedProperty gadgetPlaceablePreview;
     private SerializedProperty gadgetTool;
     private SerializedProperty gadgetToggle;
@@ -54,6 +55,7 @@ public class GadgetControllerEditor : Editor
         primaryGadgetDuration = serializedObject.FindProperty("primaryGadgetDuration");
         primaryGadgetDelay = serializedObject.FindProperty("primaryGadgetDelay");
         
+        isLockdown = serializedObject.FindProperty("IsLockdown");
         gadgetPlaceablePreview = serializedObject.FindProperty("gadgetPlaceablePreview");
         gadgetTool = serializedObject.FindProperty("gadgetTool");
         gadgetToggle = serializedObject.FindProperty("gadgetToggle");
@@ -161,6 +163,7 @@ public class GadgetControllerEditor : Editor
         {
             case GadgetController.GadgetType.Placeable:
                 EditorGUILayout.PropertyField(gadgetPlaceablePreview);
+                EditorGUILayout.PropertyField(isLockdown);
                 break;
             case GadgetController.GadgetType.Throwable:
                 EditorGUILayout.PropertyField(throwOrigin);

@@ -22,9 +22,12 @@ public class playerController : NetworkIdentity
     [SerializeField] private GameObject playerVisionNoShadows;
     [SerializeField] private GameObject drone;
 
-    #region Private Variables
+    #region Private Variables]
+    private Camera mainCamera;
     private float moveSpeed;
     private GameController gameController;
+    private GadgetController gadgetController;
+    private RoundView roundView;
     private InputManager inputManager;
     private GameObject currentPreview;
     private GameObject barricadeObj;
@@ -42,6 +45,7 @@ public class playerController : NetworkIdentity
     private bool lastWeaponHiddenState;
     private bool isPlacing;
     private bool isDefender;
+    private bool isLockdown;
     public bool isOnCameras;
     private GameController.Side side;
     private float timeAtBarricadeInteraction;
@@ -91,7 +95,21 @@ public class playerController : NetworkIdentity
             Debug.LogError($"PlayerController failed to get gameController!", this);
             return;
         }
+
+        if (!TryGetComponent(out gadgetController))
+        {
+            Debug.LogError($"PlayerController failed to get gadgetController!", this);
+        }
         
+        if (!InstanceHandler.TryGetInstance(out roundView))
+        {
+            Debug.LogError($"PlayerController failed to get RoundView!", this);
+            return;
+        }
+
+        isLockdown = gadgetController.IsLockdown;
+        
+        mainCamera = Camera.main;
         gameController = _gameController;
         gameController.playerTransform = transform;
         progressBar = gameController.progressBar;
@@ -228,25 +246,77 @@ public class playerController : NetworkIdentity
         
         barricadeObj = GetObjectUnderCursor();
 
-        if (!barricadeObj || !barricadeObj.GetComponent<Barricade>())
+        if (!barricadeObj || !barricadeObj.TryGetComponent(out Barricade barricade))
             return;
         
         if (_interact != null && _interact.IsPressed() && !isGadgetEquipped)
         {
+            // If lockdown barricade is active and interact is held, tear down lockdown barricade
+            if (barricade.getLockdownActive())
+            {
+                progressBar.BeginInteraction(new InteractionRequest
+                {
+                    duration = playerSettings.barricadePlacementTime,
+                    key = _interact,
+                    canStart = () => true,
+                    onComplete = RemoveBarricadeLockdown
+                });
+                return;
+            }
+            
+            // If lockdown barricade is not up and interact is held, place regular barricade
             progressBar.BeginInteraction(new InteractionRequest
             {
                 duration = playerSettings.barricadePlacementTime,
                 key = _interact,
                 canStart = () => true,
-                onComplete = ToggleBarricade
+                onComplete = ToggleBarricadeRegular
+            });
+        }
+        
+        //Debug.Log($"{_primaryGadget.IsPressed()}, {isLockdown}, {!barricade.GetRegularActive()}");
+        
+        // If regular barricade is not up and primary gadget button is held, place lockdown barricade
+        if (_primaryGadget != null && _primaryGadget.IsPressed() && !isGadgetEquipped && isLockdown && !barricade.GetRegularActive() && !barricade.getLockdownActive())
+        {
+            Debug.Log("Placing Lockdown Gadget");
+            
+            progressBar.BeginInteraction(new InteractionRequest
+            {
+                duration = playerSettings.barricadePlacementTime,
+                key = _primaryGadget,
+                canStart = () => (gadgetController.GetGadgetCountPrimary() > 0),
+                onComplete = PlaceBarricadeLockdown
             });
         }
     }
 
-    private void ToggleBarricade()
+    private void ToggleBarricade(bool regular)
     {
-        barricadeObj.GetComponent<Barricade>().ToggleBarricade();
+        if (!barricadeObj.TryGetComponent(out Barricade barricade))
+            return;
+        
+        barricade.ToggleBarricade(regular);
         timeAtBarricadeInteraction = Time.unscaledTime;
+    }
+    
+    private void ToggleBarricadeRegular()
+    {
+        ToggleBarricade(true);
+    }
+
+    private void RemoveBarricadeLockdown()
+    {
+        gadgetController.ChangeGadgetCountPrimary(1);
+        roundView.UpdateGadgetPrimaryCount(gadgetController.GetGadgetCountPrimary());
+        ToggleBarricade(false);
+    }
+
+    private void PlaceBarricadeLockdown()
+    {
+        gadgetController.ChangeGadgetCountPrimary(-1);
+        roundView.UpdateGadgetPrimaryCount(gadgetController.GetGadgetCountPrimary());
+        ToggleBarricade(false);
     }
 
     private void DestructibleWallInteraction()
@@ -255,9 +325,15 @@ public class playerController : NetworkIdentity
             return;
         
         reinforcementObj = GetObjectUnderCursor();
-
-        if (!reinforcementObj || !reinforcementObj.GetComponent<DestructibleWall>() ||
-            reinforcementObj.GetComponent<DestructibleWall>().IsReinforced)
+        
+        //Debug.Log(reinforcementObj, this);
+        
+        if (!reinforcementObj || !reinforcementObj.TryGetComponent(out DestructibleWall destructibleWall))
+            return;
+        
+        //Debug.Log(destructibleWall, this);
+        
+        if (destructibleWall.IsReinforced)
             return;
         
         if (_interact != null && _interact.IsPressed() && !isGadgetEquipped)
@@ -274,13 +350,16 @@ public class playerController : NetworkIdentity
     
     private void ReinforceWall()
     {
-        reinforcementObj.GetComponent<DestructibleWall>().ReinforceWall();
+        if (!reinforcementObj.TryGetComponent(out DestructibleWall destructibleWall))
+            return;
+        
+        destructibleWall.ReinforceWall();
         timeAtReinforcementInteraction = Time.unscaledTime;
     }
 
     private GameObject GetObjectUnderCursor()
     {
-        Vector2 cursorWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 cursorWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         var hit = Physics2D.Raycast(cursorWorldPosition, Vector2.zero, 0f, playerSettings.interactLayers);
         
         if (!hit)
@@ -289,7 +368,7 @@ public class playerController : NetworkIdentity
         }
         
         // If a barricade is under the cursor, check the distance. If in range, return the object
-        if (hit.collider.gameObject.GetComponent<Barricade>())
+        if (hit.collider.gameObject.TryGetComponent(out Barricade barricade))
         {
             var hitInRange = Physics2D.Raycast(transform.position, (hit.point - (Vector2)transform.position).normalized, playerSettings.barricadeInteractRange, playerSettings.interactLayers);
             
@@ -310,8 +389,10 @@ public class playerController : NetworkIdentity
         }
         
         // If a destructive wall is under the cursor, check the distance. If in range, return the object
-        if (hit.collider.gameObject.GetComponent<DestructibleWall>())
+        if (hit.collider.gameObject.TryGetComponent(out DestructibleWall destructibleWall))
         {
+            //Debug.Log(destructibleWall, this);
+            
             var hitInRange = Physics2D.Raycast(transform.position, (hit.point - (Vector2)transform.position).normalized, playerSettings.wallInteractRange, playerSettings.interactLayers);
             
             if (drawRays)
@@ -327,13 +408,12 @@ public class playerController : NetworkIdentity
             if (hitInRange && hit.collider.gameObject == hitInRange.collider.gameObject)
                 return hit.collider.gameObject;
         }
-
         return null;
     }
 
     private void RotateTowardsMouse()
     {
-        Vector3 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector2 direction = mouseWorldPosition - transform.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         _rigidbody.rotation = angle - 90f;

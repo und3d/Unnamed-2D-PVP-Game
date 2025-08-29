@@ -17,6 +17,8 @@ public static class GameExtensions
 public class PlayerSpawningState : StateNode
 {
     [SerializeField] private PlayerHealth playerPrefab;
+    [SerializeField] private GameObject dynamicObjectsParent;
+    [SerializeField] private GameObject mapParent;
     [SerializeField] private List<PlayerHealth> attackerPrefabs;
     [SerializeField] private List<PlayerHealth> defenderPrefabs;
     //[SerializeField] private List<Transform> spawnPoints = new();
@@ -27,6 +29,7 @@ public class PlayerSpawningState : StateNode
     private GameController gameController;
     private RoundView roundView;
     private Transform spawnPoint;
+    private GameObject spawnedDynamicObjects;
 
     public override void Enter(bool asServer)
     {
@@ -41,6 +44,13 @@ public class PlayerSpawningState : StateNode
         
         if (!asServer)
             return;
+        
+        if (spawnedDynamicObjects)
+            Destroy(spawnedDynamicObjects);
+        
+        spawnedDynamicObjects = Instantiate(dynamicObjectsParent, mapParent.transform);
+        
+        //ResetDynamicObjects();
         
         if (!InstanceHandler.TryGetInstance(out gameController))
         {
@@ -154,6 +164,15 @@ public class PlayerSpawningState : StateNode
             roundView.SetRedPlayerIconAlive(playerIconID);
         else
             roundView.SetBluePlayerIconAlive(playerIconID);
+    }
+
+    [ObserversRpc(runLocally:false)]
+    private void ResetDynamicObjects()
+    {
+        if (spawnedDynamicObjects)
+            Destroy(spawnedDynamicObjects);
+        
+        spawnedDynamicObjects = Instantiate(dynamicObjectsParent, mapParent.transform);
     }
     
     public override void Exit(bool asServer)

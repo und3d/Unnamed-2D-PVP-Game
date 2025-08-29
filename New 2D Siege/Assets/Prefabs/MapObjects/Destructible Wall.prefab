@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 8138368844968794330}
   - component: {fileID: 1690311154546492699}
   - component: {fileID: 1596402096173461286}
+  - component: {fileID: 3784305297178958616}
   m_Layer: 16
   m_Name: Body
   m_TagString: Untagged
@@ -335,8 +336,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -936600827
-  m_SortingLayer: 4
+  m_SortingLayerID: -2088725361
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
   m_Color: {r: 0.6132076, g: 0.36448565, b: 0.15908688, a: 1}
@@ -385,14 +386,14 @@ MonoBehaviour:
     m_Mesh: {fileID: 0}
     m_LocalBounds:
       m_Center: {x: 0, y: 0, z: 0}
-      m_Extent: {x: 0, y: 0, z: 0}
+      m_Extent: {x: 0.5, y: 0.5, z: 0}
     m_EdgeProcessing: 1
-    m_TrimEdge: 1
+    m_TrimEdge: 0
     m_FlipX: 0
     m_FlipY: 0
     m_InitialTrim: 0
   m_CastingOption: 1
-  m_PreviousTrimEdge: 1
+  m_PreviousTrimEdge: 0
   m_PreviousEdgeProcessing: 1
   m_PreviousShadowCastingSource: 2
   m_PreviousShadowShape2DSource: {fileID: 8138368844968794330}
@@ -427,3 +428,17 @@ MonoBehaviour:
   __UseUnshadowedMaskID: 0
   sr: {fileID: 8138368844968794330}
   col: {fileID: 3614781369924699763}
+--- !u!114 &3784305297178958616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9193348843327990735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123c270c11521e44f9ce7e4fc52fd87a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extraDelayFrames: 0
+  alsoToggleSprite: 1

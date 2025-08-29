@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 675056674185074763}
   - component: {fileID: 1345939578041426913}
   - component: {fileID: 4407483274723904961}
+  - component: {fileID: 5412093251336705917}
   m_Layer: 12
   m_Name: Lockdown Body
   m_TagString: Untagged
@@ -247,6 +248,20 @@ MonoBehaviour:
   __UseUnshadowedMaskID: 0
   sr: {fileID: 675056674185074763}
   col: {fileID: 3788299731863827171}
+--- !u!114 &5412093251336705917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 121421062969259195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123c270c11521e44f9ce7e4fc52fd87a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extraDelayFrames: 0
+  alsoToggleSprite: 1
 --- !u!1 &481876170671815227
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,6 +274,7 @@ GameObject:
   - component: {fileID: 6170507428990610685}
   - component: {fileID: 8381526066848139953}
   - component: {fileID: 7274078092626301782}
+  - component: {fileID: 7686912605423963703}
   m_Layer: 12
   m_Name: Body
   m_TagString: Untagged
@@ -324,8 +340,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -936600827
-  m_SortingLayer: 4
+  m_SortingLayerID: -2088725361
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
   m_Color: {r: 0, g: 0.4811321, b: 0, a: 1}
@@ -416,6 +432,20 @@ MonoBehaviour:
   __UseUnshadowedMaskID: 0
   sr: {fileID: 6170507428990610685}
   col: {fileID: 3788299731863827171}
+--- !u!114 &7686912605423963703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 481876170671815227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 123c270c11521e44f9ce7e4fc52fd87a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  extraDelayFrames: 0
+  alsoToggleSprite: 1
 --- !u!1 &4634622019510951083
 GameObject:
   m_ObjectHideFlags: 0

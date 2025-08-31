@@ -1,7 +1,7 @@
 # Unnamed 2D PVP Game
 Top-down 5v5 tactical shooter. Attack, defend, and outplay your friends.
 
-> **Play the latest build:** [Solo](https://github.com/<you>/<repo>/releases) or [Duo](https://github.com/<you>/<repo>/releases)
+> **Play the latest build:** [Test Build](https://github.com/und3d/Unnamed-2D-PVP-Game/releases)
 
 <details>
 <summary><strong>Table of Contents</strong></summary>
